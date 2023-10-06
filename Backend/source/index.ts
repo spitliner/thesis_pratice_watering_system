@@ -11,4 +11,4 @@ let portNum : number = (Number(process.env.PORT) || 3000);
 
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);
-})
+});

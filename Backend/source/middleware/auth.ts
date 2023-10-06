@@ -1,10 +1,8 @@
 require("dotenv").config();
-import argon2 = require('argon2');
-import jwt from "jsonwebtoken";
-import { Algorithm } from "jsonwebtoken";
-import crypto from 'crypto';
-//import privateKey from "../config/loadPrivateKey.js";
-//import publicKey from "../config/loadPublickey.js";
+import argon2 from 'argon2';
+import * as jose from 'jose'
+import crypto from 'node:crypto';
+import {privateKey, publicKey} from "../config/loadKeyPair";
 
 class Authentication {
     static async hashPassword(password : string) {
@@ -19,43 +17,32 @@ class Authentication {
         return argon2.verify(hash, password);
     }
 
-    static createToken(payload : any) {
+    static async createToken(payload : any) {
         payload["padding"] = crypto.randomBytes(48).toString('base64');
-        return jwt.sign(payload, {key: "privateKey", passphrase: String(process.env["KEY_PASS"]}), {
-            header: {
-                alg: "ES384",
-                typ: "JWT"
-            },
-            algorithm: "ES384",
-            expiresIn: "24h",
-            notBefore: Math.floor(Date.now() / 1000)
-        });
+        return new jose.SignJWT(payload)
+       .setProtectedHeader({ alg: "EdDSA" }) //Ed25519
+       .setExpirationTime('12h')
+       //.setNotBefore(Math.floor(Date.now() / 1000) * 1000)
+       .sign(privateKey);
     }
 
-    static verifyToken(token : string) {
-        let decode = null;
+    static async verifyToken(token : string) {
         try {
-            decode = jwt.verify(token, "publicKey", {
-                algorithms: ["ES384"],
+            const { payload, protectedHeader } = await jose.jwtVerify(token, publicKey, {
+                algorithms: ["EdDSA"]
             });
-        } catch (error) {
-            if (error instanceof jwt.TokenExpiredError) {
-                return {
-                    "Error": "expired token"
-                }
-            } else if (error instanceof jwt.JsonWebTokenError) {
-                return {
-                    "Error": "invalid token"
-                }
-            } else return {
-                "Error": "server error"
-            }
+            return payload;
+        } catch (ERR_JWT_CLAIM_VALIDATION_FAILED) {
+            
         }
-        
-        return decode;
     }
 }
-//console.log(AuthMiddle.verifyToken(AuthMiddle.createToken({a: "b"})));
-//console.log(AuthMiddle.createToken({a: "b"}));
+
+Authentication.createToken({a: "b"}).then((result) => {
+    console.log(result);
+    Authentication.verifyToken(result).then((token) => {
+        console.log(token);
+    })
+});
 
 export default Authentication;
