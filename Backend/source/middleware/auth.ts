@@ -22,7 +22,7 @@ class Authentication {
         return new jose.SignJWT(payload)
        .setProtectedHeader({ alg: "EdDSA" }) //Ed25519
        .setExpirationTime('12h')
-       //.setNotBefore(Math.floor(Date.now() / 1000) * 1000)
+       .setNotBefore('0.1s')
        .sign(privateKey);
     }
 
@@ -32,17 +32,20 @@ class Authentication {
                 algorithms: ["EdDSA"]
             });
             return payload;
-        } catch (ERR_JWT_CLAIM_VALIDATION_FAILED) {
-            
+        } catch (err) {
+            console.log(err)
         }
     }
 }
 
-Authentication.createToken({a: "b"}).then((result) => {
+/*
+Authentication.createToken({a: "b"}).then(async (result) => {
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     console.log(result);
+    await sleep(1000);
     Authentication.verifyToken(result).then((token) => {
         console.log(token);
     })
 });
-
+*/
 export default Authentication;
