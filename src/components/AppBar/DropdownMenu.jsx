@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
+import { Link } from 'react-router-dom'
 
 function DropdownMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -43,8 +44,12 @@ function DropdownMenu() {
           'aria-labelledby': 'basic-button'
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem
+          component={Link} to="/profile"
+          onClick={handleClose}>
+          Profile
+        </MenuItem>
+
         <MenuItem onClick={handleClose}>Logout</MenuItem>
       </Menu>
     </Box>
