@@ -4,6 +4,7 @@ import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded'
 import MonitorWeightRoundedIcon from '@mui/icons-material/MonitorWeightRounded'
 import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded'
 import LogoutIcon from '@mui/icons-material/Logout'
+import { Link } from 'react-router-dom'
 
 function Navigation() {
   return (
@@ -16,11 +17,15 @@ function Navigation() {
       borderRadius: '25px',
       textAlign: 'center'
     }}>
-      <Box><HomeRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 6, cursor: 'pointer' }}/></Box>
-      <Box><CalendarMonthRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 8, cursor: 'pointer' }}/></Box>
+      <div>
+        <Box component={Link} to="/">
+          <HomeRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 6, cursor: 'pointer' }}/>
+        </Box>
+      </div>
+      <Box component={Link} to="/schedules"><CalendarMonthRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 8, cursor: 'pointer' }}/></Box>
       <Box><MonitorWeightRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 4, cursor: 'pointer' }}/></Box>
       <Box><CheckBoxRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 4, cursor: 'pointer' }}/></Box>
-      <Box><LogoutIcon sx={{ fontSize: '35px', color: 'white', mt: 37, cursor: 'pointer' }}/></Box>
+      <Box ><LogoutIcon sx={{ fontSize: '35px', color: 'white', mt: 37, cursor: 'pointer' }}/></Box>
     </Box>
   )
 }
