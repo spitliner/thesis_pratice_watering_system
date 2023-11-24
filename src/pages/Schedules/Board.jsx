@@ -8,6 +8,7 @@ import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
+import { Link } from 'react-router-dom'
 
 const data = [
   ['KV01', '9 Oct 8:00 AM', 'Khanh', '500'],
@@ -24,7 +25,7 @@ function Board() {
     <Container disableGutters maxWidth={false}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Box>
+        <Box component={Link} to="/schedules/add">
           <Button variant="contained" sx={{
             backgroundColor: '#aed581',
             width: '70px',
