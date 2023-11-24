@@ -2,7 +2,7 @@ require("dotenv").config();
 import argon2 from 'argon2';
 import * as jose from 'jose'
 import crypto from 'node:crypto';
-import {privateKey, publicKey} from "../config/loadKeyPair";
+import { privateKey, publicKey } from "../config/loadKeyPair.js";
 
 class Authentication {
     static async hashPassword(password : string) {
@@ -34,15 +34,16 @@ class Authentication {
             return payload;
         } catch (err) {
             console.log(err)
+            return {"error": "invalid token"}
         }
     }
 }
 
 /*
 Authentication.createToken({a: "b"}).then(async (result) => {
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     console.log(result);
-    await sleep(1000);
+await sleep(1000);
     Authentication.verifyToken(result).then((token) => {
         console.log(token);
     })
