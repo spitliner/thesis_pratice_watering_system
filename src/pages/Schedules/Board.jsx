@@ -25,7 +25,7 @@ function Board() {
     <Container disableGutters maxWidth={false}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Box component={Link} to="/schedules/add">
+        <Box component={Link} to="/schedules/add" sx={{ textDecoration: 'none' }}>
           <Button variant="contained" sx={{
             backgroundColor: '#aed581',
             width: '70px',
