@@ -5,6 +5,7 @@ import DeviceThermostatOutlinedIcon from '@mui/icons-material/DeviceThermostatOu
 import WaterOutlinedIcon from '@mui/icons-material/WaterOutlined'
 import ReportBanner from './Banners/ReportBanner'
 import SchedulesBanner from './Banners/SchedulesBanner'
+import { Link } from 'react-router-dom'
 
 function SideBar() {
   return (
@@ -59,9 +60,15 @@ function SideBar() {
         <Typography sx={{ fontSize: '18px', fontWeight: '20px', mb: 2 }}>Report</Typography>
         <ReportBanner />
       </Box>
-      <Box sx={{ m: 4 }}>
+      <Box
+        sx={{ m: 4 }}>
         <Typography sx={{ fontSize: '18px', fontWeight: '20px', mb: 2 }}>Schedules</Typography>
-        <SchedulesBanner />
+        <Box
+          component={Link} to="/schedules"
+          sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'none' } }}
+        >
+          <SchedulesBanner />
+        </Box>
       </Box>
     </Box>
   )
