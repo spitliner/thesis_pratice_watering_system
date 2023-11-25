@@ -1,4 +1,6 @@
-require("dotenv").config();
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from "express";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -16,11 +18,13 @@ server.use(cors());
 server.use(cookieParser());
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
-server.use(express)
 
 server.use("/api", UserRouter);
 server.use("/api", DeviceRouter);
 
+server.get('*', (request, response) => {
+    return response.status(404).json({"error": "router not found"});
+});
 
 mongoose.connection.on("open", function() {
     //console.log(ref);
@@ -34,11 +38,9 @@ mongoose.connection.on("error", function(error) {
 
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@dev0.agidxfk.mongodb.net/?retryWrites=true&w=majority`;
 
-console.log(uri);
-
 mongoose.connect(uri);
 
-let portNum : number = (Number(process.env.PORT) || 8000);
+let portNum : number = (Number(process.env.PORT));
 
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);

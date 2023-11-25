@@ -9,7 +9,6 @@ import Authentication from "../../middleware/auth.js";
 //---
 
 const UserMongoModel = mongoose.model("user", UserSchema);
-
 class UserModel {
     static async getUser(userID: string) {
         return UserMongoModel.findById(userID).select("-__v");
