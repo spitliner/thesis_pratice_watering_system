@@ -15,7 +15,9 @@ function Navigation() {
       height: '730px',
       alignItems: 'center',
       borderRadius: '25px',
-      textAlign: 'center'
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
       <div>
         <Box component={Link} to="/">
@@ -23,8 +25,8 @@ function Navigation() {
         </Box>
       </div>
       <Box component={Link} to="/schedules"><CalendarMonthRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 8, cursor: 'pointer' }}/></Box>
-      <Box><MonitorWeightRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 4, cursor: 'pointer' }}/></Box>
-      <Box><CheckBoxRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 4, cursor: 'pointer' }}/></Box>
+      <Box component={Link} to="/device"><MonitorWeightRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 4, cursor: 'pointer' }}/></Box>
+      <Box component={Link} to="/report"><CheckBoxRoundedIcon sx={{ fontSize: '35px', color: 'white', mt: 4, cursor: 'pointer' }}/></Box>
       <Box ><LogoutIcon sx={{ fontSize: '35px', color: 'white', mt: 37, cursor: 'pointer' }}/></Box>
     </Box>
   )
