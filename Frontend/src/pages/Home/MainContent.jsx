@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import Welcome from './Banners/WelcomeBanner'
 import SensorInfo from './SensorInfo'
+import Chart from './Chart'
 
 function MainContent() {
   return (
@@ -13,6 +14,7 @@ function MainContent() {
     }}>
       <Welcome />
       <SensorInfo />
+      <Chart />
     </Box>
   )
 }
