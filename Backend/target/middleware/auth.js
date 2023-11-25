@@ -1,68 +1,49 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv").config();
-const argon2_1 = __importDefault(require("argon2"));
-const jose_1 = __importDefault(require("jose"));
-const crypto_1 = __importDefault(require("crypto"));
+import dotenv from 'dotenv';
+dotenv.config();
+import argon2 from 'argon2';
+import * as jose from 'jose';
+import crypto from 'node:crypto';
+import { privateKey, publicKey } from "../config/loadKeyPair.js";
 class Authentication {
     static async hashPassword(password) {
-        return argon2_1.default.hash(password, {
-            type: argon2_1.default.argon2id,
+        return argon2.hash(password, {
+            type: argon2.argon2id,
             hashLength: 100,
             timeCost: 4,
         });
     }
     static async verifyPassword(password, hash) {
-        return argon2_1.default.verify(hash, password);
+        return argon2.verify(hash, password);
     }
-    static createToken(payload) {
-        payload["padding"] = crypto_1.default.randomBytes(48).toString('base64');
-        /*
-        return new jose.SignJWT(payload, {key: "privateKey", passphrase: String(process.env["KEY_PASS"])}, {
-            header: {
-                alg: "ES384",
-                typ: "JWT"
-            },
-            algorithm: "ES384",
-            expiresIn: "24h",
-            notBefore: Math.floor(Date.now() / 1000)
-        });
-        */
-        return new jose_1.default.SignJWT(payload)
+    static async createToken(payload) {
+        payload["padding"] = crypto.randomBytes(48).toString('base64');
+        return new jose.SignJWT(payload)
             .setProtectedHeader({ alg: "EdDSA" }) //Ed25519
             .setExpirationTime('12h')
-            .setNotBefore(Math.floor(Date.now() / 1000))
-            .sign();
+            .setNotBefore('0.1s')
+            .sign(privateKey);
     }
-    static verifyToken(token) {
-        let decode = null;
+    static async verifyToken(token) {
         try {
-            decode = jwt.verify(token, "publicKey", {
-                algorithms: ["ES384"],
+            const { payload, protectedHeader } = await jose.jwtVerify(token, publicKey, {
+                algorithms: ["EdDSA"]
             });
+            return payload;
         }
-        catch (error) {
-            if (error instanceof jwt.TokenExpiredError) {
-                return {
-                    "Error": "expired token"
-                };
-            }
-            else if (error instanceof jwt.JsonWebTokenError) {
-                return {
-                    "Error": "invalid token"
-                };
-            }
-            else
-                return {
-                    "Error": "server error"
-                };
+        catch (err) {
+            console.log(err);
+            return { "error": "invalid token" };
         }
-        return decode;
     }
 }
-//console.log(AuthMiddle.verifyToken(AuthMiddle.createToken({a: "b"})));
-//console.log(AuthMiddle.createToken({a: "b"}));
-exports.default = Authentication;
+/*
+Authentication.createToken({a: "b"}).then(async (result) => {
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    console.log(result);
+await sleep(1000);
+    Authentication.verifyToken(result).then((token) => {
+        console.log(token);
+    })
+});
+*/
+export default Authentication;
