@@ -4,7 +4,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import TextField from '@mui/material/TextField'
 import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
-import DropdownMenu from '../../pages/Home/DropdownMenu'
+import DropdownMenu from './DropdownMenu'
 
 function AppBar() {
   return (

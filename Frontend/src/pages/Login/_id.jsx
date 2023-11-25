@@ -6,12 +6,15 @@ import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import { Link, useNavigate } from 'react-router-dom'
 
 function _id() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
+
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -27,7 +30,10 @@ function _id() {
     }
 
     if (email && password) {
-      console.log(email, password)
+      console.log(email, password);
+    }
+    if (!emailError && passwordError) {
+      navigate("/");
     }
   }
   return (
@@ -101,7 +107,7 @@ function _id() {
               {/* Register */}
               <Box sx={{ my: 8, textAlign: 'center' }}>
                 <Typography display={ 'inline'} sx={{ fontSize: '16px', color: '#828282' }}>Not Registered Yet? </Typography>
-                <Typography display={ 'inline'} sx={{ fontSize: '16px', color: 'primary.main' }}>Create an account</Typography>
+                <Typography display={ 'inline'} sx={{ fontSize: '16px', color: 'primary.main', textDecoration: "none"}} component={Link} to={'/register'}>Create an account</Typography>
               </Box>
             </Box>
           </Box>
