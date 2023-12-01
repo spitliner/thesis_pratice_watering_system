@@ -1,10 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
-module.exports = {
-    privateKey: fs_1.default.readFileSync("/privateKey.pem", { encoding: "utf-8" }),
-    publicKey: fs_1.default.readFileSync("/publicKey.pem", { encoding: "utf-8" })
-};
+import dotenv from 'dotenv';
+dotenv.config();
+import fs from 'fs';
+import crypto from 'node:crypto';
+const privateKey = crypto.createPrivateKey({ key: fs.readFileSync("./privateKey.pem", { encoding: "utf-8" }), passphrase: String(process.env.KEY_PASS) });
+const publicKey = crypto.createPublicKey(fs.readFileSync("./publicKey.pem", { encoding: "utf-8" }));
+export { privateKey, publicKey };

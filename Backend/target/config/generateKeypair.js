@@ -1,12 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv").config();
-const fs_1 = __importDefault(require("fs"));
-const node_crypto_1 = __importDefault(require("node:crypto"));
-const { publicKey, privateKey } = node_crypto_1.default.generateKeyPairSync('ed25519', {
+import dotenv from "dotenv";
+dotenv.config();
+import fs from 'fs';
+import crypto from 'node:crypto';
+const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519', {
     publicKeyEncoding: {
         type: 'spki',
         format: 'pem',
@@ -18,5 +14,5 @@ const { publicKey, privateKey } = node_crypto_1.default.generateKeyPairSync('ed2
         passphrase: String(process.env.KEY_PASS),
     }
 });
-fs_1.default.writeFileSync("./privateKey.pem", privateKey);
-fs_1.default.writeFileSync("./publicKey.pem", publicKey);
+fs.writeFileSync("./privateKey.pem", privateKey);
+fs.writeFileSync("./publicKey.pem", publicKey);

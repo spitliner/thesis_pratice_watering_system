@@ -1,30 +1,99 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const router = express_1.default.Router();
-router.put('/', async (request, response) => {
+import express from "express";
+import authRequest from "../middleware/expressAuth.js";
+import UserController from "../controllers/user_controller.js";
+const UserRouter = express.Router();
+UserRouter.post('/account/', async (request, response) => {
     try {
-        const { username, password, name, surname, email, phone_number } = request.body;
-        if (true) {
+        const { email, password } = request.body;
+        const usr = await UserController.createUser(email, password);
+        if (null === usr) {
+            return response.status(500).json({
+                "error": "unexpected server error"
+            });
         }
+        else if (undefined !== usr.error) {
+            if ("database error" === usr.error) {
+                return response.status(500).json({
+                    "error": "database error"
+                });
+            }
+            return response.status(400).json(usr);
+        }
+        const result = await UserController.login(email, password);
+        response.cookie("uid", result.uid, {
+            httpOnly: true,
+            sameSite: "strict"
+        });
+        response.cookie("tokenType", result.tokenType, {
+            httpOnly: true,
+            sameSite: "strict"
+        });
+        let usrObject = usr.usr?.toObject();
+        if (undefined !== usrObject) {
+            usrObject.password = "";
+        }
+        return response.status(200).json({ "token": result.bearer_token });
     }
     catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
     }
 });
-router.get('/', async (request, response) => {
+UserRouter.get('/user/', authRequest, async (request, response) => {
     try {
+        const userID = request.cookies["uid"];
+        if (undefined === userID) {
+            return response.status(400).json({ "error": "missing info" });
+        }
+        const usr = await UserController.getUser(userID);
+        if (undefined !== usr.error) {
+            if ("database error" === usr.error) {
+                return response.status(500).json({
+                    "error": "database error"
+                });
+            }
+            return response.status(400).json(usr);
+        }
+        let usrObject = usr.usr?.toObject();
+        if (undefined !== usrObject) {
+            usrObject.password = "";
+        }
+        return response.status(200).json({ "usr": usrObject });
     }
     catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
     }
 });
-router.post('/', async (request, response) => {
+UserRouter.post('/login/', async (request, response) => {
     try {
-        const { username, password } = request.body;
+        const { email, password } = request.body;
+        if (undefined === email || undefined === password) {
+            return response.status(401).json({ "error": "missing info" });
+        }
+        const result = await UserController.login(email, password);
+        if (undefined !== result["error"]) {
+            return response.status(401).json(result);
+        }
+        response.cookie("uid", result.uid, {
+            httpOnly: true,
+            sameSite: "strict"
+        });
+        response.cookie("tokenType", result.tokenType, {
+            httpOnly: true,
+            sameSite: "strict"
+        });
+        return response.status(200).json({ "token": result.bearer_token });
     }
     catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
     }
 });
-module.exports = router;
+export default UserRouter;

@@ -5,7 +5,7 @@ import { errors } from "jose";
 
 const UserRouter = express.Router();
 
-UserRouter.put('/account/', authRequest, async (request, response) => {
+UserRouter.post('/account/', async (request, response) => {
     try {
         const {email, password} = request.body;
         const usr = await UserController.createUser(email, password);
@@ -31,7 +31,11 @@ UserRouter.put('/account/', authRequest, async (request, response) => {
             httpOnly: true,
             sameSite: "strict"
         });
-        return response.status(200).json({"token": result.bearer_token, "usr": usr.usr?.toObject()});
+        let usrObject = usr.usr?.toObject();
+        if (undefined !== usrObject) {
+            usrObject.password = "";
+        }
+        return response.status(200).json({"token": result.bearer_token});
     } catch (error) {
         console.log(error);
         return response.status(500).json({
@@ -55,7 +59,11 @@ UserRouter.get('/user/', authRequest, async (request, response) => {
             }
             return response.status(400).json(usr);
         }
-
+        let usrObject = usr.usr?.toObject();
+        if (undefined !== usrObject) {
+            usrObject.password = "";
+        }
+        return response.status(200).json({"usr": usrObject});
     } catch (error) {
         console.log(error);
         return response.status(500).json({
