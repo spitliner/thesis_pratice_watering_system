@@ -89,25 +89,31 @@ class UserController {
         newPassword?: string
     }) {
         try {
+            let result = {};
+            let resultChange : boolean | null = null;
             if (undefined !== change.newSetting) {
-                return {
-                    "usr": UserModel.changeSetting(userID, change.newSetting)
-                }
-            }
+                resultChange = await UserModel.changeSetting(userID, JSON.stringify(change.newSetting))
+            }   
             else if (undefined !== change.newAPIkey) {
-                return {
-                    "usr": UserModel.changeAPIkey(userID, change.newAPIkey)
-                }
+                resultChange = await UserModel.changeAPIkey(userID, change.newAPIkey)
             }
             else if (undefined !== change.newEmail) {
-                return {
-                    "usr": UserModel.changeEmail(userID, change.newEmail)
-                }
+                resultChange = await UserModel.changeEmail(userID, change.newEmail);
             }
             else if (undefined !== change.newPassword) {
+                resultChange = await UserModel.changePassword(userID, change.newPassword)
+            }
+            if (null === resultChange) {
                 return {
-                    "usr": UserModel.changePassword(userID, change.newPassword)
+                    "error": "database error"
                 }
+            } else if (false === resultChange) {
+                return {
+                    "error": "user not found"
+                }
+            }
+            return {
+                "result": "change save"
             }
         } catch (error) {
             console.log(error);

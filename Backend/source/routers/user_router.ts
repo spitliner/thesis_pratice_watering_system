@@ -44,6 +44,50 @@ UserRouter.post('/account/', async (request, response) => {
     }
 });
 
+UserRouter.get('/account/email/duplicate', async (request, response) => {
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
+
+UserRouter.post('/account/password', async (request, response) => {
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
+
+UserRouter.post('/account/email', async (request, response) => {
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
+
+UserRouter.post('/account/settings', async (request, response) => {
+    try {
+        
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
+
 UserRouter.get('/user/', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
@@ -58,10 +102,6 @@ UserRouter.get('/user/', authRequest, async (request, response) => {
                 });
             }
             return response.status(400).json(usr);
-        }
-        let usrObject = usr.usr?.toObject();
-        if (undefined !== usrObject) {
-            usrObject.password = "";
         }
         return response.status(200).json({"usr": usrObject});
     } catch (error) {

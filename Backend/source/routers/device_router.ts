@@ -6,7 +6,7 @@ import UserController from "../controllers/user_controller.js";
 
 const DeviceRouter = express.Router();
 
-DeviceRouter.get('/device', authRequest, async (request, response) => {
+DeviceRouter.get('/device/', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
         if (undefined === userID) {
