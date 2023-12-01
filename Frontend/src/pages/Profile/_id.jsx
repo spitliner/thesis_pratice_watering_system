@@ -1,25 +1,24 @@
-import Container from '@mui/material/Container'
-import AppBar from '../../components/AppBar/AppBar'
-import Navigation from '../../components/Navigation/Navigation'
-import AvatarBox from './AvatarBox'
-import EditBox from './EditBox'
+import Container from '@mui/material/Container';
+import AppBar from '../../components/AppBar/AppBar';
+import Navigation from '../../components/Navigation/Navigation';
+import AvatarBox from './components/AvatarBox';
+import EditBox from './components/EditBox';
+import useQueryOnlineProfile from './hooks/useQueryProfile';
+import SuspenseLoader from '../../components/SuspenseLoader';
 
 function _id() {
+  const { profile, isLoading } = useQueryOnlineProfile();
+  if (isLoading) return <SuspenseLoader />;
   return (
-    <Container disableGutters maxWidth={false} sx={{ height: 'max-height', backgroundColor: 'secondary.main', px: 1, py: 1, display: 'flex' }}>
-      {/* Navigation */}
-      <Navigation />
-      <Container maxWidth={false} sx={{ height: '100%', backgroundColor: 'secondary.main', py: 1 }}>
-        {/* Header */}
-        <AppBar />
-        {/* Content */}
-        <Container disableGutters maxWidth={false} sx={{ backgroundColor: 'secondary.main', display: 'flex', mt: 2 }}>
-          <AvatarBox />
-          <EditBox />
-        </Container>
-      </Container>
+    <Container
+      disableGutters
+      maxWidth={false}
+      sx={{ backgroundColor: 'secondary.main', display: 'flex', mt: 2 }}
+    >
+      <AvatarBox profile={profile} />
+      <EditBox profile={profile} />
     </Container>
-  )
+  );
 }
 
-export default _id
+export default _id;
