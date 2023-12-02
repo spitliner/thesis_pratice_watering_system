@@ -6,7 +6,7 @@ import Authentication from "../middleware/auth.js";
 class UserController {
     static async getUser(userID: string) {
         try {
-            const usr = await UserModel.getUser(userID);
+            const usr = await UserModel.getUserData(userID);
             if (null === usr) {
                 return {
                     "error": "user not found"
@@ -45,7 +45,15 @@ class UserController {
     }
 
     static checkPasswordLength(password: string) {
-        return 12 < password.length
+        return 12 < password.length;
+    }
+
+    static checkEmailDublication(email: string) {
+        return UserModel.checkEmail(email);
+    }
+
+    static checkAPIkeylDublication(apiKey: string) {
+        return UserModel.checkAPIkey(apiKey);
     }
 
     static async createUser(email: string, password: string) {
@@ -82,7 +90,7 @@ class UserController {
 
     }
 
-    static async changeUserSetting(userID: string, change: {
+    static async changeUserData(userID: string, change: {
         newSetting?: {[key: string]: unknown},
         newAPIkey?: string,
         newEmail?: string,
@@ -94,13 +102,13 @@ class UserController {
             if (undefined !== change.newSetting) {
                 resultChange = await UserModel.changeSetting(userID, JSON.stringify(change.newSetting))
             }   
-            else if (undefined !== change.newAPIkey) {
+            if (undefined !== change.newAPIkey) {
                 resultChange = await UserModel.changeAPIkey(userID, change.newAPIkey)
             }
-            else if (undefined !== change.newEmail) {
+            if (undefined !== change.newEmail) {
                 resultChange = await UserModel.changeEmail(userID, change.newEmail);
             }
-            else if (undefined !== change.newPassword) {
+            if (undefined !== change.newPassword) {
                 resultChange = await UserModel.changePassword(userID, change.newPassword)
             }
             if (null === resultChange) {

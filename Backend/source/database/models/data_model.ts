@@ -12,7 +12,7 @@ class DataModel {
     static async getData(deviceID: string) {
         return DataMongoModel.find({
             deviceID: deviceID
-        }).select("-__v").sort("-time").lean().exec();
+        }, "-__v").sort("-time").lean().exec();
     }
 
     static async getDataWithin(deviceID: string, afterDate: Date) {
@@ -21,7 +21,7 @@ class DataModel {
             time: {
                 $gte: afterDate
             }
-        }).select("-__v").sort("-time").lean().exec();
+        }, "-__v").sort("-time").lean().exec();
     }
 
     static async insertData(data : [{

@@ -7,7 +7,7 @@ class DeviceController {
             return DeviceModel.getDeviceData(deviceID);
         } catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     }
 

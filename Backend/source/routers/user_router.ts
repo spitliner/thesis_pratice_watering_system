@@ -46,7 +46,20 @@ UserRouter.post('/account/', async (request, response) => {
 
 UserRouter.get('/account/email/duplicate', async (request, response) => {
     try {
-        
+        const email = String(request.body.email);
+        if ("undefined" === email) {
+            return response.status(400).json({
+                "error": "missing info"
+            });
+        }
+        if (await UserController.checkEmailDublication(email)) {
+            return response.status(200).json({
+                "result": "email available to use"
+            });
+        }
+        return response.status(200).json({
+            "result": "email already used"
+        });
     } catch (error) {
         console.log(error);
         return response.status(500).json({
@@ -57,7 +70,18 @@ UserRouter.get('/account/email/duplicate', async (request, response) => {
 
 UserRouter.post('/account/password', async (request, response) => {
     try {
-        
+        const password = String(request.body.password);
+        const userID = String(request.cookies.uid);
+        if ("undefined" === password) {
+            return response.status(400).json({
+                "error": "missing info"
+            });
+        }
+        const result = await UserController.changeUserData(userID, {newPassword: password});
+        if (undefined !== result.error) {
+            return response.status(500).json(result);
+        }
+        return response.status(200).json(result);
     } catch (error) {
         console.log(error);
         return response.status(500).json({
@@ -68,7 +92,23 @@ UserRouter.post('/account/password', async (request, response) => {
 
 UserRouter.post('/account/email', async (request, response) => {
     try {
-        
+        const email = String(request.body.email);
+        const userID = String(request.cookies.uid);
+        if ("undefined" === email) {
+            return response.status(400).json({
+                "error": "missing info"
+            });
+        }
+        if (!(await UserController.checkEmailDublication(email))) {
+            return response.status(400).json({
+                "error": "email already in use"
+            })
+        }
+        const result = await UserController.changeUserData(userID, {newEmail: email});
+        if (undefined !== result.error) {
+            return response.status(500).json(result);
+        }
+        return response.status(200).json(result);
     } catch (error) {
         console.log(error);
         return response.status(500).json({
@@ -79,7 +119,18 @@ UserRouter.post('/account/email', async (request, response) => {
 
 UserRouter.post('/account/settings', async (request, response) => {
     try {
-        
+        const settings : {[key: string]: unknown} = request.body.settings;
+        const userID = String(request.cookies.uid);
+        if (undefined === settings) {
+            return response.status(400).json({
+                "error": "missing info"
+            });
+        }
+        const result = await UserController.changeUserData(userID, {newSetting: settings});
+        if (undefined !== result.error) {
+            return response.status(500).json(result);
+        }
+        return response.status(200).json(result);
     } catch (error) {
         console.log(error);
         return response.status(500).json({
@@ -103,7 +154,7 @@ UserRouter.get('/user/', authRequest, async (request, response) => {
             }
             return response.status(400).json(usr);
         }
-        return response.status(200).json({"usr": usrObject});
+        return response.status(200).json({"usr": usr.usr});
     } catch (error) {
         console.log(error);
         return response.status(500).json({
