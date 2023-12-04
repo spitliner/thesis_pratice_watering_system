@@ -11,13 +11,17 @@ import Authentication from "../../middleware/auth.js";
 const UserMongoModel = mongoose.model("user", UserSchema);
 class UserModel {
     static async getUser(userID: string) {
-        return UserMongoModel.findById(userID).select("-__v");
+        return UserMongoModel.findById(userID, "-__v").exec();
+    }
+
+    static async getUserData(userID: string) {
+        return UserMongoModel.findById(userID, "-__v -password").lean().exec();
     }
 
     static async searchUser(userEmail: string) {
         return UserMongoModel.findOne({
             email: userEmail
-        }).select("-__v");
+        }).select("-__v").exec();
     }
 
     /**
@@ -52,18 +56,15 @@ class UserModel {
         }
     }
 
-    static async changeSetting(userID: string, newSetting: {[key: string]: unknown}) {
+    static async changeSetting(userID: string, newSetting: string) {
         try {
-            const result = await UserMongoModel.findOneAndUpdate(
-                {
-                    _id: userID
-                }, {
-                    settings: JSON.stringify(newSetting)
-                }, {
-                    "new": true
-                }
-            ).select("-__v -password");
-            return result;
+            const user = await UserModel.getUser(userID);
+            if (null === user) {
+                return false;
+            }
+            user.settings = newSetting;
+            await user.save();
+            return true;
         } catch (error) {
             console.log(error);
             return null;
@@ -72,16 +73,13 @@ class UserModel {
 
     static async changeAPIkey(userID: string, apiKey: string) {
         try {
-            const result = await UserMongoModel.findOneAndUpdate(
-                {
-                    _id: userID
-                }, {
-                    apiKey: apiKey
-                }, {
-                    "new": true
-                }
-            ).select("-__v -password");
-            return result;
+            const user = await UserModel.getUser(userID);
+            if (null === user) {
+                return false;
+            }
+            user.apiKey = apiKey;
+            await user.save();
+            return true;
         } catch (error) {
             console.log(error);
             return null;
@@ -90,16 +88,13 @@ class UserModel {
 
     static async changeEmail(userID: string, newmail: string) {
         try {
-            const result = await UserMongoModel.findOneAndUpdate(
-                {
-                    _id: userID
-                }, {
-                    email: newmail
-                }, {
-                    "new": true
-                }
-            ).select("-__v -password");
-            return result;
+            const user = await UserModel.getUser(userID);
+            if (null === user) {
+                return false;
+            }
+            user.email = newmail;
+            await user.save();
+            return true;
         } catch (error) {
             console.log(error);
             return null;
@@ -108,13 +103,13 @@ class UserModel {
 
     static async changePassword(userID: string, newPass: string) {
         try {
-            const result = await UserMongoModel.findOneAndUpdate(
-                {
-                    _id: userID
-                }, {
-                    password: await Authentication.hashPassword(newPass)
-                }).select("-__v -__password");
-            return result;
+            const user = await UserModel.getUser(userID);
+            if (null === user) {
+                return false;
+            }
+            user.password = newPass;
+            await user.save();
+            return true;
         } catch (error) {
             console.log(error);
             return null;
