@@ -121,7 +121,7 @@ class UserController {
                 }
             }
             return {
-                "result": "change save"
+                "result": "change saved"
             }
         } catch (error) {
             console.log(error);

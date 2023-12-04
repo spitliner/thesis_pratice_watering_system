@@ -35,7 +35,7 @@ UserRouter.post('/account/', async (request, response) => {
         if (undefined !== usrObject) {
             usrObject.password = "";
         }
-        return response.status(200).json({"token": result.bearer_token});
+        return response.status(201).json({"token": result.bearer_token});
     } catch (error) {
         console.log(error);
         return response.status(500).json({
@@ -54,11 +54,11 @@ UserRouter.get('/account/email/duplicate', async (request, response) => {
         }
         if (await UserController.checkEmailDublication(email)) {
             return response.status(200).json({
-                "result": "email available to use"
+                "result": false
             });
         }
         return response.status(200).json({
-            "result": "email already used"
+            "result": true
         });
     } catch (error) {
         console.log(error);
