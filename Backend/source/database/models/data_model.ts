@@ -28,7 +28,7 @@ class DataModel {
         id: string,
         deviceID: string,
         time: Date,
-        data: string[]
+        data: string
     }]) {
         try {
             const result = await DataMongoModel.insertMany(data);
