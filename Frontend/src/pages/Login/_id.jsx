@@ -31,12 +31,7 @@ function _id() {
     if (password == '') {
       setPasswordError(true);
     }
-
-    if (email && password) {
-      console.log(email, password);
-    }
     if (!emailError && !passwordError) {
-      debugger;
       onLogin({
         email: email,
         password: password

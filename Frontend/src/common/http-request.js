@@ -1,5 +1,6 @@
 import Axios from 'axios';
 import { getAccessToken } from '../utils/localStorage';
+
 const headerRequest = () => {
   const header = {
     'Content-Type': 'application/json'

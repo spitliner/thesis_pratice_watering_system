@@ -44,7 +44,7 @@ UserRouter.post('/account/', async (request, response) => {
     }
 });
 
-UserRouter.get('/account/email/duplicate', async (request, response) => {
+UserRouter.post('/account/email/duplicate', async (request, response) => {
     try {
         const email = String(request.body.email);
         if ("undefined" === email) {

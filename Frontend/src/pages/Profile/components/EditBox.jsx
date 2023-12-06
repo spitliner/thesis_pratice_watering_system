@@ -1,14 +1,23 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import useQueryProfile from '../hooks/useQueryProfile';
+import useProfile from '../hooks/useMutateProfile';
 
 function EditBox(props) {
   const { profile } = props;
+  const { onSaveProfile } = useProfile();
+  const [email, setEmail] = useState(profile.email);
+  const [currentPassword, setCurrentPassword] = useState(null);
+  const [newPassword, setNewPassword] = useState(null);
+  const [changePassStatus, setChangePassStatus] = useState(false)
+
+  const handleSubmit = () => {
+    onSaveProfile({ email: profile.email, password: currentPassword, newEmail: email, newPassword: newPassword })
+  }
 
   return (
     <Box
@@ -30,85 +39,63 @@ function EditBox(props) {
         >
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              BASIC INFO
+              ACCOUNT INFO
             </Typography>
           </Box>
           <Box>
             <Button
-              variant="outlined"
-              sx={{ marginRight: '10px', width: '70px' }}
+              variant="contained"
+              color='success'
+              sx={{ marginRight: '10px' }}
+              onClick={() => setChangePassStatus(!changePassStatus)}
             >
-              CANCEL
+              {!changePassStatus ? 'CHANGE PASSWORD' : 'CHANGE EMAIL'}
             </Button>
-            <Button variant="contained" sx={{ width: '70px' }}>
+            <Button variant="contained" sx={{ width: '70px' }} onClick={handleSubmit}>
               SAVE
             </Button>
           </Box>
         </Box>
         <Divider />
         <Grid container spacing={3} sx={{ my: 1 }}>
-          <Grid item xs={12} sm={6}>
+          {!changePassStatus && <Grid item xs={12}>
             <Typography sx={{ mb: 1, fontWeight: 500, fontSize: '14px' }}>
-              {' '}
-              FIRST NAME{' '}
+              EMAIL
             </Typography>
             <TextField
-              label="First name"
               variant="outlined"
               size="small"
               fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid>}
+          <Grid item xs={12}>
             <Typography sx={{ mb: 1, fontWeight: 500, fontSize: '14px' }}>
-              {' '}
-              LAST NAME{' '}
+              {changePassStatus ? 'CURRENT PASSWORD' : 'PASSWORD'}
             </Typography>
             <TextField
-              label="Last name"
               variant="outlined"
               size="small"
               fullWidth
+              value={currentPassword}
+              type='password'
+              onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12}>
+          {changePassStatus && <Grid item xs={12}>
             <Typography sx={{ mb: 1, fontWeight: 500, fontSize: '14px' }}>
-              {' '}
-              TITLE{' '}
+              NEW PASSWORD
             </Typography>
             <TextField
-              label="Title"
               variant="outlined"
               size="small"
               fullWidth
+              value={newPassword}
+              type='password'
+              onChange={(e) => setNewPassword(e.target.value)}
             />
-          </Grid>
-          <Grid item xs={12}>
-            <Typography sx={{ mb: 1, fontWeight: 500, fontSize: '14px' }}>
-              {' '}
-              EMAIL{' '}
-            </Typography>
-            <TextField
-              label="Email"
-              variant="outlined"
-              size="small"
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mt: 1, mb: 3, fontWeight: 'bold' }}>
-              {' '}
-              ABOUT ME{' '}
-            </Typography>
-            <Divider />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              sx={{ mt: 1 }}
-              fullWidth
-              placeholder="I’m responsible for the Front-end tasks"
-            />
-          </Grid>
+          </Grid>}
         </Grid>
       </React.Fragment>
     </Box>

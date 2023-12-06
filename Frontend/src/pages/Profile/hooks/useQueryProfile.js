@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { ProfileService } from '../ProfileService';
 
 const useQueryProfile = () => {
-  const { data, isLoading } = useQuery('get-Profile', ProfileService.get);
+  const { data, isLoading } = useQuery('get-Profile', ProfileService.get, { refetchOnWindowFocus: false });
   return {
     profile: data?.usr,
     isLoading

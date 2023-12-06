@@ -24,17 +24,14 @@ function AvatarBox(props) {
 
   const handleGetAvatar = async () => {
     const userId = profile?._id;
-    console.log('profile', profile);
     const url = await GetAvatarByUserId(userId).catch(
       () =>
         'https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
     );
-    console.log(url);
     setAvatarUrl(url);
   };
 
   const handleUpload = (e) => {
-    debugger;
     const image = e.target.files[0];
     const url = URL.createObjectURL(image);
     UploadAvatarByUserId(profile?._id, image);
