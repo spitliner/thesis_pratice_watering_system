@@ -60,7 +60,7 @@ function EditBox(props) {
         <Grid container spacing={3} sx={{ my: 1 }}>
           {!changePassStatus && <Grid item xs={12}>
             <Typography sx={{ mb: 1, fontWeight: 500, fontSize: '14px' }}>
-              EMAIL
+              NEW EMAIL
             </Typography>
             <TextField
               variant="outlined"
