@@ -13,7 +13,7 @@ const useRegister = () => {
     RegisterService.create,
     {
       onSuccess: (data) => {
-        navigate('/');
+        navigate('/login');
       }
     }
   );
