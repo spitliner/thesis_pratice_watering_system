@@ -26,9 +26,13 @@ mongoose.connection.on("error", function (error) {
     console.log("Could not connect to mongo server!");
     console.log(error);
 });
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@dev0.agidxfk.mongodb.net/?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@dev0.agidxfk.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://dev:eViYIinNHi6iH2rA@dev0.agidxfk.mongodb.net/?retryWrites=true&w=majority`;
+
 mongoose.connect(uri);
-let portNum = (Number(process.env.PORT));
+// let portNum = (Number(process.env.PORT));
+let portNum = 27017
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);
 });
+

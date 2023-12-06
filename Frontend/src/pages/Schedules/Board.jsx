@@ -11,13 +11,13 @@ import Box from '@mui/material/Box'
 import { Link } from 'react-router-dom'
 
 const data = [
-  ['KV01', '9 Oct 8:00 AM', 'Khanh', '500'],
-  ['KV01', '9 Oct 8:00 AM', 'Vi', '250'],
-  ['KV03', '10 Oct 4:00 PM', 'Phuc', '1000'],
-  ['KV04', '11 Oct 4:00 PM', 'Huy', '1000'],
-  ['KV01', '11 Oct 5:00 PM', 'Vi', '1000'],
-  ['KV05', '12 Oct 8:00 AM', 'Khanh', '500'],
-  ['KV05', '12 Oct 5:00 PM', 'Huy', '500']
+  ['KV01', '9 Oct 8:00 AM', '500'],
+  ['KV01', '9 Oct 8:00 AM', '250'],
+  ['KV03', '10 Oct 4:00 PM', '1000'],
+  ['KV04', '11 Oct 4:00 PM', '1000'],
+  ['KV01', '11 Oct 5:00 PM', '1000'],
+  ['KV05', '12 Oct 8:00 AM', '500'],
+  ['KV05', '12 Oct 5:00 PM', '500']
 ]
 
 function Board() {
@@ -43,9 +43,8 @@ function Board() {
             <TableRow>
               <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}>DEVICE</TableCell>
               <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D' }}>DATE</TableCell>
-              <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}>CLIENT</TableCell>
-              <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D' }}>AMOUNT OF WATER</TableCell>
-              <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}>ACTION</TableCell>
+              <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}>AMOUNT OF WATER</TableCell>
+              <TableCell sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D' }}>ACTION</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

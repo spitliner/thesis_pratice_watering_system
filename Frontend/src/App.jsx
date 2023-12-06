@@ -1,18 +1,18 @@
-import Home from "./pages/Home/_id"
-import Login from "./pages/Login/_id"
-import Register from "./pages/Register/_id"
-import Schedules from "./pages/Schedules/_id"
-import Profile from "./pages/Profile/_id"
-import Add from "./pages/Schedules/Add"
-import Device from "./pages/Device/_id"
-// import Report from "./pages/Report/_id"
+import Home from './pages/Home/_id'
+import Login from './pages/Login/_id'
+import Register from './pages/Register/_id'
+import Schedules from './pages/Schedules/_id'
+import Profile from './pages/Profile/_id'
+import Add from './pages/Schedules/Add'
+import Device from './pages/Device/_id'
+// import Report from './pages/Report/_id'
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
-  BrowserRouter,
-} from "react-router-dom"
+  BrowserRouter
+} from 'react-router-dom'
 
 function App() {
   return (

@@ -14,7 +14,7 @@ function _id() {
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -29,11 +29,36 @@ function _id() {
       setPasswordError(true)
     }
 
+    // if (email && password) {
+    //   console.log(email, password)
+    // }
+    // if (!emailError && passwordError) {
+    //   navigate('/')
+    // }
+
     if (email && password) {
-      console.log(email, password);
-    }
-    if (!emailError && passwordError) {
-      navigate("/");
+      fetch('http://localhost:27017/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Login successful, you might want to handle this response accordingly
+            console.log('Login successful')
+            navigate('/')
+          } else {
+            // Handle login error
+            response.json().then((data) => {
+              console.error(data.error)
+            })
+          }
+        })
+        .catch((error) => {
+          console.error('An error occurred during login:', error)
+        })
     }
   }
   return (
@@ -107,7 +132,7 @@ function _id() {
               {/* Register */}
               <Box sx={{ my: 8, textAlign: 'center' }}>
                 <Typography display={ 'inline'} sx={{ fontSize: '16px', color: '#828282' }}>Not Registered Yet? </Typography>
-                <Typography display={ 'inline'} sx={{ fontSize: '16px', color: 'primary.main', textDecoration: "none"}} component={Link} to={'/register'}>Create an account</Typography>
+                <Typography display={ 'inline'} sx={{ fontSize: '16px', color: 'primary.main', textDecoration: 'none' }} component={Link} to={'/register'}>Create an account</Typography>
               </Box>
             </Box>
           </Box>
