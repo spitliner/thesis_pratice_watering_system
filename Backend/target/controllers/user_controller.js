@@ -94,7 +94,7 @@ class UserController {
                 resultChange = await UserModel.changeEmail(userID, change.newEmail);
             }
             if (undefined !== change.newPassword) {
-                resultChange = await UserModel.changePassword(userID, change.newPassword);
+                resultChange = await UserModel.changePassword(userID, await Authentication.hashPassword(change.newPassword));
             }
             if (null === resultChange) {
                 return {
