@@ -1,13 +1,12 @@
 import Container from '@mui/material/Container';
-import Navigation from '../../components/Navigation/Navigation';
 import Box from '@mui/material/Box';
 import loginSVG from '../../assets/login.png';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Link, useNavigate } from 'react-router-dom';
-import useRegister from './hooks/useMutateRegister';
+import { Link } from 'react-router-dom';
+import useCheckDuplicate from './hooks/useCheckDuplicate';
 
 function _id() {
   const [email, setEmail] = useState('');
@@ -17,12 +16,9 @@ function _id() {
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-  const { onRegister, isLoading } = useRegister();
+  const { onCheckDuplicate } = useCheckDuplicate();
 
-  const navigate = useNavigate();
-
-  const handleSubmit = (event) => {
-    debugger;
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setEmailError(false);
@@ -36,17 +32,16 @@ function _id() {
       setPasswordError(true);
     }
 
-    if (confirmPassword == '' || confirmPassword !== password) {
-      setConfirmPassword(true);
+    if (confirmPassword !== password) {
+      setConfirmPasswordError(true);
     }
-    if (!emailError && !passwordError) {
-      debugger;
-      onRegister({
+
+    if (!emailError && !passwordError && !confirmPasswordError) {
+      onCheckDuplicate({
         email: email,
         password: password,
         confirmPassword: confirmPassword
       });
-      // navigate("/");
     }
   };
   return (

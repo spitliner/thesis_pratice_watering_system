@@ -1,18 +1,29 @@
-import { useMutation, useQueryClient } from 'react-query';
-import { LoginService } from '../LoginService';
+import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { LoginService } from '../../Login/LoginService';
+import useSaveData from './useMutateData';
 
-const useMutateProfile = () => {
-  const queryClient = useQueryClient();
-  const { mutate: onSaveData, isLoading } = useMutation(LoginService.create, {
-    onSuccess: (res) => {
-      queryClient.invalidateQueries('get-Profile');
-    }
-  });
+const useProfile = () => {
+    const { onSaveEmail, onSavePassword, onSaveSetting } = useSaveData();
 
-  return {
-    onSaveData,
-    isLoading
-  };
+    const { mutate: onSaveProfile, isLoading } = useMutation(LoginService.create, {
+        onSuccess: (data, variables) => {
+            if (variables.newEmail && variables.email !== variables.newEmail)
+                onSaveEmail({ email: variables.newEmail });
+            if (variables.newPassword && variables.password !== variables.newPassword) {
+                onSavePassword({ password: variables.newPassword })
+            }
+
+        },
+        onError: (res) => {
+            alert(res.response.data.error)
+        }
+    });
+
+    return {
+        onSaveProfile,
+        isLoading
+    };
 };
 
-export default useMutateProfile;
+export default useProfile;

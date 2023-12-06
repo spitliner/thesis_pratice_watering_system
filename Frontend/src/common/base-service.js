@@ -6,7 +6,9 @@ class BaseService {
   }
 
   get = (params = {}) => {
-    return httpRequest.get(this.endPoint, params).then((res) => res.data);
+    return httpRequest
+      .get(this.endPoint, params)
+      .then((res) => res.data);
   };
 
   getById = (id, params = {}) => {

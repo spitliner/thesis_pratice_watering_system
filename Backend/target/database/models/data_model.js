@@ -7,7 +7,7 @@ class DataModel {
     static async getData(deviceID) {
         return DataMongoModel.find({
             deviceID: deviceID
-        }).select("-__v").sort("-time");
+        }, "-__v -_id").sort("-time").lean().exec();
     }
     static async getDataWithin(deviceID, afterDate) {
         return DataMongoModel.find({
@@ -15,7 +15,7 @@ class DataModel {
             time: {
                 $gte: afterDate
             }
-        }).select("-__v").sort("-time");
+        }, "-__v -_id").sort("-time").lean().exec();
     }
     static async insertData(data) {
         try {
@@ -31,7 +31,7 @@ class DataModel {
     static async checkID(idList) {
         return DataMongoModel.find({
             id: idList
-        }).select("-__v");
+        }).select("-__v").lean().exec();
     }
     static async deleteDataByDevice(deviceID) {
     }

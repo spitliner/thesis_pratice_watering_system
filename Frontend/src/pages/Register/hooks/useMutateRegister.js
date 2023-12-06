@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { RegisterService } from '../RegisterService';
+import { RegisterService, CheckDuplicateService } from '../RegisterService';
 import { getAccessToken } from '../../../utils/localStorage';
 
 const useRegister = () => {
@@ -12,8 +12,8 @@ const useRegister = () => {
   const { mutate: onRegister, isLoading } = useMutation(
     RegisterService.create,
     {
-      onSuccess: () => {
-        navigate('/login');
+      onSuccess: (data) => {
+        navigate('/');
       }
     }
   );
