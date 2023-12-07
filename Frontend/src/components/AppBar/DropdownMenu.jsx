@@ -1,23 +1,25 @@
-import React from 'react'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import Avatar from '@mui/material/Avatar'
-import Typography from '@mui/material/Typography'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import { Link } from 'react-router-dom';
+import useLogoutHook from '../../pages/Login/hooks/useMutateLogout';
 
 function DropdownMenu() {
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const open = Boolean(anchorEl)
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  }
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const logout = useLogoutHook();
   return (
     <Box>
       <Button
@@ -30,10 +32,13 @@ function DropdownMenu() {
       >
         <Avatar
           sx={{ width: 32, height: 32 }}
-          src = 'https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
+          src="https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg"
         >
-            M</Avatar>
-        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', px: 1 }}>Kate</Typography>
+          M
+        </Avatar>
+        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', px: 1 }}>
+          Kate
+        </Typography>
       </Button>
       <Menu
         id="basic-menu"
@@ -44,12 +49,13 @@ function DropdownMenu() {
           'aria-labelledby': 'basic-button'
         }}
       >
-        <MenuItem component={Link} to="/profile" onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem component={Link} to="/profile" onClick={handleClose}>
+          Profile
+        </MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </Box>
-
-  )
+  );
 }
 
-export default DropdownMenu
+export default DropdownMenu;

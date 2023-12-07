@@ -4,7 +4,7 @@ import Authentication from "../middleware/auth.js";
 class UserController {
     static async getUser(userID) {
         try {
-            const usr = await UserModel.getUser(userID);
+            const usr = await UserModel.getUserData(userID);
             if (null === usr) {
                 return {
                     "error": "user not found"
@@ -44,6 +44,12 @@ class UserController {
     static checkPasswordLength(password) {
         return 12 < password.length;
     }
+    static checkEmailDublication(email) {
+        return UserModel.checkEmail(email);
+    }
+    static checkAPIkeylDublication(apiKey) {
+        return UserModel.checkAPIkey(apiKey);
+    }
     static async createUser(email, password) {
         try {
             if (!this.checkPasswordLength(password)) {
@@ -74,28 +80,35 @@ class UserController {
     }
     static async getDailyReport(userID) {
     }
-    static async changeUserSetting(userID, change) {
+    static async changeUserData(userID, change) {
         try {
+            let result = {};
+            let resultChange = null;
             if (undefined !== change.newSetting) {
+                resultChange = await UserModel.changeSetting(userID, JSON.stringify(change.newSetting));
+            }
+            if (undefined !== change.newAPIkey) {
+                resultChange = await UserModel.changeAPIkey(userID, change.newAPIkey);
+            }
+            if (undefined !== change.newEmail) {
+                resultChange = await UserModel.changeEmail(userID, change.newEmail);
+            }
+            if (undefined !== change.newPassword) {
+                resultChange = await UserModel.changePassword(userID, await Authentication.hashPassword(change.newPassword));
+            }
+            if (null === resultChange) {
                 return {
-                    "usr": UserModel.changeSetting(userID, change.newSetting)
+                    "error": "database error"
                 };
             }
-            else if (undefined !== change.newAPIkey) {
+            else if (false === resultChange) {
                 return {
-                    "usr": UserModel.changeAPIkey(userID, change.newAPIkey)
+                    "error": "user not found"
                 };
             }
-            else if (undefined !== change.newEmail) {
-                return {
-                    "usr": UserModel.changeEmail(userID, change.newEmail)
-                };
-            }
-            else if (undefined !== change.newPassword) {
-                return {
-                    "usr": UserModel.changePassword(userID, change.newPassword)
-                };
-            }
+            return {
+                "result": "change saved"
+            };
         }
         catch (error) {
             console.log(error);
