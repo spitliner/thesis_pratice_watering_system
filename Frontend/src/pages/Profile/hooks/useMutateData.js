@@ -1,9 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query';
-import {
-  ChangeEmailService,
-  ChangePasswordService,
-  ChangeSettingService
-} from '../ProfileService';
+import { ChangeEmailService, ChangePasswordService, ChangeSettingService } from '../ProfileService';
 
 const useSaveData = () => {
   const queryClient = useQueryClient();
@@ -29,7 +25,7 @@ const useSaveData = () => {
   return {
     onSaveEmail,
     onSavePassword,
-    onSaveSetting
+    onSaveSetting,
   };
 };
 

@@ -9,14 +9,14 @@ const useCheckDuplicate = () => {
     {
       onSuccess: (data, variables) => {
         if (!data.result) {
-          onRegister(variables);
+          onRegister(variables)
         }
-      }
+      },
     }
   );
   return {
     onCheckDuplicate,
-    isLoading
+    isLoading,
   };
 };
 
