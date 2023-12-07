@@ -7,10 +7,11 @@ function MainContent() {
   return (
     <Box
       sx={{
-        width: '500px',
+        width: '630px',
         height: 'calc(100vh - 32px - 35px)',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        mr: 3
       }}
     >
       <Welcome />

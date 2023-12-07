@@ -1,21 +1,13 @@
-import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography'
 
 function Add() {
-  const [selectedTime, setSelectedTime] = useState('');
-
   const handleSubmit = (event) => {
     event.preventDefault();
     // Handle form submission logic here
-  };
-
-  const handleTimeChange = (event) => {
-    setSelectedTime(event.target.value);
   };
 
   return (
@@ -25,14 +17,13 @@ function Add() {
         height: '100vh',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        my: 2
+        justifyContent: 'center'
       }}
     >
       <Container maxWidth="sm">
         <Box
           sx={{
-            backgroundColor: '#fff',
+            backgroundColor: '#fff', // Màu nền form
             borderRadius: '8px',
             padding: '20px',
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
@@ -43,14 +34,13 @@ function Add() {
           }}
         >
           <form onSubmit={handleSubmit}>
-            <Typography sx={{ fontSize: '25px', fontWeight: 'bold', textAlign: 'center' }}>Add Task</Typography>
             <TextField
               label="Device"
               variant="outlined"
               fullWidth
               select
-              sx={{ mb: 2, mt: 4 }}
-              InputLabelProps={{ shrink: true }}
+              sx={{ mb: 2 }}
+              InputLabelProps={{ shrink: true }} // Shrink label to top
             >
               <MenuItem value="DV01">DV01</MenuItem>
               <MenuItem value="DV02">DV02</MenuItem>
@@ -60,11 +50,16 @@ function Add() {
             </TextField>
 
             <TextField
-              type="time"
+              type="datetime-local"
               variant="outlined"
               fullWidth
-              value={selectedTime}
-              onChange={handleTimeChange}
+              sx={{ mb: 2 }}
+            />
+
+            <TextField
+              label="Client"
+              variant="outlined"
+              fullWidth
               sx={{ mb: 2 }}
             />
 
