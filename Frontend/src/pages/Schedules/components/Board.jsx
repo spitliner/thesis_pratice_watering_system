@@ -1,3 +1,4 @@
+import React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,13 +12,13 @@ import Box from '@mui/material/Box';
 import { Link } from 'react-router-dom';
 
 const data = [
-  ['KV01', '9 Oct 8:00 AM', 'Khanh', '500'],
-  ['KV01', '9 Oct 8:00 AM', 'Vi', '250'],
-  ['KV03', '10 Oct 4:00 PM', 'Phuc', '1000'],
-  ['KV04', '11 Oct 4:00 PM', 'Huy', '1000'],
-  ['KV01', '11 Oct 5:00 PM', 'Vi', '1000'],
-  ['KV05', '12 Oct 8:00 AM', 'Khanh', '500'],
-  ['KV05', '12 Oct 5:00 PM', 'Huy', '500']
+  ['KV01', '8:00', '500'],
+  ['KV01', '10:00', '250'],
+  ['KV03', '4:00', '1000'],
+  ['KV04', '4:00', '1000'],
+  ['KV01', '15:00','1000'],
+  ['KV05', '8:00', '500'],
+  ['KV05', '5:00', '500']
 ];
 
 function Board() {
@@ -57,17 +58,12 @@ function Board() {
                 DATE
               </TableCell>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}
+                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2', textAlign: 'center' }}
               >
-                CLIENT
+                WATER (ML)
               </TableCell>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D' }}
-              >
-                AMOUNT OF WATER
-              </TableCell>
-              <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}
+                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D', textAlign: 'center' }}
               >
                 ACTION
               </TableCell>
@@ -82,25 +78,28 @@ function Board() {
                     sx={{
                       fontSize: '16px',
                       fontWeight: 500,
-                      color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D'
+                      color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
+                      textAlign: cellIndex === 2 || cellIndex === 3 ? 'center' : 'left'
                     }}
                   >
                     {cell}
                   </TableCell>
                 ))}
                 <TableCell>
-                  <Button
-                    variant="contained"
-                    sx={{ backgroundColor: '#FF7961', mr: 2, width: '70px' }}
-                  >
-                    DELETE
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                  >
-                    EDIT
-                  </Button>
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button
+                      variant="contained"
+                      sx={{ backgroundColor: '#FF7961', mr: 2, width: '70px' }}
+                    >
+                      DELETE
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                    >
+                      EDIT
+                    </Button>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}

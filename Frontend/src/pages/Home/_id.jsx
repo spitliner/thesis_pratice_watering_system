@@ -12,8 +12,7 @@ function Home() {
       sx={{
         backgroundColor: 'secondary.main',
         display: 'flex',
-        mt: 2,
-        gap: 20
+        mt: 2
       }}
     >
       <MainContent />
