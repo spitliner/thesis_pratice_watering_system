@@ -19,7 +19,7 @@ const useLogin = () => {
       location.replace('/');
     },
     onError: (res) => {
-      alert(res.response.data.error);
+      alert(res.response.data.error)
     }
   });
 
