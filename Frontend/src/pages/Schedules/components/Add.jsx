@@ -1,29 +1,39 @@
+import React, { useState } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 function Add() {
+  const [selectedTime, setSelectedTime] = useState('');
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // Handle form submission logic here
+  };
+
+  const handleTimeChange = (event) => {
+    setSelectedTime(event.target.value);
   };
 
   return (
     <Box
       sx={{
         backgroundColor: '#c8e6c9',
-        height: '100vh',
+        height: '650px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        my: 2,
+        borderRadius: 5
       }}
     >
       <Container maxWidth="sm">
         <Box
           sx={{
-            backgroundColor: '#fff', // Màu nền form
+            backgroundColor: '#fff',
             borderRadius: '8px',
             padding: '20px',
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
@@ -34,13 +44,18 @@ function Add() {
           }}
         >
           <form onSubmit={handleSubmit}>
+            <Typography
+              sx={{ fontSize: '25px', fontWeight: 'bold', textAlign: 'center' }}
+            >
+              Add Task
+            </Typography>
             <TextField
               label="Device"
               variant="outlined"
               fullWidth
               select
-              sx={{ mb: 2 }}
-              InputLabelProps={{ shrink: true }} // Shrink label to top
+              sx={{ mb: 2, mt: 3 }}
+              InputLabelProps={{ shrink: true }}
             >
               <MenuItem value="DV01">DV01</MenuItem>
               <MenuItem value="DV02">DV02</MenuItem>
@@ -50,16 +65,11 @@ function Add() {
             </TextField>
 
             <TextField
-              type="datetime-local"
+              type="time"
               variant="outlined"
               fullWidth
-              sx={{ mb: 2 }}
-            />
-
-            <TextField
-              label="Client"
-              variant="outlined"
-              fullWidth
+              value={selectedTime}
+              onChange={handleTimeChange}
               sx={{ mb: 2 }}
             />
 
