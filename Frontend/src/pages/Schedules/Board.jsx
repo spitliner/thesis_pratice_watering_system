@@ -111,4 +111,4 @@ function Board() {
   );
 }
 
-export default Board
+export default Board;

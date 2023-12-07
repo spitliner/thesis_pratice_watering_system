@@ -151,4 +151,4 @@ function _id() {
   );
 }
 
-export default _id
+export default _id;

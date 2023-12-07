@@ -22,12 +22,6 @@
     "@mui/material": "^5.14.18",
     "@mui/x-data-grid": "^6.18.2",
     "@mui/x-date-pickers": "^6.18.2",
-<<<<<<< HEAD
-    "axios": "^1.6.2",
-    "chart.js": "^4.4.0",
-    "date-fns": "^2.30.0",
-    "query-string": "^8.1.0",
-=======
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.2",
     "chart.js": "^4.4.0",
@@ -38,7 +32,6 @@
     "js-cookie": "^3.0.5",
     "nprogress": "^0.2.0",
     "prettier": "^3.1.0",
->>>>>>> 7f40234898d70b21a7a7c2c12f7b6b9142273fb3
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
