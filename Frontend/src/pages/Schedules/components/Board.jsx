@@ -48,32 +48,22 @@ function Board() {
           <TableHead>
             <TableRow>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2' }}
+                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2', textAlign: 'center' }}
               >
                 DEVICE
               </TableCell>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D' }}
+                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D', textAlign: 'center' }}
               >
-                DATE
+                TIME
               </TableCell>
               <TableCell
-                sx={{
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  color: '#7A40F2',
-                  textAlign: 'center'
-                }}
+                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2', textAlign: 'center' }}
               >
                 WATER (ML)
               </TableCell>
               <TableCell
-                sx={{
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  color: '#F2946D',
-                  textAlign: 'center'
-                }}
+                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D', textAlign: 'center' }}
               >
                 ACTION
               </TableCell>
@@ -89,8 +79,7 @@ function Board() {
                       fontSize: '16px',
                       fontWeight: 500,
                       color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
-                      textAlign:
-                        cellIndex === 2 || cellIndex === 3 ? 'center' : 'left'
+                      textAlign: 'center', // Set text alignment to center
                     }}
                   >
                     {cell}
@@ -100,16 +89,16 @@ function Board() {
                   <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Button
                       variant="contained"
-                      sx={{ backgroundColor: '#FF7961', mr: 2, width: '70px' }}
+                      sx={{ backgroundColor: '#FF7961', width: '70px' }}
                     >
                       DELETE
                     </Button>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       sx={{ backgroundColor: '#b39ddb', width: '70px' }}
                     >
                       EDIT
-                    </Button>
+                    </Button> */}
                   </Box>
                 </TableCell>
               </TableRow>
