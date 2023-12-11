@@ -28,12 +28,9 @@ class DataModel {
             return false;
         }
     }
-    static async checkID(idList) {
-        return DataMongoModel.find({
-            id: idList
-        }).select("-__v").lean().exec();
-    }
     static async deleteDataByDevice(deviceID) {
+        const result = await DataMongoModel.deleteMany({ deviceID: deviceID }).lean().exec();
+        return result.acknowledged;
     }
 }
 export default DataModel;

@@ -47,9 +47,6 @@ class UserController {
     static checkEmailDublication(email) {
         return UserModel.checkEmail(email);
     }
-    static checkAPIkeylDublication(apiKey) {
-        return UserModel.checkAPIkey(apiKey);
-    }
     static async createUser(email, password) {
         try {
             if (!this.checkPasswordLength(password)) {
@@ -75,7 +72,7 @@ class UserController {
         }
     }
     static async getUserDevice(userID) {
-        const result = await DeviceModel.getUserDeivce(userID);
+        const result = await DeviceModel.getUserDeivceData(userID);
         return result;
     }
     static async getDailyReport(userID) {
@@ -86,9 +83,6 @@ class UserController {
             let resultChange = null;
             if (undefined !== change.newSetting) {
                 resultChange = await UserModel.changeSetting(userID, JSON.stringify(change.newSetting));
-            }
-            if (undefined !== change.newAPIkey) {
-                resultChange = await UserModel.changeAPIkey(userID, change.newAPIkey);
             }
             if (undefined !== change.newEmail) {
                 resultChange = await UserModel.changeEmail(userID, change.newEmail);
@@ -116,6 +110,11 @@ class UserController {
                 "error": "database error"
             };
         }
+    }
+    static async deleteUser(userID) {
+        DeviceModel.deleteUserDevice(userID);
+        const result = await UserModel.deleteUser(userID);
+        return result;
     }
 }
 export default UserController;
