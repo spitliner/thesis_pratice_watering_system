@@ -1,6 +1,7 @@
 import express from "express";
 import authRequest from "../middleware/expressAuth.js";
 import UserController from "../controllers/user_controller.js";
+import DeviceController from "../controllers/device_controllers.js";
 const UserRouter = express.Router();
 UserRouter.post('/account/', async (request, response) => {
     try {
@@ -160,6 +161,26 @@ UserRouter.get('/user/', authRequest, async (request, response) => {
         });
     }
 });
+UserRouter.post('/user/device', authRequest, async (request, response) => {
+    try {
+        const userID = request.cookies["uid"];
+        const { deviceID, name, type, apiKey } = request.body;
+        const result = await DeviceController.createDevice(deviceID, userID, name, type, apiKey);
+        if (undefined !== result.error) {
+            if ("Device already in use" === result.error) {
+                return response.status(409).json(result);
+            }
+            return response.status(500).json(result);
+        }
+        return response.status(201).json(result);
+    }
+    catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
 UserRouter.post('/login/', async (request, response) => {
     try {
         const { email, password } = request.body;
@@ -179,6 +200,19 @@ UserRouter.post('/login/', async (request, response) => {
             sameSite: "strict"
         });
         return response.status(200).json({ "token": result.bearer_token });
+    }
+    catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
+UserRouter.post('/user/delete', authRequest, async (request, response) => {
+    try {
+        const userID = request.cookies["uid"];
+        const result = await UserController.deleteUser(userID);
+        return response.status(200).json({ result: result });
     }
     catch (error) {
         console.log(error);
