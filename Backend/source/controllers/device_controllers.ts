@@ -36,6 +36,15 @@ class DeviceController {
         }
     }
 
+    static async getUserDevice(userID: string) {
+        try {
+            return DeviceModel.getUserDeivceData(userID);
+        } catch (error) {
+            console.log(error);
+            return undefined;
+        }
+    }
+
     static async deleteDevice(deviceID: string, userID: string) {
         try {
             return DeviceModel.deleteDevice(deviceID, userID);
