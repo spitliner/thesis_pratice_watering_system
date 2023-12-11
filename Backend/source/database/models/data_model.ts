@@ -40,14 +40,9 @@ class DataModel {
         }
     }
 
-    static async checkID(idList: string []) {
-        return DataMongoModel.find({
-            id: idList
-        }).select("-__v").lean().exec();
-    }
-
     static async deleteDataByDevice(deviceID: string) {
-        
+        const result = await DataMongoModel.deleteMany({deviceID: deviceID}).lean().exec();
+        return result.acknowledged;
     }
 }
 
