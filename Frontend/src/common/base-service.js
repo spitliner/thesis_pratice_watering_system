@@ -19,15 +19,26 @@ class BaseService {
     return httpRequest.post(this.endPoint, data).then((res) => res.data);
   };
 
-  updateById = (id, data = {}) => {
+  updateById = (id, data = {}, params = {}) => {
+    console.log(params);
     return httpRequest
-      .put(`${this.endPoint}/${id}`, data)
+      .post(`${this.endPoint}/${id}`, data, params)
       .then((res) => res.data);
   };
 
   update = (data = {}) => {
-    return httpRequest.put(`${this.endPoint}`, data).then((res) => res.data);
+    return httpRequest.post(`${this.endPoint}`, data).then((res) => res.data);
   };
+
+  // updateById = (id, data = {}) => {
+  //   return httpRequest
+  //     .put(`${this.endPoint}/${id}`, data)
+  //     .then((res) => res.data);
+  // };
+
+  // update = (data = {}) => {
+  //   return httpRequest.put(`${this.endPoint}`, data).then((res) => res.data);
+  // };
 
   remove = (id) => {
     return httpRequest.delete(`${this.endPoint}/${id}`).then((res) => res.data);

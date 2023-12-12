@@ -16,16 +16,13 @@ const TabButton = styled(Button)(({ theme }) => ({
 }));
 
 function _id() {
-  const { device } = useQueryDevice();
+  const { deviceList } = useQueryDevice();
+
   const [activeTab, setActiveTab] = useState('temp');
 
   const handleTabChange = (tabIndex) => {
     setActiveTab(tabIndex);
   };
-
-  useEffect(() => {
-    console.log(device);
-  }, device);
 
   return (
     <>
@@ -61,9 +58,9 @@ function _id() {
         </TabButton>
       </Container>
       <Container sx={{ backgroundColor: '#fff', mt: 5, p: 2 }}>
-        {activeTab === 'temp' && <TempertureTab />}
-        {activeTab === 'humid' && <HumidTab />}
-        {activeTab === 'water' && <WateringTab />}
+        {activeTab === 'temp' && <TempertureTab deviceList={deviceList} />}
+        {activeTab === 'humid' && <HumidTab deviceList={deviceList} />}
+        {activeTab === 'water' && <WateringTab deviceList={deviceList} />}
       </Container>
     </>
   );

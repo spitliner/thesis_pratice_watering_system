@@ -10,14 +10,14 @@ import useProfile from '../hooks/useMutateProfile';
 function EditBox(props) {
   const { profile } = props;
   const { onSaveProfile } = useProfile();
-  const [email, setEmail] = useState(profile.email);
+  const [email, setEmail] = useState(profile?.email);
   const [currentPassword, setCurrentPassword] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
   const [changePassStatus, setChangePassStatus] = useState(false);
 
   const handleSubmit = () => {
     onSaveProfile({
-      email: profile.email,
+      email: profile?.email,
       password: currentPassword,
       newEmail: email,
       newPassword: newPassword

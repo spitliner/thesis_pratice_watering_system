@@ -1,19 +1,8 @@
-import React, { useState } from 'react';
-import AppBar from '../../../components/AppBar/AppBar';
-import Navigation from '../../../components/Navigation/Navigation';
-import {
-  Box,
-  Container,
-  Button,
-  Typography,
-  Grid,
-  Switch,
-  styled
-} from '@mui/material';
-import WaterDropIcon from '@mui/icons-material/WaterDrop';
-import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
-import ShowerIcon from '@mui/icons-material/Shower';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, Grid, styled } from '@mui/material';
 import DeviceThermostatOutlinedIcon from '@mui/icons-material/DeviceThermostat';
+import CreateForm from './CreateForm';
+import useMutateDeleteDevice from '../hooks/useMutateDeleteById';
 
 const Device = styled(Box)(({ theme }) => ({
   width: 450,
@@ -25,35 +14,21 @@ const Device = styled(Box)(({ theme }) => ({
   alignItems: 'center'
 }));
 
-const tempDeviceList = [
-  {
-    id: 1,
-    area: 'KV1',
-    status: true
-  },
-  {
-    id: 2,
-    area: 'KV2',
-    status: true
-  },
-  {
-    id: 3,
-    area: 'KV3',
-    status: true
-  },
-  {
-    id: 4,
-    area: 'KV4',
-    status: true
-  }
-];
+const deviceType = {
+  value: 'Temperture',
+  label: 'Temperture'
+};
 
-export default function TempertureTab() {
-  const [change, setChange] = useState(0);
-  const changeStatus = (device) => {
-    device.status = !device.status;
-    setChange(change + 1);
+export default function TempertureTab(props) {
+  const { deviceList } = props;
+  const { onDeleteData } = useMutateDeleteDevice();
+  const [open, setOpen] = useState(false);
+
+  const handleDelete = (id) => {
+    onDeleteData(id);
   };
+
+  if (!deviceList) return null;
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -71,23 +46,36 @@ export default function TempertureTab() {
             The temperture measuring device
           </Typography>
         </Box>
-        <Button variant="contained">+</Button>
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          +
+        </Button>
       </Box>
+
+      <CreateForm open={open} handleClose={() => setOpen(false)} />
+
       <Grid container rowSpacing={5} mt={0}>
-        {tempDeviceList.map((device) => (
-          <Grid item xs={6}>
-            <Device key={device.id}>
-              <Typography color="primary">{device.area}</Typography>
-              <Box>
-                {device.status ? 'ON' : 'OFF'}
-                <Switch
-                  checked={device.status}
-                  onChange={() => changeStatus(device)}
-                />
-              </Box>
-            </Device>
-          </Grid>
-        ))}
+        {deviceList.map(
+          (device) =>
+            device?.type == 'Temperture' && (
+              <Grid key={device.id} item xs={6}>
+                <Device>
+                  <Typography color="primary">{device.name}</Typography>
+                  <Typography color="primary">
+                    apiKey: {device.apiKey}
+                  </Typography>
+                  <Box>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDelete(device.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
+                </Device>
+              </Grid>
+            )
+        )}
       </Grid>
     </>
   );

@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
-import { DeviceService } from '../DeviceService';
+import { DeviceService, UserDeviceService } from '../DeviceService';
 
 const useQueryDevice = () => {
-  const { data, isLoading } = useQuery('get-Device', DeviceService.get);
+  const { data, isLoading } = useQuery('getDevice', DeviceService.get);
   return {
-    device: data?.deviceList,
+    deviceList: data?.deviceList,
     isLoading
   };
 };

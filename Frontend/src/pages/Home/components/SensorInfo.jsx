@@ -2,8 +2,21 @@ import Box from '@mui/material/Box';
 import WbSunnyRoundedIcon from '@mui/icons-material/WbSunnyRounded';
 import Typography from '@mui/material/Typography';
 import WaterDropRoundedIcon from '@mui/icons-material/WaterDropRounded';
+import fetchWeatherData from '../../../common/weatherAPI';
+import { useEffect, useState } from 'react';
 
 function SensorInfo() {
+  const [weatherData, setWeatherData] = useState(null);
+  const getWeatherData = async () => {
+    const weather = await fetchWeatherData();
+    setWeatherData(weather);
+  };
+  useEffect(() => {
+    getWeatherData();
+  }, []);
+
+  if (!weatherData) return null;
+
   return (
     <Box
       sx={{
@@ -25,7 +38,7 @@ function SensorInfo() {
         <Typography
           sx={{ fontSize: '60px', fontWeight: 'bold', color: 'black' }}
         >
-          50°C
+          {Math.round(weatherData?.main?.temp)}°C
         </Typography>
       </Box>
       <Box
@@ -40,7 +53,7 @@ function SensorInfo() {
         <Typography
           sx={{ fontSize: '60px', fontWeight: 'bold', color: 'black' }}
         >
-          70%
+          {Math.round(weatherData?.main?.humidity)}%
         </Typography>
       </Box>
     </Box>
