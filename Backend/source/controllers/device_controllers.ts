@@ -168,6 +168,17 @@ class DeviceController {
             };
         }
     }
+
+    static async triggerDeviceSchedules(time: string) {
+        try {
+            const deviceList = await DeviceModel.getAllDeviceData();
+            const actionDeviceList = await DeviceModel.getDeviceWithSchedules(time);
+
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 export default DeviceController;

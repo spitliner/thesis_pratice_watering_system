@@ -148,6 +148,16 @@ class DeviceModel {
         });
         return result.deletedCount;
     }
+
+    static async getAllDeviceData() {
+        return DeviceMongoModel.find().lean().exec();
+    }
+
+    static async getDeviceWithSchedules(time: string) {
+        return DeviceMongoModel.find({
+            schedules: time
+        }).lean().exec();
+    }
 }
 
 export default DeviceModel;
