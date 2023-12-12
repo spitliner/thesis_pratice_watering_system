@@ -10,7 +10,7 @@ class DeviceController {
                 }
             }
             const deviceSetting = {};
-            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting));
+            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey);
             if (null === device || undefined === device) {
                 return {
                     "error": "Database error"
