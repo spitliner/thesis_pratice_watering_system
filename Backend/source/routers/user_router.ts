@@ -189,6 +189,27 @@ UserRouter.post('/user/device', authRequest, async (request, response) => {
     }
 });
 
+UserRouter.get('/user/device', authRequest, async (request, response) => {
+    try {
+        const userID: string = request.cookies["uid"];
+        
+        const result = await DeviceController.getUserDevice(userID);
+
+        if (undefined === result) {
+            return response.status(500).json({
+                "error": "unexpected server error"
+            });
+        }
+
+        return response.status(201).json(result);
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            "error": "unexpected server error"
+        });
+    }
+});
+
 
 UserRouter.post('/login/', async (request, response) => {
     try {
@@ -217,7 +238,7 @@ UserRouter.post('/login/', async (request, response) => {
     }
 });
 
-UserRouter.post('/user/delete', authRequest, async (request, response) => {
+UserRouter.post('/account/delete', authRequest, async (request, response) => {
     try {
         const userID: string = request.cookies["uid"];
 
