@@ -1,13 +1,16 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { DeviceService } from '../DeviceService';
+import { UserDeviceService } from '../DeviceService';
 
 const useMutateDevice = () => {
   const queryClient = useQueryClient();
-  const { mutate: onSaveData, isLoading } = useMutation(DeviceService.create, {
-    onSuccess: (res) => {
-      queryClient.invalidateQueries('get-Device');
+  const { mutate: onSaveData, isLoading } = useMutation(
+    UserDeviceService.create,
+    {
+      onSuccess: (res) => {
+        queryClient.invalidateQueries('getDevice');
+      }
     }
-  });
+  );
 
   return {
     onSaveData,

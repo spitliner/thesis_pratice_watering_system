@@ -2,9 +2,9 @@ import { useMutation } from 'react-query';
 import { CheckDuplicateService } from '../RegisterService';
 import useRegister from './useMutateRegister';
 
-const useCheckDuplicate = () => {
+const useCheckAndRegister = () => {
   const { onRegister } = useRegister();
-  const { mutate: onCheckDuplicate, isLoading } = useMutation(
+  const { mutate: onCheckAndRegister, isLoading } = useMutation(
     CheckDuplicateService.create,
     {
       onSuccess: (data, variables) => {
@@ -15,9 +15,9 @@ const useCheckDuplicate = () => {
     }
   );
   return {
-    onCheckDuplicate,
+    onCheckAndRegister,
     isLoading
   };
 };
 
-export default useCheckDuplicate;
+export default useCheckAndRegister;
