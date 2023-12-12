@@ -30,7 +30,7 @@ class UserModel {
     static async createUser(userEmail, password) {
         try {
             const result = await UserMongoModel.insertMany([{
-                    _id: nanoid(12),
+                    id: nanoid(12),
                     email: userEmail,
                     password: await Authentication.hashPassword(password),
                     settings: "{}"

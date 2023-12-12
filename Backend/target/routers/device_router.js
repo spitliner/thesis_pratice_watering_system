@@ -53,8 +53,8 @@ DeviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
 });
 DeviceRouter.post('/device/duplicateKey', authRequest, async (request, response) => {
     try {
-        const key = request.body.key;
-        if (undefined === request.body.key) {
+        const key = request.body.apiKey;
+        if (undefined === key) {
             return response.status(400).json({ "error": "Missing key to check" });
         }
         if (await DeviceModel.checkKey(key)) {
@@ -113,8 +113,8 @@ DeviceRouter.post('/device/:deviceID/type', authRequest, async (request, respons
     try {
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
-        const { newType } = request.body;
-        const result = await DeviceController.changeType(deviceID, userID, newType);
+        const { type } = request.body;
+        const result = await DeviceController.changeType(deviceID, userID, type);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -127,12 +127,12 @@ DeviceRouter.post('/device/:deviceID/type', authRequest, async (request, respons
         });
     }
 });
-DeviceRouter.post('/device/:deviceID/schedule', authRequest, async (request, response) => {
+DeviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
-        const { newSchedule } = request.body;
-        const result = await DeviceController.changeSchedule(deviceID, userID, newSchedule);
+        const { schedules } = request.body;
+        const result = await DeviceController.changeSchedule(deviceID, userID, schedules);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -163,7 +163,7 @@ DeviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
         });
     }
 });
-DeviceRouter.get('/device/delete/:deviceID', authRequest, async (request, response) => {
+DeviceRouter.post('/device/delete/:deviceID', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
