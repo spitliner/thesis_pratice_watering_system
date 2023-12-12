@@ -35,9 +35,9 @@ class UserController {
         }
         return {
             "bearer_token": await Authentication.createToken({
-                "uid": usr._id
+                "uid": usr.id
             }),
-            "uid": usr._id,
+            "uid": usr.id,
             "tokenType": "jwt"
         };
     }
