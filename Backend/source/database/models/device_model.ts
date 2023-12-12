@@ -4,14 +4,15 @@ import DeviceSchema from "../schema/device_schema.js";
 const DeviceMongoModel = mongoose.model("device", DeviceSchema);
 
 class DeviceModel {
-    static async insertDevice(deviceID: string, userID: string, deviceType: string, deviceName: string, deviceSettings: string) {
+    static async insertDevice(deviceID: string, userID: string, deviceType: string, deviceName: string, deviceSettings: string, apiKey: string) {
         try {
             const result = await DeviceMongoModel.insertMany([{
                 id: deviceID,
                 userID: userID,
                 type: deviceType,
                 name: deviceName,
-                settings: deviceSettings
+                settings: deviceSettings,
+                apiKey: apiKey
             }]);
             console.log("Insert device from user " + result[0].userID + " with device id " + result[0]._id);
             return result[0];

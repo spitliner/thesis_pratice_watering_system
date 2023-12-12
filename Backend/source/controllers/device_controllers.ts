@@ -10,7 +10,7 @@ class DeviceController {
                 }
             }
             const deviceSetting = {};
-            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting));
+            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey);
             if (null === device || undefined === device) {
                 return {
                     "error": "Database error"
@@ -30,6 +30,15 @@ class DeviceController {
     static async getDevice(deviceID: string, userID: string) {
         try {
             return DeviceModel.getDeviceData(deviceID, userID);
+        } catch (error) {
+            console.log(error);
+            return undefined;
+        }
+    }
+
+    static async getUserDevice(userID: string) {
+        try {
+            return DeviceModel.getUserDeivceData(userID);
         } catch (error) {
             console.log(error);
             return undefined;
