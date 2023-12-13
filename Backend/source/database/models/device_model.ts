@@ -23,7 +23,7 @@ class DeviceModel {
     }
 
     static async getDevice(deviceID: string) {
-        return DeviceMongoModel.findOne({id: deviceID}, "-__v -_id").exec();
+        return DeviceMongoModel.findOne({id: deviceID}, "-__v").exec();
     }
 
     static async getDeviceData(deviceID: string, userID: string) {
@@ -57,9 +57,8 @@ class DeviceModel {
             } else if (userID !== device.userID) {
                 return false;
             }
-            device.name = newName;
-            await device.save();
-            return device.name === newName;
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {name: newName}).lean().exec();
+            return result.acknowledged;
         } catch (error) {
             console.log(error);
             return null;
@@ -74,9 +73,8 @@ class DeviceModel {
             } else if (userID !== device.userID) {
                 return false;
             }
-            device.type = editdType;
-            await device.save();
-            return device.type === editdType;
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {type: editdType}).lean().exec();
+            return result.acknowledged;
         } catch (error) {
             console.log(error);
             return null;
@@ -91,9 +89,8 @@ class DeviceModel {
             } else if (userID !== device.userID) {
                 return false;
             }
-            device.settings = newSetting;
-            await device.save();
-            return device.settings === newSetting;
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {settings: newSetting}).lean().exec();
+            return result.acknowledged;
         } catch (error) {
             console.log(error);
             return null;
@@ -108,9 +105,8 @@ class DeviceModel {
             } else if (userID !== device.userID) {
                 return false;
             }
-            device.schedules = newSchedule;
-            await device.save();
-            return device.schedules === newSchedule;;
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {schedules: newSchedule}).lean().exec();
+            return result.acknowledged;
         } catch (error) {
             console.log(error);
             return null;
@@ -125,9 +121,8 @@ class DeviceModel {
             } else if (userID !== device.userID) {
                 return false;
             }
-            device.apiKey = apiKey;
-            await device.save();
-            return device.apiKey === apiKey;;
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {apiKey: apiKey}).lean().exec();
+            return result.acknowledged;
         } catch (error) {
             console.log(error);
             return null;
