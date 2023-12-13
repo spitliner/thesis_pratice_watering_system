@@ -68,6 +68,7 @@ const Table = (props) => {
       }}
       getRowHeight={() => 'auto'}
       sx={{
+        border: '1px solid #666666',
         minHeight: 208,
         '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
         '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {

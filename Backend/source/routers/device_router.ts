@@ -146,7 +146,6 @@ DeviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, re
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
         const {schedules} = request.body;
-
         const result = await DeviceController.changeSchedule(deviceID, userID, schedules);
 
         if (undefined === result.error) {

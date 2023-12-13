@@ -7,9 +7,11 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
 import { useNavigate } from 'react-router-dom';
+import useQueryDevice from '../hooks/useQueryDevice';
 
 function Add() {
   const { onSaveDataById } = useMutateDeviceById();
+  const { deviceList } = useQueryDevice();
   const navigate = useNavigate();
 
   const [selectedTime, setSelectedTime] = useState('');
@@ -25,12 +27,10 @@ function Add() {
   };
 
   const handleTimeChange = (event) => {
-    console.log(typeof event.target.value);
     setSelectedTime(event.target.value);
   };
 
   const handleWaterChange = (event) => {
-    console.log(event.target.value);
     setWater(event.target.value);
   };
 
@@ -40,6 +40,7 @@ function Add() {
     onSaveDataById([device, 'schedules', { schedules: [selectedTime, water] }]);
   };
 
+  if (!deviceList) return null;
   return (
     <Box
       sx={{
@@ -80,12 +81,21 @@ function Add() {
               InputLabelProps={{ shrink: true }}
               value={device}
               onChange={handleDeviceChange}
+              required
             >
-              <MenuItem value="KV101">KV101</MenuItem>
+              {/* <MenuItem value="KV101">KV101</MenuItem>
               <MenuItem value="KV102">KV102</MenuItem>
               <MenuItem value="DV03">DV03</MenuItem>
               <MenuItem value="DV04">DV04</MenuItem>
-              <MenuItem value="DV05">DV05</MenuItem>
+              <MenuItem value="DV05">DV05</MenuItem> */}
+              {deviceList?.map(
+                (device) =>
+                  device.type === 'Watering' && (
+                    <MenuItem key={device.id} value={device.id}>
+                      {device.id}
+                    </MenuItem>
+                  )
+              )}
             </TextField>
 
             <TextField
@@ -95,6 +105,7 @@ function Add() {
               value={selectedTime}
               onChange={handleTimeChange}
               sx={{ mb: 2 }}
+              required
             />
 
             <TextField
@@ -105,6 +116,7 @@ function Add() {
               sx={{ mb: 2 }}
               value={water}
               onChange={handleWaterChange}
+              required
             />
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

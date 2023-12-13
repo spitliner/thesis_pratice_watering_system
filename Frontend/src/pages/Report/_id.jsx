@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import AppBar from '../../components/AppBar/AppBar';
-import Navigation from '../../components/Navigation/Navigation';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import Table from './components/Table';
 import Charts from './components/Chart';
 import dayjs from 'dayjs';
@@ -22,14 +20,22 @@ function _id() {
   if (!deviceList) return null;
   return (
     <>
+      <Container sx={{ mt: 5 }}>
+        <Typography variant="h4" fontWeight={700}>
+          REPORT
+        </Typography>
+      </Container>
+
       <Container
         sx={{
-          backgroundColor: 'secondary.main',
+          backgroundColor: '#fff',
           display: 'flex',
-          justifyContent: 'space-between',
+          // justifyContent: 'space-between',
           alignItems: 'center',
-          mt: 5,
-          width: '80%'
+          mt: 3,
+          columnGap: 6,
+          p: 2
+          // width: '100%'
         }}
       >
         <Box
@@ -51,7 +57,7 @@ function _id() {
               /> */}
               <DateCalendar
                 style={{
-                  border: '1px solid #ccc',
+                  border: '1px solid #666666',
                   borderRadius: 5
                 }}
                 maxDate={dayjs(yesterday)}

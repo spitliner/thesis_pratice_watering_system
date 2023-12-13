@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Button, styled } from '@mui/material';
+import { Box, Container, Button, styled, Typography } from '@mui/material';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ShowerIcon from '@mui/icons-material/Shower';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
@@ -26,13 +26,18 @@ function _id() {
 
   return (
     <>
+      <Container sx={{ mt: 5 }}>
+        <Typography variant="h4" fontWeight={700}>
+          DEVICE
+        </Typography>
+      </Container>
       <Container
         sx={{
           backgroundColor: 'secondary.main',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          mt: 5
+          mt: 3
         }}
       >
         <TabButton

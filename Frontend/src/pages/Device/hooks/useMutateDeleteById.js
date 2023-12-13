@@ -8,7 +8,6 @@ const useMutateDeleteDevice = () => {
     {
       onSuccess: (res) => {
         queryClient.invalidateQueries('getDevice');
-        console.log('getDevice');
       }
     }
   );

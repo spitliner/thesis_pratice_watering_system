@@ -3,20 +3,26 @@ import { ApiKeyService } from '../DeviceService';
 import useMutateDevice from './useMutateDevice';
 
 const useCheckAndSave = () => {
-  const { onSaveData } = useMutateDevice();
-  const { mutate: onCheckAndSave, isLoading } = useMutation(
-    ApiKeyService.create,
-    {
-      onSuccess: (data, variables) => {
-        if (!data.result) {
-          onSaveData(variables);
-        }
+  const { onSaveData, nameError } = useMutateDevice();
+  const {
+    mutate: onCheckAndSave,
+    isLoading,
+    isError
+  } = useMutation(ApiKeyService.create, {
+    onSuccess: (data, variables) => {
+      if (!data.result) {
+        localStorage.removeItem('apiKeyError');
+        onSaveData(variables);
+      } else {
+        localStorage.setItem('apiKeyError', true);
       }
     }
-  );
+  });
   return {
     onCheckAndSave,
-    isLoading
+    isLoading,
+    apiKeyError: isError,
+    nameError
   };
 };
 
