@@ -100,8 +100,6 @@ class DeviceModel {
     static async changeDeviceSchedule(deviceID: string, userID: string, newSchedule: string[]) {
         try {
             const device = await DeviceModel.getDevice(deviceID);
-            console.log(device)
-            console.log(deviceID, userID, newSchedule)
             if (null === device) {
                 return false;
             } else if (userID !== device.userID) {

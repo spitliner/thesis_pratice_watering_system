@@ -7,7 +7,7 @@ import Authentication from "../../middleware/auth.js";
 const UserMongoModel = mongoose.model("user", UserSchema);
 class UserModel {
     static async getUser(userID) {
-        return UserMongoModel.findOne({ id: userID }, "-_id -__v").exec();
+        return UserMongoModel.findOne({ id: userID }, "-__v").exec();
     }
     static async getUserData(userID) {
         return UserMongoModel.findOne({ id: userID }, "-_id -__v -password").lean().exec();
@@ -48,9 +48,8 @@ class UserModel {
             if (null === user) {
                 return false;
             }
-            user.settings = newSetting;
-            await user.save();
-            return user.settings === newSetting;
+            const result = await UserMongoModel.updateOne({ id: userID }, { settings: newSetting }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -63,9 +62,8 @@ class UserModel {
             if (null === user) {
                 return false;
             }
-            user.email = newMail;
-            await user.save();
-            return user.email === newMail;
+            const result = await UserMongoModel.updateOne({ id: userID }, { email: newMail }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -78,9 +76,8 @@ class UserModel {
             if (null === user) {
                 return false;
             }
-            user.password = newPass;
-            await user.save();
-            return user.password === newPass;
+            const result = await UserMongoModel.updateOne({ id: userID }, { password: newPass }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
