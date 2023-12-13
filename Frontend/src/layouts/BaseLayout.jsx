@@ -18,7 +18,6 @@ function BaseLayout({ children }) {
     >
       <Navigation />
       <Container
-        maxWidth={false}
         sx={{ height: '100%', backgroundColor: 'secondary.main', py: 1 }}
       >
         {/* Header */}

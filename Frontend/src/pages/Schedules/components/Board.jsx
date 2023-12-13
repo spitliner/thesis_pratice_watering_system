@@ -30,7 +30,7 @@ function Board() {
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
-
+  if (!deviceList) return null;
   return (
     <Container disableGutters maxWidth={false}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -99,50 +99,58 @@ function Board() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {deviceList?.map((device, index) => (
-              <TableRow key={index}>
-                <TableCell
-                  sx={{
-                    fontSize: '16px',
-                    fontWeight: 500,
-                    color: '#7A40F2',
-                    textAlign: 'center' // Set text alignment to center
-                  }}
-                >
-                  {device.id}
-                </TableCell>
-                {device.schedules.map((cell, cellIndex) => (
-                  <TableCell
-                    key={cellIndex}
-                    sx={{
-                      fontSize: '16px',
-                      fontWeight: 500,
-                      color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
-                      textAlign: 'center' // Set text alignment to center
-                    }}
+            {deviceList?.map(
+              (device, index) =>
+                device.type === 'Watering' && (
+                  <TableRow
+                    key={index}
+                    sx={{ border: 1, borderColor: '#e0e0e0' }}
                   >
-                    {cell}
-                  </TableCell>
-                ))}
-                <TableCell>
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button
-                      variant="contained"
-                      sx={{ backgroundColor: '#FF7961', width: '70px' }}
-                      onClick={() => handleDelete(device.id)}
+                    <TableCell
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        color: '#7A40F2',
+                        textAlign: 'center' // Set text alignment to center
+                      }}
                     >
-                      DELETE
-                    </Button>
-                    {/* <Button
+                      {device.id}
+                    </TableCell>
+                    {device.schedules.map((cell, cellIndex) => (
+                      <TableCell
+                        key={cellIndex}
+                        sx={{
+                          fontSize: '16px',
+                          fontWeight: 500,
+                          color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
+                          textAlign: 'center' // Set text alignment to center
+                        }}
+                      >
+                        {cell}
+                      </TableCell>
+                    ))}
+                    {device.schedules.length > 0 && (
+                      <TableCell>
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                          <Button
+                            variant="contained"
+                            sx={{ backgroundColor: '#FF7961', width: '70px' }}
+                            onClick={() => handleDelete(device.id)}
+                          >
+                            DELETE
+                          </Button>
+                          {/* <Button
                       variant="contained"
                       sx={{ backgroundColor: '#b39ddb', width: '70px' }}
                     >
                       EDIT
                     </Button> */}
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
+                        </Box>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )
+            )}
           </TableBody>
         </Table>
       </TableContainer>

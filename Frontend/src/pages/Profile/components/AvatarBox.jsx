@@ -23,7 +23,7 @@ function AvatarBox(props) {
   }, [profile]);
 
   const handleGetAvatar = async () => {
-    const userId = profile?._id;
+    const userId = profile?.id;
     const url = await GetAvatarByUserId(userId).catch(
       () =>
         'https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
@@ -34,7 +34,7 @@ function AvatarBox(props) {
   const handleUpload = (e) => {
     const image = e.target.files[0];
     const url = URL.createObjectURL(image);
-    UploadAvatarByUserId(profile?._id, image);
+    UploadAvatarByUserId(profile?.id, image);
     setAvatarUrl(url);
   };
 

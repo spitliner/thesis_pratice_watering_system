@@ -44,7 +44,13 @@ const Charts = (props) => {
   }, [chartData]);
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        rowGap: 5
+      }}
+    >
       {/* Line Chart */}
       <Box
         sx={{
@@ -55,10 +61,10 @@ const Charts = (props) => {
       >
         <h3>Temperture</h3>
         <LineChart
-          width={400}
-          height={250}
+          width={480}
+          height={260}
           data={dataList}
-          margin={{ left: 15, right: 30, bottom: 50, top: 10 }}
+          margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
         >
           <XAxis
             dataKey="time"
@@ -69,7 +75,8 @@ const Charts = (props) => {
               value: 'Temperture (°C)',
               angle: -90,
               position: 'insideLeft',
-              dy: 50
+              dy: 50,
+              offset: -5
             }}
           />
           <Tooltip />
@@ -87,10 +94,10 @@ const Charts = (props) => {
       >
         <h3>Rainfall</h3>
         <BarChart
-          width={400}
-          height={250}
+          width={480}
+          height={260}
           data={dataList}
-          margin={{ left: 15, right: 30, bottom: 50, top: 10 }}
+          margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
         >
           <XAxis
             dataKey="time"
@@ -101,7 +108,8 @@ const Charts = (props) => {
               value: 'Rainfall (mm)',
               angle: -90,
               position: 'insideLeft',
-              dy: 50
+              dy: 50,
+              offset: -5
             }}
           />
           <Tooltip />
