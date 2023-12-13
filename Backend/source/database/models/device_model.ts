@@ -23,7 +23,7 @@ class DeviceModel {
     }
 
     static async getDevice(deviceID: string) {
-        return DeviceMongoModel.findOne({id: deviceID}, "-__v -_id -userID").exec();
+        return DeviceMongoModel.findOne({id: deviceID}, "-__v -_id").exec();
     }
 
     static async getDeviceData(deviceID: string, userID: string) {
