@@ -21,7 +21,7 @@ class DeviceModel {
         }
     }
     static async getDevice(deviceID) {
-        return DeviceMongoModel.findOne({ id: deviceID }, "-__v -_id -userID").exec();
+        return DeviceMongoModel.findOne({ id: deviceID }, "-__v -_id").exec();
     }
     static async getDeviceData(deviceID, userID) {
         return DeviceMongoModel.findOne({ id: deviceID, userID: userID }, "-__v -_id -userID").lean().exec();
@@ -98,6 +98,8 @@ class DeviceModel {
     static async changeDeviceSchedule(deviceID, userID, newSchedule) {
         try {
             const device = await DeviceModel.getDevice(deviceID);
+            console.log(device);
+            console.log(deviceID, userID, newSchedule);
             if (null === device) {
                 return false;
             }
@@ -145,6 +147,14 @@ class DeviceModel {
             userID: userID
         });
         return result.deletedCount;
+    }
+    static async getAllDeviceData() {
+        return DeviceMongoModel.find().lean().exec();
+    }
+    static async getDeviceWithSchedules(time) {
+        return DeviceMongoModel.find({
+            schedules: time
+        }).lean().exec();
     }
 }
 export default DeviceModel;
