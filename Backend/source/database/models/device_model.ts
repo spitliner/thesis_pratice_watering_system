@@ -23,7 +23,7 @@ class DeviceModel {
     }
 
     static async getDevice(deviceID: string) {
-        return DeviceMongoModel.findOne({id: deviceID}, "-__v -_id -userID").exec();
+        return DeviceMongoModel.findOne({id: deviceID}, "-__v -_id").exec();
     }
 
     static async getDeviceData(deviceID: string, userID: string) {
@@ -147,6 +147,16 @@ class DeviceModel {
             userID: userID
         });
         return result.deletedCount;
+    }
+
+    static async getAllDeviceData() {
+        return DeviceMongoModel.find().lean().exec();
+    }
+
+    static async getDeviceWithSchedules(time: string) {
+        return DeviceMongoModel.find({
+            schedules: time
+        }).lean().exec();
     }
 }
 

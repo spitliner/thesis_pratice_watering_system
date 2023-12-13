@@ -128,6 +128,8 @@ class UserController {
         const result = await UserModel.deleteUser(userID);
         return result;
     }
+
+    
 }
 
 export default UserController;
