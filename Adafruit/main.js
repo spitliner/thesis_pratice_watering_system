@@ -1,6 +1,6 @@
 // Adafruit account used for project:
-// username:
-// password:
+// username: viluong
+// password: 1234512345ok
 
 const mqtt = require("mqtt");
 const dayjs = require("dayjs");
