@@ -168,9 +168,9 @@ UserRouter.post('/user/device', authRequest, async (request, response) => {
     try {
         const userID: string = request.cookies["uid"];
         
-        const {deviceID, name, type, apiKey} = request.body;
+        const {deviceID, name, type, apiKey, adaUsername} = request.body;
 
-        const result = await DeviceController.createDevice(deviceID, userID, name, type, apiKey);
+        const result = await DeviceController.createDevice(deviceID, userID, name, type, apiKey, adaUsername);
 
         if (undefined !== result.error) {
             if ("Device already in use" === result.error) {
