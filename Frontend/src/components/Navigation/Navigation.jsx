@@ -12,9 +12,9 @@ function Navigation() {
   return (
     <Box
       sx={{
-        position: 'fixed', // Thêm dòng này
-        top: 0, // Thêm dòng này
-        left: 0, // Thêm dòng này
+        position: 'fixed',
+        top: 0,
+        left: 0,
         backgroundColor: 'primary.main',
         width: '118px',
         height: '730px',
