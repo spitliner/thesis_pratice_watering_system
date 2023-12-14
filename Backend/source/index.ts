@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import UserRouter from "./routers/user_router.js";
 import DeviceRouter from "./routers/device_router.js";
 import DeviceModel from './database/models/device_model.js';
+import DeviceController from './controllers/device_controllers.js';
 
 //---
 
