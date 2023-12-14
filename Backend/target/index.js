@@ -30,8 +30,8 @@ mongoose.connection.on("error", function (error) {
     console.log(error);
 });
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@dev0.agidxfk.mongodb.net/?retryWrites=true&w=majority`;
-mongoose.connect(uri);
-let portNum = (Number(process.env.DB_PORT) || 27017);
+mongoose.connect(uri, { dbName: 'webGarden' });
+let portNum = (Number(process.env.DB_PORT) || 9000);
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);
 });
