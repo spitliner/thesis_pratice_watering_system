@@ -10,6 +10,9 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { Link } from 'react-router-dom';
+import useQueryDevice from '../hooks/useQueryDevice';
+import useQueryDeviceById from '../hooks/useQueryDeviceById';
+import useMutateDeviceById from '../hooks/useMutateDeviceById';
 
 const data = [
   ['KV01', '8:00', '500'],
@@ -22,6 +25,12 @@ const data = [
 ];
 
 function Board() {
+  const { deviceList } = useQueryDevice();
+  const { onSaveDataById } = useMutateDeviceById();
+  const handleDelete = (id) => {
+    onSaveDataById([id, 'schedules', { schedules: [] }]);
+  };
+  if (!deviceList) return null;
   return (
     <Container disableGutters maxWidth={false}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -48,61 +57,100 @@ function Board() {
           <TableHead>
             <TableRow>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2', textAlign: 'center' }}
+                sx={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#7A40F2',
+                  textAlign: 'center'
+                }}
               >
                 DEVICE
               </TableCell>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D', textAlign: 'center' }}
+                sx={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#F2946D',
+                  textAlign: 'center'
+                }}
               >
                 TIME
               </TableCell>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#7A40F2', textAlign: 'center' }}
+                sx={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#7A40F2',
+                  textAlign: 'center'
+                }}
               >
                 WATER (ML)
               </TableCell>
               <TableCell
-                sx={{ fontSize: '18px', fontWeight: 'bold', color: '#F2946D', textAlign: 'center' }}
+                sx={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#F2946D',
+                  textAlign: 'center'
+                }}
               >
                 ACTION
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row, index) => (
-              <TableRow key={index}>
-                {row.map((cell, cellIndex) => (
-                  <TableCell
-                    key={cellIndex}
-                    sx={{
-                      fontSize: '16px',
-                      fontWeight: 500,
-                      color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
-                      textAlign: 'center', // Set text alignment to center
-                    }}
+            {deviceList?.map(
+              (device, index) =>
+                device.type === 'Watering' && (
+                  <TableRow
+                    key={index}
+                    sx={{ border: 1, borderColor: '#e0e0e0' }}
                   >
-                    {cell}
-                  </TableCell>
-                ))}
-                <TableCell>
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button
-                      variant="contained"
-                      sx={{ backgroundColor: '#FF7961', width: '70px' }}
+                    <TableCell
+                      sx={{
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        color: '#7A40F2',
+                        textAlign: 'center' // Set text alignment to center
+                      }}
                     >
-                      DELETE
-                    </Button>
-                    {/* <Button
+                      {device.id}
+                    </TableCell>
+                    {device.schedules.map((cell, cellIndex) => (
+                      <TableCell
+                        key={cellIndex}
+                        sx={{
+                          fontSize: '16px',
+                          fontWeight: 500,
+                          color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
+                          textAlign: 'center' // Set text alignment to center
+                        }}
+                      >
+                        {cell}
+                      </TableCell>
+                    ))}
+                    {device.schedules.length > 0 && (
+                      <TableCell>
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                          <Button
+                            variant="contained"
+                            sx={{ backgroundColor: '#FF7961', width: '70px' }}
+                            onClick={() => handleDelete(device.id)}
+                          >
+                            DELETE
+                          </Button>
+                          {/* <Button
                       variant="contained"
                       sx={{ backgroundColor: '#b39ddb', width: '70px' }}
                     >
                       EDIT
                     </Button> */}
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
+                        </Box>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )
+            )}
           </TableBody>
         </Table>
       </TableContainer>

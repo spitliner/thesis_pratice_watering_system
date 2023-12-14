@@ -6,7 +6,7 @@ import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import useCheckDuplicate from './hooks/useCheckDuplicate';
+import useCheckAndRegister from './hooks/useCheckDuplicate';
 
 function _id() {
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ function _id() {
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-  const { onCheckDuplicate } = useCheckDuplicate();
+  const { onCheckAndRegister } = useCheckAndRegister();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -37,7 +37,7 @@ function _id() {
     }
 
     if (!emailError && !passwordError && !confirmPasswordError) {
-      onCheckDuplicate({
+      onCheckAndRegister({
         email: email,
         password: password,
         confirmPassword: confirmPassword

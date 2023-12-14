@@ -2,14 +2,15 @@ import mongoose from "mongoose";
 import DeviceSchema from "../schema/device_schema.js";
 const DeviceMongoModel = mongoose.model("device", DeviceSchema);
 class DeviceModel {
-    static async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings) {
+    static async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings, apiKey) {
         try {
             const result = await DeviceMongoModel.insertMany([{
                     id: deviceID,
                     userID: userID,
                     type: deviceType,
                     name: deviceName,
-                    settings: deviceSettings
+                    settings: deviceSettings,
+                    apiKey: apiKey
                 }]);
             console.log("Insert device from user " + result[0].userID + " with device id " + result[0]._id);
             return result[0];
@@ -20,7 +21,7 @@ class DeviceModel {
         }
     }
     static async getDevice(deviceID) {
-        return DeviceMongoModel.findOne({ id: deviceID }, "-__v -_id -userID").exec();
+        return DeviceMongoModel.findOne({ id: deviceID }, "-__v").exec();
     }
     static async getDeviceData(deviceID, userID) {
         return DeviceMongoModel.findOne({ id: deviceID, userID: userID }, "-__v -_id -userID").lean().exec();
@@ -49,9 +50,8 @@ class DeviceModel {
             else if (userID !== device.userID) {
                 return false;
             }
-            device.name = newName;
-            await device.save();
-            return device.name === newName;
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { name: newName }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -67,9 +67,8 @@ class DeviceModel {
             else if (userID !== device.userID) {
                 return false;
             }
-            device.type = editdType;
-            await device.save();
-            return device.type === editdType;
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { type: editdType }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -85,9 +84,8 @@ class DeviceModel {
             else if (userID !== device.userID) {
                 return false;
             }
-            device.settings = newSetting;
-            await device.save();
-            return device.settings === newSetting;
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { settings: newSetting }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -103,10 +101,8 @@ class DeviceModel {
             else if (userID !== device.userID) {
                 return false;
             }
-            device.schedules = newSchedule;
-            await device.save();
-            return device.schedules === newSchedule;
-            ;
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { schedules: newSchedule }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -122,10 +118,8 @@ class DeviceModel {
             else if (userID !== device.userID) {
                 return false;
             }
-            device.apiKey = apiKey;
-            await device.save();
-            return device.apiKey === apiKey;
-            ;
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey }).lean().exec();
+            return result.acknowledged;
         }
         catch (error) {
             console.log(error);
@@ -144,6 +138,14 @@ class DeviceModel {
             userID: userID
         });
         return result.deletedCount;
+    }
+    static async getAllDeviceData() {
+        return DeviceMongoModel.find().lean().exec();
+    }
+    static async getDeviceWithSchedules(time) {
+        return DeviceMongoModel.find({
+            schedules: time
+        }).lean().exec();
     }
 }
 export default DeviceModel;

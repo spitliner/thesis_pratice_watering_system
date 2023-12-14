@@ -44,7 +44,7 @@ const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@d
 
 mongoose.connect(uri);
 
-let portNum : number = (Number(process.env.DB_PORT) || 9000);
+let portNum : number = (Number(process.env.DB_PORT) || 27017);
 
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);

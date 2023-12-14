@@ -5,19 +5,42 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import useMutateDeviceById from '../hooks/useMutateDeviceById';
+import { useNavigate } from 'react-router-dom';
+import useQueryDevice from '../hooks/useQueryDevice';
 
 function Add() {
-  const [selectedTime, setSelectedTime] = useState('');
+  const { onSaveDataById } = useMutateDeviceById();
+  const { deviceList } = useQueryDevice();
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here
+  const [selectedTime, setSelectedTime] = useState('');
+  const [device, setDevice] = useState('');
+  const [water, setWater] = useState('');
+
+  const handleCancel = () => {
+    navigate('/schedules');
+  };
+
+  const handleDeviceChange = (event) => {
+    setDevice(event.target.value);
   };
 
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
   };
 
+  const handleWaterChange = (event) => {
+    setWater(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Handle form submission logic here
+    onSaveDataById([device, 'schedules', { schedules: [selectedTime, water] }]);
+  };
+
+  if (!deviceList) return null;
   return (
     <Box
       sx={{
@@ -56,12 +79,23 @@ function Add() {
               select
               sx={{ mb: 2, mt: 3 }}
               InputLabelProps={{ shrink: true }}
+              value={device}
+              onChange={handleDeviceChange}
+              required
             >
-              <MenuItem value="DV01">DV01</MenuItem>
-              <MenuItem value="DV02">DV02</MenuItem>
+              {/* <MenuItem value="KV101">KV101</MenuItem>
+              <MenuItem value="KV102">KV102</MenuItem>
               <MenuItem value="DV03">DV03</MenuItem>
               <MenuItem value="DV04">DV04</MenuItem>
-              <MenuItem value="DV05">DV05</MenuItem>
+              <MenuItem value="DV05">DV05</MenuItem> */}
+              {deviceList?.map(
+                (device) =>
+                  device.type === 'Watering' && (
+                    <MenuItem key={device.id} value={device.id}>
+                      {device.id}
+                    </MenuItem>
+                  )
+              )}
             </TextField>
 
             <TextField
@@ -71,13 +105,18 @@ function Add() {
               value={selectedTime}
               onChange={handleTimeChange}
               sx={{ mb: 2 }}
+              required
             />
 
             <TextField
+              type="number"
               label="Amount of Water"
               variant="outlined"
               fullWidth
               sx={{ mb: 2 }}
+              value={water}
+              onChange={handleWaterChange}
+              required
             />
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -100,6 +139,7 @@ function Add() {
                   width: '45%',
                   mt: 2
                 }}
+                onClick={handleCancel}
               >
                 Cancel
               </Button>

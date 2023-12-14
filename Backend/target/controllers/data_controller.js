@@ -3,7 +3,7 @@ import DeviceModel from "../database/models/device_model.js";
 class DataController {
     static async getData(deviceID, userID) {
         try {
-            const deviceData = await DeviceModel.getDeviceData(deviceID);
+            const deviceData = await DeviceModel.getDeviceData(deviceID, userID);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -25,7 +25,7 @@ class DataController {
     }
     static async getDataWithin(deviceID, userID, afterDate) {
         try {
-            const deviceData = await DeviceModel.getDeviceData(deviceID);
+            const deviceData = await DeviceModel.getDeviceData(deviceID, userID);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -47,7 +47,7 @@ class DataController {
     }
     static async insertFeed(deviceID, userID, feed) {
         try {
-            const deviceData = await DeviceModel.getDeviceData(deviceID);
+            const deviceData = await DeviceModel.getDeviceData(deviceID, userID);
             if (null === deviceData) {
                 return {
                     error: "Device not found"

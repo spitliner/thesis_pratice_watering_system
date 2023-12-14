@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Button, styled } from '@mui/material';
+import { Box, Container, Button, styled, Typography } from '@mui/material';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ShowerIcon from '@mui/icons-material/Shower';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
@@ -16,26 +16,28 @@ const TabButton = styled(Button)(({ theme }) => ({
 }));
 
 function _id() {
-  const { device } = useQueryDevice();
+  const { deviceList } = useQueryDevice();
+
   const [activeTab, setActiveTab] = useState('temp');
 
   const handleTabChange = (tabIndex) => {
     setActiveTab(tabIndex);
   };
 
-  useEffect(() => {
-    console.log(device);
-  }, device);
-
   return (
     <>
+      <Container sx={{ mt: 5 }}>
+        <Typography variant="h4" fontWeight={700}>
+          DEVICE
+        </Typography>
+      </Container>
       <Container
         sx={{
           backgroundColor: 'secondary.main',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          mt: 5
+          mt: 3
         }}
       >
         <TabButton
@@ -61,9 +63,9 @@ function _id() {
         </TabButton>
       </Container>
       <Container sx={{ backgroundColor: '#fff', mt: 5, p: 2 }}>
-        {activeTab === 'temp' && <TempertureTab />}
-        {activeTab === 'humid' && <HumidTab />}
-        {activeTab === 'water' && <WateringTab />}
+        {activeTab === 'temp' && <TempertureTab deviceList={deviceList} />}
+        {activeTab === 'humid' && <HumidTab deviceList={deviceList} />}
+        {activeTab === 'water' && <WateringTab deviceList={deviceList} />}
       </Container>
     </>
   );

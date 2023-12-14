@@ -1,17 +1,26 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { DeviceService } from '../DeviceService';
+import { UserDeviceService } from '../DeviceService';
 
 const useMutateDevice = () => {
   const queryClient = useQueryClient();
-  const { mutate: onSaveData, isLoading } = useMutation(DeviceService.create, {
+  const {
+    mutate: onSaveData,
+    isLoading,
+    isError
+  } = useMutation(UserDeviceService.create, {
     onSuccess: (res) => {
-      queryClient.invalidateQueries('get-Device');
+      localStorage.removeItem('deviceNameError');
+      queryClient.invalidateQueries('getDevice');
+    },
+    onError: () => {
+      localStorage.setItem('deviceNameError', true);
     }
   });
 
   return {
     onSaveData,
-    isLoading
+    isLoading,
+    nameError: isError
   };
 };
 
