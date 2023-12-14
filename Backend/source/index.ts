@@ -50,11 +50,3 @@ let portNum : number = (Number(process.env.DB_PORT) || 9000);
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);
 });
-
-DeviceController.createDevice("KH101", "101", "a", "b", "c", "d").then(result => {
-    console.log(result);
-    DeviceController.changeSchedule("KH101", "101", [["11:00", "2"]]).then(async result => {
-        console.log(result);
-        //console.log(DeviceModel.getDeviceWithSchedules("11:00"));
-    });
-})
