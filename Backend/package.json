@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node target/index.js",
-    "dev": "nodemon target/index.js"
+    "dev": "tsc -p tsconfig.json & nodemon target/index.js",
+    "build": "tsc -p tsconfig.json"
   },
   "author": "",
   "license": "ISC",
