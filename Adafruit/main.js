@@ -1,3 +1,7 @@
+// Adafruit account used for project:
+// username:
+// password:
+
 const mqtt = require("mqtt");
 const dayjs = require("dayjs");
 const customParseFormat = require("dayjs/plugin/customParseFormat");
@@ -5,7 +9,7 @@ dayjs.extend(customParseFormat);
 
 const client = mqtt.connect("mqtt://io.adafruit.com", {
   username: "viluong",
-  password: "aio_RIdw74keavoQzqvfKWHrisPfscjr",
+  password: "aio_tzeu93jhXdpm7EYcU98K7k280qAI",
 });
 
 const AIO_FEEDS = ["temperature", "humidity", "auto-watering"];
@@ -16,6 +20,8 @@ const topic_temp = "viluong/feeds/temperature";
 const topic_humid = "viluong/feeds/humidity";
 
 const topics = AIO_FEEDS.map((feed) => `${AIO_USERNAME}/feeds/${feed}`);
+
+let pumpState = ""; // Keep track of the last received state
 
 client.on("connect", () => {
   console.log("Connected to Adafruit IO");
@@ -30,35 +36,50 @@ client.on("connect", () => {
   });
 });
 
+// Data receive from adafruit
 client.on("message", (receivedTopic, message) => {
   console.log(`Received data on topic ${receivedTopic}: ${message.toString()}`);
+  if (receivedTopic === topic_water) pumpState = message.toString();
 });
 
 client.on("error", (error) => {
   console.error("Error:", error);
 });
 
-const defaultWaterStatus = "OFF";
-client.publish(topic_water, defaultWaterStatus);
+// send default status to adafruit
+const default_pump_status = "OFF";
+client.publish(topic_water, default_pump_status);
 
-const schedules = [["15:59", "30"]];
+// schedules receive from Backend
+const schedules = [["23:56", "30"]];
 
+// update data every 10s
 setInterval(() => {
   const startTime = schedules[0][0];
-  const offTime = dayjs(startTime, "HH:mm")
-    .add(Number(schedules[0][1]), "second")
-    .format("HH:mm");
+  const duration = Number(schedules[0][1]);
+  const currentTime = dayjs().format("HH:mm");
 
+  // duration from start time to current
+  const timeDifference = dayjs().diff(dayjs(startTime, "HH:mm"), "seconds");
+
+  // send data to adafruit
   AIO_FEEDS.forEach((feed) => {
     const topic = `${AIO_USERNAME}/feeds/${feed}`;
-    const time = dayjs().format("HH:mm");
+
     if (topic === topic_water) {
-      if (time === startTime) {
+      if (
+        currentTime === startTime &&
+        timeDifference < duration &&
+        pumpState !== "ON"
+      ) {
+        console.log("Turn on pump");
         client.publish(topic, "ON");
       }
-      if (time === offTime) {
+
+      if (timeDifference >= duration && pumpState !== "OFF") {
+        console.log("Turn off pump");
         client.publish(topic, "OFF");
       }
     }
   });
-}, 60000);
+}, 5000);
