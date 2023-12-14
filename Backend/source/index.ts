@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import UserRouter from "./routers/user_router.js";
 import DeviceRouter from "./routers/device_router.js";
 import DeviceModel from './database/models/device_model.js';
+import DeviceController from './controllers/device_controllers.js';
 
 //---
 
@@ -49,3 +50,11 @@ let portNum : number = (Number(process.env.DB_PORT) || 9000);
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);
 });
+
+DeviceController.createDevice("KH101", "101", "a", "b", "c", "d").then(result => {
+    console.log(result);
+    DeviceController.changeSchedule("KH101", "101", [["11:00", "2"]]).then(async result => {
+        console.log(result);
+        //console.log(DeviceModel.getDeviceWithSchedules("11:00"));
+    });
+})

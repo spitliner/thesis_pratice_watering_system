@@ -57,12 +57,13 @@ DeviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
 DeviceRouter.post('/device/duplicateKey', authRequest, async (request, response) => {
     try {
         const key: string = request.body.apiKey;
+        const username: string = request.body.adaUsername;
 
         if (undefined === key) {
             return response.status(400).json({"error": "Missing key to check"});
         }
 
-        if (await DeviceModel.checkKey(key)) {
+        if (await DeviceModel.checkKey(key, username)) {
             return response.status(200).json({
                 "result": false
             });
@@ -165,9 +166,9 @@ DeviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
     try {
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
-        const {apiKey} = request.body;
+        const {apiKey, adaUsername} = request.body;
 
-        const result = await DeviceController.changeAPIkey(deviceID, userID, apiKey);
+        const result = await DeviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
 
         if (undefined === result.error) {
             return response.status(200).json(result);

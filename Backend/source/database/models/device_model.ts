@@ -4,7 +4,7 @@ import DeviceSchema from "../schema/device_schema.js";
 const DeviceMongoModel = mongoose.model("device", DeviceSchema);
 
 class DeviceModel {
-    static async insertDevice(deviceID: string, userID: string, deviceType: string, deviceName: string, deviceSettings: string, apiKey: string) {
+    static async insertDevice(deviceID: string, userID: string, deviceType: string, deviceName: string, deviceSettings: string, apiKey: string, adaUsername: string) {
         try {
             const result = await DeviceMongoModel.insertMany([{
                 id: deviceID,
@@ -12,7 +12,8 @@ class DeviceModel {
                 type: deviceType,
                 name: deviceName,
                 settings: deviceSettings,
-                apiKey: apiKey
+                apiKey: apiKey,
+                adaUserName: adaUsername
             }]);
             console.log("Insert device from user " + result[0].userID + " with device id " + result[0]._id);
             return result[0];
@@ -43,9 +44,10 @@ class DeviceModel {
     }
 
 
-    static async checkKey(APIkey: string) {
+    static async checkKey(APIkey: string, adaUserName: string) {
         return 0 === await DeviceMongoModel.countDocuments({
-            apiKey: APIkey
+            apiKey: APIkey,
+            adaUserName: adaUserName
         }).lean().exec();
     }
 
@@ -97,7 +99,7 @@ class DeviceModel {
         }
     }
 
-    static async changeDeviceSchedule(deviceID: string, userID: string, newSchedule: string[]) {
+    static async changeDeviceSchedule(deviceID: string, userID: string, newSchedule: string[][]) {
         try {
             const device = await DeviceModel.getDevice(deviceID);
             if (null === device) {
@@ -113,7 +115,7 @@ class DeviceModel {
         }
     }
 
-    static async changeAPIkey(deviceID: string, userID: string, apiKey: string) {
+    static async changeAPIkey(deviceID: string, userID: string, apiKey: string, adaUserName: string) {
         try {
             const device = await DeviceModel.getDevice(deviceID);
             if (null === device) {
@@ -121,7 +123,7 @@ class DeviceModel {
             } else if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {apiKey: apiKey}).lean().exec();
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {apiKey: apiKey, adaUserName: adaUserName}).lean().exec();
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -150,7 +152,13 @@ class DeviceModel {
 
     static async getDeviceWithSchedules(time: string) {
         return DeviceMongoModel.find({
-            schedules: time
+            schedules: {
+                $elemMatch: {
+                    $elemMatch: {
+                        $in : [time]
+                    }
+                }
+            }
         }).lean().exec();
     }
 }

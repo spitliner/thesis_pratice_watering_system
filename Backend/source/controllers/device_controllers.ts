@@ -2,7 +2,7 @@ import DeviceModel from "../database/models/device_model.js";
 
 
 class DeviceController {
-    static async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string) {
+    static async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUserName: string) {
         try {
             if (false === await DeviceModel.checkID(deviceID)) {
                 return {
@@ -10,7 +10,7 @@ class DeviceController {
                 }
             }
             const deviceSetting = {};
-            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey);
+            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUserName);
             if (null === device || undefined === device) {
                 return {
                     "error": "Database error"
@@ -54,7 +54,7 @@ class DeviceController {
         }
     }
 
-    static async changeSchedule(deviceID: string, userID: string, newSchedule:string[]) {
+    static async changeSchedule(deviceID: string, userID: string, newSchedule:string[][]) {
         try {
             const result = await DeviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
             if (null === result) {
@@ -146,9 +146,9 @@ class DeviceController {
         }
     }
 
-    static async changeAPIkey(deviceID: string, userID: string, newKey: string) {
+    static async changeAPIkey(deviceID: string, userID: string, newKey: string, newUsername: string) {
         try {
-            const result = await DeviceModel.changeAPIkey(deviceID, userID, newKey);
+            const result = await DeviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
             if (null === result) {
                 return {
                     "error": "database error"
