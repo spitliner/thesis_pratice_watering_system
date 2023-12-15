@@ -60,6 +60,4 @@ const adaConnect = {
     }
 };
 
-adaConnect.triggerPump('viluong', 'auto-watering', 'aio_CnpW66XLTayrvT1wyThIPB19Sysp', '12');
-
 export default adaConnect;
