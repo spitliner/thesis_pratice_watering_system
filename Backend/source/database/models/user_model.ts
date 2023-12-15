@@ -21,7 +21,7 @@ class UserModel {
     static async searchUser(userEmail: string) {
         return UserMongoModel.findOne({
             email: userEmail
-        }).select("-_id -__v").exec();
+        }).select("-_id -__v").lean().exec();
     }
 
     /**

@@ -108,6 +108,24 @@ class DeviceModel {
                 return false;
             }
             const result = await DeviceMongoModel.updateOne({id: deviceID}, {schedules: newSchedule}).lean().exec();
+            console.log(result);
+            return result.acknowledged;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+
+    static async removeDeviceSchedule(deviceID: string, userID: string) {
+        try {
+            const device = await DeviceModel.getDevice(deviceID);
+            if (null === device) {
+                return false;
+            } else if (userID !== device.userID) {
+                return false;
+            }
+            const result = await DeviceMongoModel.updateOne({id: deviceID}, {$unset: { schedules: [[]]} }).lean().exec();
+            console.log(result);
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -148,6 +166,12 @@ class DeviceModel {
 
     static async getAllDeviceData() {
         return DeviceMongoModel.find().lean().exec();
+    }
+
+    static async getAllSensorData() {
+        return DeviceMongoModel.find({
+            schedules: [undefined, null]
+        }).lean().exec();
     }
 
     static async getDeviceWithSchedules(time: string) {

@@ -50,3 +50,7 @@ let portNum : number = (Number(process.env.DB_PORT) || 9000);
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);
 });
+
+DeviceController.changeSchedule('W01', 'mvptZDrHf-Pd', [['15:05', '12']]).then(result => {
+    console.log(result);
+});
