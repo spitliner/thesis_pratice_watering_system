@@ -1,6 +1,6 @@
 import DeviceModel from "../database/models/device_model.js";
 class DeviceController {
-    static async createDevice(deviceID, userID, name, type, apiKey) {
+    static async createDevice(deviceID, userID, name, type, apiKey, adaUserName) {
         try {
             if (false === await DeviceModel.checkID(deviceID)) {
                 return {
@@ -8,7 +8,7 @@ class DeviceController {
                 };
             }
             const deviceSetting = {};
-            const device = await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey);
+            const device = await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUserName);
             if (null === device || undefined === device) {
                 return {
                     "error": "Database error"
@@ -54,7 +54,13 @@ class DeviceController {
     }
     static async changeSchedule(deviceID, userID, newSchedule) {
         try {
-            const result = await DeviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
+            let result = null;
+            if (undefined === newSchedule) {
+                result = await DeviceModel.removeDeviceSchedule(deviceID, userID);
+            }
+            else {
+                result = await DeviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
+            }
             if (null === result) {
                 return {
                     "error": "database error"
@@ -148,9 +154,9 @@ class DeviceController {
             };
         }
     }
-    static async changeAPIkey(deviceID, userID, newKey) {
+    static async changeAPIkey(deviceID, userID, newKey, newUsername) {
         try {
-            const result = await DeviceModel.changeAPIkey(deviceID, userID, newKey);
+            const result = await DeviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
             if (null === result) {
                 return {
                     "error": "database error"
@@ -174,7 +180,7 @@ class DeviceController {
     }
     static async triggerDeviceSchedules(time) {
         try {
-            const deviceList = await DeviceModel.getAllDeviceData();
+            const deviceList = await DeviceModel.getAllSensorData();
             const actionDeviceList = await DeviceModel.getDeviceWithSchedules(time);
         }
         catch (error) {
