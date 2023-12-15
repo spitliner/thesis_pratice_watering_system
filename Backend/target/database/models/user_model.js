@@ -15,7 +15,7 @@ class UserModel {
     static async searchUser(userEmail) {
         return UserMongoModel.findOne({
             email: userEmail
-        }).select("-_id -__v").exec();
+        }).select("-_id -__v").lean().exec();
     }
     /**
      * If email availible, return true, otherwise return false

@@ -1,17 +1,17 @@
+import process from 'node:process';
 import dotenv from 'dotenv';
-dotenv.config();
-
 import express from "express";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 
+dotenv.config();
+
 //---
 
 import UserRouter from "./routers/user_router.js";
 import DeviceRouter from "./routers/device_router.js";
-import DeviceModel from './database/models/device_model.js';
-import DeviceController from './controllers/device_controllers.js';
+import pollingJob from './cron-jobs/cron_request.js';
 
 //---
 
@@ -46,6 +46,34 @@ const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@d
 mongoose.connect(uri, {dbName: 'webGarden'});
 
 let portNum : number = (Number(process.env.DB_PORT) || 9000);
+
+//------
+
+let exceptionOccured = false;
+
+pollingJob.start();
+
+process.on('uncaughtException', function(err) {
+    console.log('Caught exception: ' + err);
+    exceptionOccured = true;
+    process.exit();
+});
+
+process.on('exit', function(code) {
+    if(exceptionOccured) console.log('Exception occured');
+    else console.log('Kill signal received');
+    pollingJob.stop();
+});
+
+process.on('SIGINT', function() {
+    process.exit();
+});
+
+process.on('SIGTERM', function() {
+    process.exit();
+});
+
+//------
 
 server.listen(portNum, () => {
     console.log("Server started on port " + portNum);

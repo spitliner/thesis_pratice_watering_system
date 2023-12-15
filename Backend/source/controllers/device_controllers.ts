@@ -54,9 +54,14 @@ class DeviceController {
         }
     }
 
-    static async changeSchedule(deviceID: string, userID: string, newSchedule:string[][]) {
+    static async changeSchedule(deviceID: string, userID: string, newSchedule:string[][] | undefined) {
         try {
-            const result = await DeviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
+            let result = null;
+            if (undefined === newSchedule) {
+                result = await DeviceModel.removeDeviceSchedule(deviceID, userID);
+            } else {
+                result = await DeviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
+            }
             if (null === result) {
                 return {
                     "error": "database error"
@@ -171,7 +176,7 @@ class DeviceController {
 
     static async triggerDeviceSchedules(time: string) {
         try {
-            const deviceList = await DeviceModel.getAllDeviceData();
+            const deviceList = await DeviceModel.getAllSensorData();
             const actionDeviceList = await DeviceModel.getDeviceWithSchedules(time);
 
             

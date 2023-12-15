@@ -31,6 +31,13 @@ class DataModel {
         data: string
     }]) {
         try {
+            const bulkUpsert = data.map(doc => ({
+                updateOne: {
+                    filter: {id: doc.id},
+                    update: { $set: doc },
+                    upsert: true
+                }
+            }))
             const result = await DataMongoModel.insertMany(data);
             console.log("Insert " + result.length);
             return true;
