@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import DeviceSchema from "../schema/device_schema.js";
 const DeviceMongoModel = mongoose.model("device", DeviceSchema);
 class DeviceModel {
-    static async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings, apiKey) {
+    static async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings, apiKey, adaUsername) {
         try {
             const result = await DeviceMongoModel.insertMany([{
                     id: deviceID,
@@ -10,7 +10,8 @@ class DeviceModel {
                     type: deviceType,
                     name: deviceName,
                     settings: deviceSettings,
-                    apiKey: apiKey
+                    apiKey: apiKey,
+                    adaUserName: adaUsername
                 }]);
             console.log("Insert device from user " + result[0].userID + " with device id " + result[0]._id);
             return result[0];
@@ -36,9 +37,10 @@ class DeviceModel {
             id: deviceID
         }).lean().exec();
     }
-    static async checkKey(APIkey) {
+    static async checkKey(APIkey, adaUserName) {
         return 0 === await DeviceMongoModel.countDocuments({
-            apiKey: APIkey
+            apiKey: APIkey,
+            adaUserName: adaUserName
         }).lean().exec();
     }
     static async changeDeviceName(deviceID, userID, newName) {
@@ -102,6 +104,7 @@ class DeviceModel {
                 return false;
             }
             const result = await DeviceMongoModel.updateOne({ id: deviceID }, { schedules: newSchedule }).lean().exec();
+            console.log(result);
             return result.acknowledged;
         }
         catch (error) {
@@ -109,7 +112,7 @@ class DeviceModel {
             return null;
         }
     }
-    static async changeAPIkey(deviceID, userID, apiKey) {
+    static async removeDeviceSchedule(deviceID, userID) {
         try {
             const device = await DeviceModel.getDevice(deviceID);
             if (null === device) {
@@ -118,7 +121,25 @@ class DeviceModel {
             else if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey }).lean().exec();
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { $unset: { schedules: [[]] } }).lean().exec();
+            console.log(result);
+            return result.acknowledged;
+        }
+        catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+    static async changeAPIkey(deviceID, userID, apiKey, adaUserName) {
+        try {
+            const device = await DeviceModel.getDevice(deviceID);
+            if (null === device) {
+                return false;
+            }
+            else if (userID !== device.userID) {
+                return false;
+            }
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey, adaUserName: adaUserName }).lean().exec();
             return result.acknowledged;
         }
         catch (error) {
@@ -142,9 +163,20 @@ class DeviceModel {
     static async getAllDeviceData() {
         return DeviceMongoModel.find().lean().exec();
     }
+    static async getAllSensorData() {
+        return DeviceMongoModel.find({
+            schedules: [undefined, null]
+        }).lean().exec();
+    }
     static async getDeviceWithSchedules(time) {
         return DeviceMongoModel.find({
-            schedules: time
+            schedules: {
+                $elemMatch: {
+                    $elemMatch: {
+                        $in: [time]
+                    }
+                }
+            }
         }).lean().exec();
     }
 }
