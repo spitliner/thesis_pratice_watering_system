@@ -1,16 +1,16 @@
-import DeviceModel from "../database/models/device_model.js";
+import deviceModel from "../database/models/device_model.js";
 
 
 class DeviceController {
-    static async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUserName: string) {
+    static async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUsername: string) {
         try {
-            if (false === await DeviceModel.checkID(deviceID)) {
+            if (false === await deviceModel.checkID(deviceID)) {
                 return {
                     "error": "Device already in use"
                 }
             }
             const deviceSetting = {};
-            const device =  await DeviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUserName);
+            const device =  await deviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUsername);
             if (null === device || undefined === device) {
                 return {
                     "error": "Database error"
@@ -29,7 +29,7 @@ class DeviceController {
 
     static async getDevice(deviceID: string, userID: string) {
         try {
-            return DeviceModel.getDeviceData(deviceID, userID);
+            return deviceModel.getDeviceData(deviceID, userID);
         } catch (error) {
             console.log(error);
             return undefined;
@@ -38,7 +38,7 @@ class DeviceController {
 
     static async getUserDevice(userID: string) {
         try {
-            return DeviceModel.getUserDeivceData(userID);
+            return deviceModel.getUserDeivceData(userID);
         } catch (error) {
             console.log(error);
             return undefined;
@@ -47,7 +47,7 @@ class DeviceController {
 
     static async deleteDevice(deviceID: string, userID: string) {
         try {
-            return DeviceModel.deleteDevice(deviceID, userID);
+            return deviceModel.deleteDevice(deviceID, userID);
         } catch (error) {
             console.log(error);
             return null;
@@ -58,9 +58,9 @@ class DeviceController {
         try {
             let result = null;
             if (undefined === newSchedule) {
-                result = await DeviceModel.removeDeviceSchedule(deviceID, userID);
+                result = await deviceModel.removeDeviceSchedule(deviceID, userID);
             } else {
-                result = await DeviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
+                result = await deviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
             }
             if (null === result) {
                 return {
@@ -84,7 +84,7 @@ class DeviceController {
 
     static async changeSettings(deviceID: string, userID: string, newSettings: {[key: string]: unknown}) {
         try {
-            const result = await DeviceModel.changeDeviceSettings(deviceID, userID, JSON.stringify(newSettings));
+            const result = await deviceModel.changeDeviceSettings(deviceID, userID, JSON.stringify(newSettings));
             if (null === result) {
                 return {
                     "error": "database error"
@@ -107,7 +107,7 @@ class DeviceController {
 
     static async changeType(deviceID: string, userID: string, editedType: string) {
         try {
-            const result = await DeviceModel.changeDeviceType(deviceID, userID, editedType);
+            const result = await deviceModel.changeDeviceType(deviceID, userID, editedType);
             if (null === result) {
                 return {
                     "error": "database error"
@@ -130,7 +130,7 @@ class DeviceController {
 
     static async changeName(deviceID: string, userID: string, newName: string) {
         try {
-            const result = await DeviceModel.changeDeviceName(deviceID, userID, newName);
+            const result = await deviceModel.changeDeviceName(deviceID, userID, newName);
             if (null === result) {
                 return {
                     "error": "database error"
@@ -153,7 +153,7 @@ class DeviceController {
 
     static async changeAPIkey(deviceID: string, userID: string, newKey: string, newUsername: string) {
         try {
-            const result = await DeviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
+            const result = await deviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
             if (null === result) {
                 return {
                     "error": "database error"
@@ -176,8 +176,8 @@ class DeviceController {
 
     static async triggerDeviceSchedules(time: string) {
         try {
-            const deviceList = await DeviceModel.getAllSensorData();
-            const actionDeviceList = await DeviceModel.getDeviceWithSchedules(time);
+            const deviceList = await deviceModel.getAllSensorData();
+            const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
 
             
         } catch (error) {

@@ -9,33 +9,33 @@ import Authentication from "../../middleware/auth.js";
 //---
 
 const UserMongoModel = mongoose.model("user", UserSchema);
-class UserModel {
-    static async getUser(userID: string) {
+const userModel = {
+    async getUser(userID: string) {
         return UserMongoModel.findOne({id: userID}, "-__v").exec();
-    }
+    },
 
-    static async getUserData(userID: string) {
+    async getUserData(userID: string) {
         return UserMongoModel.findOne({id: userID}, "-_id -__v -password").lean().exec();
-    }
+    },
 
-    static async searchUser(userEmail: string) {
+    async searchUser(userEmail: string) {
         return UserMongoModel.findOne({
             email: userEmail
         }).select("-_id -__v").lean().exec();
-    }
+    },
 
     /**
      * If email availible, return true, otherwise return false
      * @param userEmail email to check
      * @returns 
      */
-    static async checkEmail(userEmail: string) {
+    async checkEmail(userEmail: string) {
         return 0 === await UserMongoModel.countDocuments({
             email: userEmail
         });
-    }
+    },
 
-    static async createUser(userEmail: string, password: string) {
+    async createUser(userEmail: string, password: string) {
         try {
             const result = await UserMongoModel.insertMany([{
                 id: nanoid(12),
@@ -48,11 +48,11 @@ class UserModel {
             console.log(error);
             return null;
         }
-    }
+    },
 
-    static async changeSetting(userID: string, newSetting: string) {
+    async changeSetting(userID: string, newSetting: string) {
         try {
-            const user = await UserModel.getUser(userID);
+            const user = await userModel.getUser(userID);
             if (null === user) {
                 return false;
             }
@@ -62,11 +62,11 @@ class UserModel {
             console.log(error);
             return null;
         }
-    }
+    },
 
-    static async changeEmail(userID: string, newMail: string) {
+    async changeEmail(userID: string, newMail: string) {
         try {
-            const user = await UserModel.getUser(userID);
+            const user = await userModel.getUser(userID);
             if (null === user) {
                 return false;
             }
@@ -76,11 +76,11 @@ class UserModel {
             console.log(error);
             return null;
         }
-    }
+    },
 
-    static async changePassword(userID: string, newPass: string) {
+    async changePassword(userID: string, newPass: string) {
         try {
-            const user = await UserModel.getUser(userID);
+            const user = await userModel.getUser(userID);
             if (null === user) {
                 return false;
             }
@@ -90,9 +90,9 @@ class UserModel {
             console.log(error);
             return null;
         }
-    }
+    },
     
-    static async deleteUser(userID: string) {
+    async deleteUser(userID: string) {
         const result = await UserMongoModel.deleteOne({
             id: userID,
         });
@@ -100,4 +100,4 @@ class UserModel {
     }
 }
 
-export default UserModel;
+export default userModel;
