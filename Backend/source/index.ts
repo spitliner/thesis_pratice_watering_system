@@ -12,6 +12,9 @@ dotenv.config();
 import UserRouter from "./routers/user_router.js";
 import DeviceRouter from "./routers/device_router.js";
 import pollingJob from './cron-jobs/cron_request.js';
+import dataController from './controllers/data_controller.js';
+import deviceModel from './database/models/device_model.js';
+import adaConnect from './cron-jobs/ada_request.js';
 
 //---
 
