@@ -1,12 +1,12 @@
-import DeviceModel from "../database/models/device_model.js";
-import UserModel from "../database/models/user_model.js";
+import deviceModel from "../database/models/device_model.js";
+import userModel from "../database/models/user_model.js";
 import Authentication from "../middleware/auth.js";
 
 
 class UserController {
     static async getUser(userID: string) {
         try {
-            const usr = await UserModel.getUserData(userID);
+            const usr = await userModel.getUserData(userID);
             if (null === usr) {
                 return {
                     "error": "user not found"
@@ -24,7 +24,7 @@ class UserController {
     }
 
     static async login(email: string, password: string) {
-        const usr = await UserModel.searchUser(email);
+        const usr = await userModel.searchUser(email);
         if (null === usr) {
             return {
                 "error": "user not found"
@@ -49,7 +49,7 @@ class UserController {
     }
 
     static checkEmailDublication(email: string) {
-        return UserModel.checkEmail(email);
+        return userModel.checkEmail(email);
     }
 
     static async createUser(email: string, password: string) {
@@ -59,12 +59,12 @@ class UserController {
                     "error": "weak password"
                 }
             }
-            if (!UserModel.checkEmail(email)) {
+            if (!userModel.checkEmail(email)) {
                 return {
                     "error": "dublicate email"
                 }
             }
-            const usr = await UserModel.createUser(email, password);
+            const usr = await userModel.createUser(email, password);
             return {
                 "usr": usr
             };
@@ -78,7 +78,7 @@ class UserController {
     }
 
     static async getUserDevice(userID: string) {
-        const result = await DeviceModel.getUserDeivceData(userID);
+        const result = await deviceModel.getUserDeivceData(userID);
         return result;
     }
 
@@ -95,13 +95,13 @@ class UserController {
             let result = {};
             let resultChange : boolean | null = null;
             if (undefined !== change.newSetting) {
-                resultChange = await UserModel.changeSetting(userID, JSON.stringify(change.newSetting))
+                resultChange = await userModel.changeSetting(userID, JSON.stringify(change.newSetting))
             }
             if (undefined !== change.newEmail) {
-                resultChange = await UserModel.changeEmail(userID, change.newEmail);
+                resultChange = await userModel.changeEmail(userID, change.newEmail);
             }
             if (undefined !== change.newPassword) {
-                resultChange = await UserModel.changePassword(userID, await Authentication.hashPassword(change.newPassword))
+                resultChange = await userModel.changePassword(userID, await Authentication.hashPassword(change.newPassword))
             }
             if (null === resultChange) {
                 return {
@@ -124,8 +124,8 @@ class UserController {
     }
 
     static async deleteUser(userID: string) {
-        DeviceModel.deleteUserDevice(userID);
-        const result = await UserModel.deleteUser(userID);
+        deviceModel.deleteUserDevice(userID);
+        const result = await userModel.deleteUser(userID);
         return result;
     }
 
