@@ -15,7 +15,8 @@ const deviceModel = {
                 apiKey: apiKey,
                 adaUsername: adaUsername
             }]);
-            console.log("Insert device from user " + result[0].userID + " with device id " + result[0]._id);
+            deviceModel.removeDeviceSchedule(deviceID, userID);
+            console.log("Insert device from user " + result[0].userID + " with device id " + result[0].id);
             return result[0];
         } catch (error) {
             console.log(error);
@@ -125,7 +126,7 @@ const deviceModel = {
                 return false;
             }
             const result = await DeviceMongoModel.updateOne({id: deviceID}, {$unset: { schedules: [[]]} }).lean().exec();
-            console.log(result);
+            // console.log(result);
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -170,7 +171,9 @@ const deviceModel = {
 
     async getAllSensorData() {
         return DeviceMongoModel.find({
-            schedules: [undefined, null]
+            schedules: {
+                $exists: false
+            }
         }).lean().exec();
     },
 
