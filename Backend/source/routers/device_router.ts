@@ -3,7 +3,7 @@ import authRequest from "../middleware/expressAuth.js";
 import DeviceController from "../controllers/device_controllers.js";
 import DataModel from "../database/models/data_model.js";
 import UserController from "../controllers/user_controller.js";
-import DeviceModel from "../database/models/device_model.js";
+import deviceModel from "../database/models/device_model.js";
 
 const DeviceRouter = express.Router();
 
@@ -62,7 +62,7 @@ DeviceRouter.post('/device/duplicateKey', authRequest, async (request, response)
             return response.status(400).json({"error": "Missing key to check"});
         }
 
-        if (await DeviceModel.checkKey(key, username)) {
+        if (await deviceModel.checkKey(key, username)) {
             return response.status(200).json({
                 "result": false
             });
