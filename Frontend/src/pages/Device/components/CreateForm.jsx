@@ -14,7 +14,6 @@ import { useForm, Controller } from 'react-hook-form';
 import SelectInput from '../../../components/SelectInput';
 import useMutateDevice from '../hooks/useMutateDevice';
 import useCheckAndSave from '../hooks/useCheckApiKey';
-import { v4 } from 'uuid';
 
 const deviceType = [
   {
@@ -35,8 +34,6 @@ export default function CreateForm(props) {
   const { onSaveData } = useMutateDevice();
   const { onCheckAndSave } = useCheckAndSave();
   const { open, handleClose } = props;
-  // const [apiError, setApiError] = useState(false);
-  // const [nameError, setNameError] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
     api: false,
     name: false
@@ -46,6 +43,7 @@ export default function CreateForm(props) {
 
   const submitForm = (data) => {
     const id = data?.name;
+    console.log({ ...data, deviceID: id });
     onCheckAndSave({ ...data, deviceID: id });
     setTimeout(() => {
       const deviceNameError = localStorage.getItem('deviceNameError');
@@ -100,6 +98,16 @@ export default function CreateForm(props) {
                   required
                 />
               )}
+              required
+            />
+            <TextField
+              id="adaUserName"
+              name="adaUserName"
+              size="small"
+              fullWidth
+              label="Adafruit user name"
+              {...register('adaUserName')}
+              control
               required
             />
             <TextField

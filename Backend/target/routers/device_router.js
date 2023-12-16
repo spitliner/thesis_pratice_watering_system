@@ -55,6 +55,7 @@ DeviceRouter.post('/device/duplicateKey', authRequest, async (request, response)
     try {
         const key = request.body.apiKey;
         const username = request.body.adaUsername;
+        console.log("-----receive request.body: -------", request.body);
         if (undefined === key) {
             return response.status(400).json({ "error": "Missing key to check" });
         }
