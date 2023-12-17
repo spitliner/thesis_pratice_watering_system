@@ -1,41 +1,43 @@
+import crypto from 'node:crypto';
 import dotenv from 'dotenv';
-dotenv.config();
 import argon2 from 'argon2';
 import * as jose from 'jose';
-import crypto from 'node:crypto';
-import { privateKey, publicKey } from "../config/loadKeyPair.js";
-class Authentication {
-    static async hashPassword(password) {
+import { privateKey, publicKey } from '../config/loadKeyPair.js';
+dotenv.config();
+const authentication = {
+    async hashPassword(password) {
         return argon2.hash(password, {
             type: argon2.argon2id,
             hashLength: 100,
             timeCost: 4,
         });
-    }
-    static async verifyPassword(password, hash) {
+    },
+    async verifyPassword(password, hash) {
         return argon2.verify(hash, password);
-    }
-    static async createToken(payload) {
-        payload["padding"] = crypto.randomBytes(48).toString('base64');
+    },
+    async createToken(payload) {
+        payload.padding = crypto.randomBytes(48).toString('base64');
         return new jose.SignJWT(payload)
-            .setProtectedHeader({ alg: "EdDSA" }) //Ed25519
+            .setProtectedHeader({ alg: 'EdDSA' }) // Ed25519
             .setExpirationTime('12h')
             .setNotBefore('0.1s')
             .sign(privateKey);
-    }
-    static async verifyToken(token) {
+    },
+    async verifyToken(token) {
         try {
             const { payload, protectedHeader } = await jose.jwtVerify(token, publicKey, {
-                algorithms: ["EdDSA"]
+                algorithms: ['EdDSA'],
             });
             return payload;
         }
-        catch (err) {
-            console.log(err);
-            return { "error": "invalid token" };
+        catch (error) {
+            console.log(error);
+            return {
+                error: 'invalid token',
+            };
         }
-    }
-}
+    },
+};
 /*
 Authentication.createToken({a: "b"}).then(async (result) => {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -46,4 +48,4 @@ await sleep(1000);
     })
 });
 */
-export default Authentication;
+export default authentication;

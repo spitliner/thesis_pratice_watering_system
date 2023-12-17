@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
-import DeviceSchema from "../schema/device_schema.js";
+import mongoose from 'mongoose';
+import deviceSchema from '../schema/device-schema.js';
 
-const DeviceMongoModel = mongoose.model("device", DeviceSchema);
+const deviceMongoModel = mongoose.model('device', deviceSchema);
 
 const deviceModel = {
     async insertDevice(deviceID: string, userID: string, deviceType: string, deviceName: string, deviceSettings: string, apiKey: string, adaUsername: string) {
         try {
-            const result = await DeviceMongoModel.insertMany([{
+            const result = await deviceMongoModel.insertMany([{
                 id: deviceID,
                 userID: userID,
                 type: deviceType,
@@ -15,8 +15,9 @@ const deviceModel = {
                 apiKey: apiKey,
                 adaUsername: adaUsername
             }]);
-            deviceModel.removeDeviceSchedule(deviceID, userID);
-            console.log("Insert device from user " + result[0].userID + " with device id " + result[0].id);
+
+            await deviceModel.removeDeviceSchedule(deviceID, userID);
+            console.log('Insert device from user ' + result[0].userID + ' with device id ' + String(result[0].id));
             return result[0];
         } catch (error) {
             console.log(error);
@@ -25,28 +26,27 @@ const deviceModel = {
     },
 
     async getDevice(deviceID: string) {
-        return DeviceMongoModel.findOne({id: deviceID}, "-__v").exec();
+        return deviceMongoModel.findOne({id: deviceID}, '-__v').exec();
     },
 
     async getDeviceData(deviceID: string, userID: string) {
-        return DeviceMongoModel.findOne({id: deviceID, userID: userID}, "-__v -_id -userID").lean().exec();
+        return deviceMongoModel.findOne({id: deviceID, userID: userID}, '-__v -_id -userID').lean().exec();
     },
 
     async getUserDeivceData(userID: string) {
-        return DeviceMongoModel.find({
+        return deviceMongoModel.find({
             userID: userID
-        }).select("-__v -_id -userID").lean().exec();
+        }).select('-__v -_id -userID').lean().exec();
     },
 
     async checkID(deviceID: string) {
-        return 0 === await DeviceMongoModel.countDocuments({
-            id: deviceID
+        return 0 === await deviceMongoModel.countDocuments({
+            id: deviceID,
         }).lean().exec();
     },
 
-
     async checkKey(APIkey: string, adaUsername: string) {
-        return 0 === await DeviceMongoModel.countDocuments({
+        return 0 === await deviceMongoModel.countDocuments({
             apiKey: APIkey,
             adaUsername: adaUsername
         }).lean().exec();
@@ -57,10 +57,13 @@ const deviceModel = {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
-            } else if (userID !== device.userID) {
+            }
+
+            if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {name: newName}).lean().exec();
+
+            const result = await deviceMongoModel.updateOne({id: deviceID}, {name: newName}).lean().exec();
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -73,10 +76,13 @@ const deviceModel = {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
-            } else if (userID !== device.userID) {
+            }
+
+            if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {type: editdType}).lean().exec();
+
+            const result = await deviceMongoModel.updateOne({id: deviceID}, {type: editdType}).lean().exec();
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -89,10 +95,13 @@ const deviceModel = {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
-            } else if (userID !== device.userID) {
+            }
+
+            if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {settings: newSetting}).lean().exec();
+
+            const result = await deviceMongoModel.updateOne({id: deviceID}, {settings: newSetting}).lean().exec();
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -105,10 +114,13 @@ const deviceModel = {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
-            } else if (userID !== device.userID) {
+            }
+
+            if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {schedules: newSchedule}).lean().exec();
+
+            const result = await deviceMongoModel.updateOne({id: deviceID}, {schedules: newSchedule}).lean().exec();
             console.log(result);
             return result.acknowledged;
         } catch (error) {
@@ -122,10 +134,13 @@ const deviceModel = {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
-            } else if (userID !== device.userID) {
+            }
+
+            if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {$unset: { schedules: [[]]} }).lean().exec();
+
+            const result = await deviceMongoModel.updateOne({id: deviceID}, {$unset: { schedules: [[]]} }).lean().exec();
             // console.log(result);
             return result.acknowledged;
         } catch (error) {
@@ -139,10 +154,13 @@ const deviceModel = {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
-            } else if (userID !== device.userID) {
+            }
+
+            if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({id: deviceID}, {apiKey: apiKey, adaUsername: adaUsername}).lean().exec();
+
+            const result = await deviceMongoModel.updateOne({id: deviceID}, {apiKey: apiKey, adaUsername: adaUsername}).lean().exec();
             return result.acknowledged;
         } catch (error) {
             console.log(error);
@@ -151,43 +169,43 @@ const deviceModel = {
     },
 
     async deleteDevice(deviceID: string, userID: string) {
-        const result = await DeviceMongoModel.deleteOne({
+        const result = await deviceMongoModel.deleteOne({
             id: deviceID,
-            userID: userID
+            userID: userID,
         });
         return 1 === result.deletedCount;
     },
 
     async deleteUserDevice(userID: string) {
-        const result = await DeviceMongoModel.deleteMany({
-            userID: userID
+        const result = await deviceMongoModel.deleteMany({
+            userID: userID,
         });
         return result.deletedCount;
     },
 
     async getAllDeviceData() {
-        return DeviceMongoModel.find().lean().exec();
+        return deviceMongoModel.find().lean().exec();
     },
 
     async getAllSensorData() {
-        return DeviceMongoModel.find({
+        return deviceMongoModel.find({
             schedules: {
-                $exists: false
-            }
+                $exists: false,
+            },
         }).lean().exec();
     },
 
     async getDeviceWithSchedules(time: string) {
-        return DeviceMongoModel.find({
+        return deviceMongoModel.find({
             schedules: {
                 $elemMatch: {
                     $elemMatch: {
-                        $in : [time]
-                    }
-                }
-            }
+                        $in: [time],
+                    },
+                },
+            },
         }).lean().exec();
-    }
-}
+    },
+};
 
 export default deviceModel;

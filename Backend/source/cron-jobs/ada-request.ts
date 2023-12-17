@@ -1,14 +1,14 @@
-import axios from "axios";
+import axios from 'axios';
 
 const adaConnect = {
     async getFeedData(username: string, feedName: string, key : string) {
         try {
             const result = await axios.get(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, {
                 headers: {
-                    "X-AIO-Key": key,
+                    'X-AIO-Key': key,
                 }
             });
-            const resultArr: [{
+            const resultArray: [{
                 id: string,
                 value: string,
                 feed_id: number,
@@ -17,14 +17,12 @@ const adaConnect = {
                 created_epoch: number,
                 expiration: string
             }] = result.data;
-            const insertData = resultArr.map(dataPoint => {
-                return {
-                    id: dataPoint.id,
-                    deviceID: dataPoint.feed_key,
-                    time: new Date(dataPoint.created_epoch*1000),
-                    data: dataPoint.value
-                }
-            });
+            const insertData = resultArray.map(dataPoint => ({
+                id: dataPoint.id,
+                deviceID: dataPoint.feed_key,
+                time: new Date(dataPoint.created_epoch * 1000),
+                data: dataPoint.value,
+            }));
             return insertData;
         } catch (error) {
             console.log(error);
@@ -34,30 +32,30 @@ const adaConnect = {
 
     async triggerPump(username: string, feedName: string, key : string, time: string) {
         try {
-            axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, 
+            await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, 
                 {
-                    value: 'ON'
+                    value: 'ON',
                 }, {
                     headers: {
-                        "X-AIO-Key": key,
-                    }
+                        'X-AIO-Key': key,
+                    },
                 });
             const waitTime = Number(time);
             setTimeout(() => {}, waitTime);
-            axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, 
-            {
-                value: 'OFF'
-            }, {
-                headers: {
-                    "X-AIO-Key": key,
-                }
-            });
+            await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, 
+                {
+                    value: 'OFF',
+                }, {
+                    headers: {
+                        'X-AIO-Key': key,
+                    },
+                });
             return true;
         } catch (error) {
             console.log(error);
             return false;
         }
-    }
+    },
 };
 
 export default adaConnect;
