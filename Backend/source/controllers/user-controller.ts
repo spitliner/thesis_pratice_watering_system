@@ -1,6 +1,6 @@
-import deviceModel from "../database/models/device_model.js";
-import userModel from "../database/models/user_model.js";
-import Authentication from "../middleware/auth.js";
+import deviceModel from '../database/models/device-model.js';
+import userModel from '../database/models/user-model.js';
+import authentication from '../middleware/auth.js';
 
 
 const userController = {
@@ -9,17 +9,18 @@ const userController = {
             const usr = await userModel.getUserData(userID);
             if (null === usr) {
                 return {
-                    "error": "user not found"
-                }
+                    error: 'user not found',
+                };
             }
+
             return {
-                "usr": usr
-            }
+                usr,
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "database error"
-            }
+                error: 'database error',
+            };
         }
     },
 
@@ -27,21 +28,23 @@ const userController = {
         const usr = await userModel.searchUser(email);
         if (null === usr) {
             return {
-                "error": "user not found"
-            }
+                error: 'user not found',
+            };
         }
-        if (!(await Authentication.verifyPassword(password, usr.password))) {
+
+        if (!(await authentication.verifyPassword(password, usr.password))) {
             return {
-                "error": "wrong password"
-            }
+                error: 'wrong password',
+            };
         }
+
         return {
-            "bearer_token": await Authentication.createToken({
-                "uid": usr.id
+            bearerToken: await authentication.createToken({
+                uid: usr.id,
             }),
-            "uid": usr.id,
-            "tokenType": "jwt"
-        }
+            uid: usr.id,
+            tokenType: 'jwt',
+        };
     },
 
     checkPasswordLength(password: string) {
@@ -101,7 +104,7 @@ const userController = {
                 resultChange = await userModel.changeEmail(userID, change.newEmail);
             }
             if (undefined !== change.newPassword) {
-                resultChange = await userModel.changePassword(userID, await Authentication.hashPassword(change.newPassword))
+                resultChange = await userModel.changePassword(userID, await authentication.hashPassword(change.newPassword))
             }
             if (null === resultChange) {
                 return {
