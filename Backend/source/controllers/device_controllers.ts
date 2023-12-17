@@ -1,8 +1,10 @@
+import adaConnect from "../cron-jobs/ada_request.js";
 import deviceModel from "../database/models/device_model.js";
+import dataController from "./data_controller.js";
 
 
-class DeviceController {
-    static async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUsername: string) {
+const deviceController = {
+    async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUsername: string) {
         try {
             if (false === await deviceModel.checkID(deviceID)) {
                 return {
@@ -25,36 +27,36 @@ class DeviceController {
                 "error": "Server error"
             }
         }
-    }
+    },
 
-    static async getDevice(deviceID: string, userID: string) {
+    async getDevice(deviceID: string, userID: string) {
         try {
             return deviceModel.getDeviceData(deviceID, userID);
         } catch (error) {
             console.log(error);
             return undefined;
         }
-    }
+    },
 
-    static async getUserDevice(userID: string) {
+    async getUserDevice(userID: string) {
         try {
             return deviceModel.getUserDeivceData(userID);
         } catch (error) {
             console.log(error);
             return undefined;
         }
-    }
+    },
 
-    static async deleteDevice(deviceID: string, userID: string) {
+    async deleteDevice(deviceID: string, userID: string) {
         try {
             return deviceModel.deleteDevice(deviceID, userID);
         } catch (error) {
             console.log(error);
             return null;
         }
-    }
+    },
 
-    static async changeSchedule(deviceID: string, userID: string, newSchedule:string[][] | undefined) {
+    async changeSchedule(deviceID: string, userID: string, newSchedule:string[][] | undefined) {
         try {
             let result = null;
             if (undefined === newSchedule) {
@@ -80,9 +82,9 @@ class DeviceController {
                 "error": "unexpected error"
             };
         }
-    }
+    },
 
-    static async changeSettings(deviceID: string, userID: string, newSettings: {[key: string]: unknown}) {
+    async changeSettings(deviceID: string, userID: string, newSettings: {[key: string]: unknown}) {
         try {
             const result = await deviceModel.changeDeviceSettings(deviceID, userID, JSON.stringify(newSettings));
             if (null === result) {
@@ -103,9 +105,9 @@ class DeviceController {
                 "error": "unexpected error"
             };
         }
-    }
+    },
 
-    static async changeType(deviceID: string, userID: string, editedType: string) {
+    async changeType(deviceID: string, userID: string, editedType: string) {
         try {
             const result = await deviceModel.changeDeviceType(deviceID, userID, editedType);
             if (null === result) {
@@ -126,9 +128,9 @@ class DeviceController {
                 "error": "unexpected error"
             };
         }
-    }
+    },
 
-    static async changeName(deviceID: string, userID: string, newName: string) {
+    async changeName(deviceID: string, userID: string, newName: string) {
         try {
             const result = await deviceModel.changeDeviceName(deviceID, userID, newName);
             if (null === result) {
@@ -149,9 +151,9 @@ class DeviceController {
                 "error": "unexpected error"
             };
         }
-    }
+    },
 
-    static async changeAPIkey(deviceID: string, userID: string, newKey: string, newUsername: string) {
+    async changeAPIkey(deviceID: string, userID: string, newKey: string, newUsername: string) {
         try {
             const result = await deviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
             if (null === result) {
@@ -172,18 +174,41 @@ class DeviceController {
                 "error": "unexpected error"
             };
         }
-    }
+    },
 
-    static async triggerDeviceSchedules(time: string) {
+    async triggerDeviceSchedules(time: string) {
         try {
             const deviceList = await deviceModel.getAllSensorData();
             const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
 
-            
+            deviceList.forEach(async device => {
+                try {
+                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.apiKey));
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+
+            actionDeviceList.forEach(async device => {
+                try {
+                    let pumpTime = "1";
+                    if (null !== device.schedules && undefined !== device.schedules) {
+                        for (let schedule of device.schedules) {
+                            if (schedule[0] === time) {
+                                pumpTime = schedule[1];
+                                break;
+                            }
+                        }
+                    }
+                    await adaConnect.triggerPump(device.adaUsername, device.id, device.apiKey, pumpTime);
+                } catch (error) {
+                    console.log(error);
+                }
+            });
         } catch (error) {
             console.log(error);
         }
     }
 }
 
-export default DeviceController;
+export default deviceController;
