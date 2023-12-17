@@ -3,8 +3,8 @@ import userModel from "../database/models/user_model.js";
 import Authentication from "../middleware/auth.js";
 
 
-class UserController {
-    static async getUser(userID: string) {
+const userController = {
+    async getUser(userID: string) {
         try {
             const usr = await userModel.getUserData(userID);
             if (null === usr) {
@@ -21,9 +21,9 @@ class UserController {
                 "error": "database error"
             }
         }
-    }
+    },
 
-    static async login(email: string, password: string) {
+    async login(email: string, password: string) {
         const usr = await userModel.searchUser(email);
         if (null === usr) {
             return {
@@ -42,17 +42,17 @@ class UserController {
             "uid": usr.id,
             "tokenType": "jwt"
         }
-    }
+    },
 
-    static checkPasswordLength(password: string) {
+    checkPasswordLength(password: string) {
         return 12 < password.length;
-    }
+    },
 
-    static checkEmailDublication(email: string) {
+    checkEmailDublication(email: string) {
         return userModel.checkEmail(email);
-    }
+    },
 
-    static async createUser(email: string, password: string) {
+    async createUser(email: string, password: string) {
         try {
             if (!this.checkPasswordLength(password)) {
                 return {
@@ -75,18 +75,18 @@ class UserController {
             }
         }
         
-    }
+    },
 
-    static async getUserDevice(userID: string) {
+    async getUserDevice(userID: string) {
         const result = await deviceModel.getUserDeivceData(userID);
         return result;
-    }
+    },
 
-    static async getDailyReport(userID: string) {
+    async getDailyReport(userID: string) {
 
-    }
+    },
 
-    static async changeUserData(userID: string, change: {
+    async changeUserData(userID: string, change: {
         newSetting?: {[key: string]: unknown},
         newEmail?: string,
         newPassword?: string
@@ -121,9 +121,9 @@ class UserController {
                 "error": "database error"
             }
         }
-    }
+    },
 
-    static async deleteUser(userID: string) {
+    async deleteUser(userID: string) {
         deviceModel.deleteUserDevice(userID);
         const result = await userModel.deleteUser(userID);
         return result;
@@ -132,4 +132,4 @@ class UserController {
     
 }
 
-export default UserController;
+export default userController;

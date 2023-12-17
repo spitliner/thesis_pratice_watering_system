@@ -24,23 +24,23 @@ class DataModel {
         }, "-__v -_id").sort("-time").lean().exec();
     }
 
-    static async insertData(data : [{
+    static async insertData(data : {
         id: string,
         deviceID: string,
         time: Date,
         data: string
-    }]) {
+    }[]) {
         try {
             const bulkUpsert = data.map(doc => ({
                 updateOne: {
                     filter: {id: doc.id},
-                    update: { $set: doc },
+                    update: { $setOnInsert: doc },
                     upsert: true
                 }
             }))
-            const result = await DataMongoModel.insertMany(data);
-            console.log("Insert " + result.length);
-            return true;
+            const result = await DataMongoModel.bulkWrite(bulkUpsert);
+            console.log("Insert " + result.upsertedCount);
+            return !result.hasWriteErrors();
         } catch (error) {
             console.log(error);
             return false;

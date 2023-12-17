@@ -2,8 +2,8 @@ import DataModel from "../database/models/data_model.js";
 import deviceModel from "../database/models/device_model.js";
 
 
-class DataController {
-    static async getData(deviceID: string, userID: string) {
+const dataController = {
+    async getData(deviceID: string, userID: string) {
         try {
             const deviceData = await deviceModel.getDeviceData(deviceID, userID);
             if (null === deviceData) {
@@ -23,11 +23,11 @@ class DataController {
                 error: "Database error"
             }
         }
-    }
+    },
 
-    static async getDataWithin(deviceID: string, userID: string, afterDate: Date) {
+    async getDataWithin(deviceID: string, userID: string, afterDate: Date) {
         try {
-            const deviceData = await deviceModel.getDeviceData(deviceID, userID);
+            const deviceData = await deviceModel.getDevice(deviceID);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -45,11 +45,12 @@ class DataController {
                 error: "Database error"
             }
         }
-    }
+    },
 
-    static async insertFeed(deviceID: string, userID: string, feed: [{id: string, deviceID: string, time: Date, data: string}]) {
+    async insertFeed(deviceID: string, userID: string, feed: {id: string, deviceID: string, time: Date, data: string}[]) {
         try {
-            const deviceData = await deviceModel.getDeviceData(deviceID, userID);
+            const deviceData = await deviceModel.getDevice(deviceID);
+            //console.log(deviceData);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -60,7 +61,7 @@ class DataController {
                 }
             }
 
-            await DataModel.insertData(feed);
+            return await DataModel.insertData(feed);
         } catch (error) {
             console.log(error);
             return {
@@ -71,4 +72,4 @@ class DataController {
     
 }
 
-export default DataController;
+export default dataController;
