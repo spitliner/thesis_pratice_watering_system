@@ -5,6 +5,51 @@ import authRequest from '../middleware/express-auth.js';
 import userController from '../controllers/user-controller.js';
 import deviceController from '../controllers/device-controllers.js';
 const userRouter = express.Router(); // eslint-disable-line new-cap
+userRouter.post('/account/', async (request, response) => {
+    try {
+        const email = request.body.email;
+        const password = request.body.password;
+        if (!(input => {
+            return "string" === typeof input;
+        })(email) || !(input => {
+            return "string" === typeof input;
+        })(password)) {
+            return response.status(400).json({
+                error: 'missing information',
+            });
+        }
+        const usr = await userController.createUser(email, password);
+        if (null === usr) {
+            return response.status(500).json({
+                error: 'unexpected server error',
+            });
+        }
+        if (undefined !== usr.error) {
+            if ('database error' === usr.error) {
+                return response.status(500).json({
+                    error: 'database error',
+                });
+            }
+            return response.status(400).json(usr);
+        }
+        const result = await userController.login(email, password);
+        response.cookie('uid', result.uid, {
+            httpOnly: true,
+            sameSite: 'strict',
+        });
+        response.cookie('tokenType', result.tokenType, {
+            httpOnly: true,
+            sameSite: 'strict',
+        });
+        return response.status(201).json({ token: result.bearerToken });
+    }
+    catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            error: 'unexpected server error',
+        });
+    }
+});
 userRouter.post('/account/email/duplicate', async (request, response) => {
     try {
         const email = request.body.email;
@@ -221,20 +266,6 @@ userRouter.post('/login/', async (request, response) => {
             return response.status(400).json({
                 error: 'missing information',
             });
-        }
-        const usr = await userController.createUser(email, password);
-        if (null === usr) {
-            return response.status(500).json({
-                error: 'unexpected server error',
-            });
-        }
-        if (undefined !== usr.error) {
-            if ('database error' === usr.error) {
-                return response.status(500).json({
-                    error: 'database error',
-                });
-            }
-            return response.status(400).json(usr);
         }
         const result = await userController.login(email, password);
         response.cookie('uid', result.uid, {
