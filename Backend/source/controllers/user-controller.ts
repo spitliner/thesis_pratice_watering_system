@@ -1,120 +1,137 @@
-import deviceModel from "../database/models/device_model.js";
-import userModel from "../database/models/user_model.js";
-import Authentication from "../middleware/auth.js";
+import deviceModel from '../database/models/device-model.js';
+import userModel from '../database/models/user-model.js';
+import authentication from '../middleware/auth.js';
+
 const userController = {
-    async getUser(userID) {
+    async getUser(userID: string) {
         try {
             const usr = await userModel.getUserData(userID);
             if (null === usr) {
                 return {
-                    "error": "user not found"
+                    error: 'user not found',
                 };
             }
+
             return {
-                "usr": usr
+                usr,
             };
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
             return {
-                "error": "database error"
+                error: 'database error',
             };
         }
     },
-    async login(email, password) {
+
+    async login(email: string, password: string) {
         const usr = await userModel.searchUser(email);
         if (null === usr) {
             return {
-                "error": "user not found"
+                error: 'user not found',
             };
         }
-        if (!(await Authentication.verifyPassword(password, usr.password))) {
+
+        if (!(await authentication.verifyPassword(password, usr.password))) {
             return {
-                "error": "wrong password"
+                error: 'wrong password',
             };
         }
+
         return {
-            "bearer_token": await Authentication.createToken({
-                "uid": usr.id
+            bearerToken: await authentication.createToken({
+                uid: usr.id,
             }),
-            "uid": usr.id,
-            "tokenType": "jwt"
+            uid: usr.id,
+            tokenType: 'jwt',
         };
     },
-    checkPasswordLength(password) {
+
+    checkPasswordLength(password: string) {
         return 12 < password.length;
     },
-    checkEmailDublication(email) {
+
+    async checkEmailDublication(email: string) {
         return userModel.checkEmail(email);
     },
-    async createUser(email, password) {
+
+    async createUser(email: string, password: string) {
         try {
             if (!this.checkPasswordLength(password)) {
                 return {
-                    "error": "weak password"
+                    error: 'weak password',
                 };
             }
-            if (!userModel.checkEmail(email)) {
+
+            if (!(await userModel.checkEmail(email))) {
                 return {
-                    "error": "dublicate email"
+                    error: 'dublicate email',
                 };
             }
+
             const usr = await userModel.createUser(email, password);
             return {
-                "usr": usr
+                usr,
             };
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
             return {
-                "error": "database error"
+                error: 'database error',
             };
         }
     },
-    async getUserDevice(userID) {
+
+    async getUserDevice(userID: string) {
         const result = await deviceModel.getUserDeivceData(userID);
         return result;
     },
-    async getDailyReport(userID) {
-    },
-    async changeUserData(userID, change) {
+
+    async changeUserData(userID: string, change: {
+        newSetting?: Record<string, unknown>;
+        newEmail?: string;
+        newPassword?: string;
+    }) {
         try {
-            let result = {};
-            let resultChange = null;
+            let resultChange: boolean | undefined;
             if (undefined !== change.newSetting) {
                 resultChange = await userModel.changeSetting(userID, JSON.stringify(change.newSetting));
             }
+
             if (undefined !== change.newEmail) {
                 resultChange = await userModel.changeEmail(userID, change.newEmail);
             }
+
             if (undefined !== change.newPassword) {
-                resultChange = await userModel.changePassword(userID, await Authentication.hashPassword(change.newPassword));
+                resultChange = await userModel.changePassword(userID, await authentication.hashPassword(change.newPassword));
             }
-            if (null === resultChange) {
+
+            if (undefined === resultChange) {
                 return {
-                    "error": "database error"
+                    error: 'database error',
                 };
             }
-            else if (false === resultChange) {
+
+            if (!resultChange) {
                 return {
-                    "error": "user not found"
+                    error: 'user not found',
                 };
             }
+
             return {
-                "result": "change saved"
+                result: 'change saved',
             };
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
             return {
-                "error": "database error"
+                error: 'database error',
             };
         }
     },
-    async deleteUser(userID) {
-        deviceModel.deleteUserDevice(userID);
+
+    async deleteUser(userID: string) {
+        await deviceModel.deleteUserDevice(userID);
         const result = await userModel.deleteUser(userID);
         return result;
-    }
+    },
 };
+
 export default userController;

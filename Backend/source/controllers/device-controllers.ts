@@ -1,37 +1,38 @@
-import adaConnect from "../cron-jobs/ada_request.js";
-import deviceModel from "../database/models/device_model.js";
-import dataController from "./data_controller.js";
-
+import adaConnect from '../cron-jobs/ada-request.js';
+import deviceModel from '../database/models/device-model.js';
+import dataController from './data-controller.js';
 
 const deviceController = {
     async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUsername: string) {
         try {
-            if (false === await deviceModel.checkID(deviceID)) {
+            if (!(await deviceModel.checkID(deviceID))) {
                 return {
-                    "error": "Device already in use"
-                }
+                    error: 'Device already in use',
+                };
             }
+
             const deviceSetting = {};
-            const device =  await deviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUsername);
+            const device = await deviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUsername);
             if (null === device || undefined === device) {
                 return {
-                    "error": "Database error"
-                }
+                    error: 'Database error',
+                };
             }
+
             return {
-                result: device
-            }
+                result: device,
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "Server error"
-            }
+                error: 'Server error',
+            };
         }
     },
 
     async getDevice(deviceID: string, userID: string) {
         try {
-            return deviceModel.getDeviceData(deviceID, userID);
+            return await deviceModel.getDeviceData(deviceID, userID);
         } catch (error) {
             console.log(error);
             return undefined;
@@ -40,7 +41,7 @@ const deviceController = {
 
     async getUserDevice(userID: string) {
         try {
-            return deviceModel.getUserDeivceData(userID);
+            return await deviceModel.getUserDeivceData(userID);
         } catch (error) {
             console.log(error);
             return undefined;
@@ -49,60 +50,62 @@ const deviceController = {
 
     async deleteDevice(deviceID: string, userID: string) {
         try {
-            return deviceModel.deleteDevice(deviceID, userID);
+            return await deviceModel.deleteDevice(deviceID, userID);
         } catch (error) {
             console.log(error);
             return null;
         }
     },
 
-    async changeSchedule(deviceID: string, userID: string, newSchedule:string[][] | undefined) {
+    async changeSchedule(deviceID: string, userID: string, newSchedule: string[][] | undefined) {
         try {
             let result = null;
-            if (undefined === newSchedule) {
-                result = await deviceModel.removeDeviceSchedule(deviceID, userID);
-            } else {
-                result = await deviceModel.changeDeviceSchedule(deviceID, userID, newSchedule);
-            }
+            result = await (undefined === newSchedule ? deviceModel.removeDeviceSchedule(deviceID, userID) : deviceModel.changeDeviceSchedule(deviceID, userID, newSchedule));
             if (null === result) {
                 return {
-                    "error": "database error"
+                    error: 'database error',
                 };
-            } else if (false === result) {
+            }
+
+            if (!result) {
                 return {
-                    "error": "device not found"
+                    error: 'device not found',
                 };
             }
+
             return {
-                "result": "change save"
-            }
+                result: 'change save',
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "unexpected error"
+                error: 'unexpected error',
             };
         }
     },
 
-    async changeSettings(deviceID: string, userID: string, newSettings: {[key: string]: unknown}) {
+    async changeSettings(deviceID: string, userID: string, newSettings: Record<string, unknown>) {
         try {
             const result = await deviceModel.changeDeviceSettings(deviceID, userID, JSON.stringify(newSettings));
             if (null === result) {
                 return {
-                    "error": "database error"
+                    error: 'database error',
                 };
-            } else if (false === result) {
+            }
+
+            if (!result) {
                 return {
-                    "error": "device not found"
+                    error: 'device not found',
                 };
             }
+
             return {
-                "result": "change save"
-            }
+                result: 'change save',
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "unexpected error"
+                error: 'unexpected error',
             };
         }
     },
@@ -112,20 +115,23 @@ const deviceController = {
             const result = await deviceModel.changeDeviceType(deviceID, userID, editedType);
             if (null === result) {
                 return {
-                    "error": "database error"
+                    error: 'database error',
                 };
-            } else if (false === result) {
+            }
+
+            if (!result) {
                 return {
-                    "error": "device not found"
+                    error: 'device not found',
                 };
             }
+
             return {
-                "result": "change save"
-            }
+                result: 'change save',
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "unexpected error"
+                error: 'unexpected error',
             };
         }
     },
@@ -135,43 +141,50 @@ const deviceController = {
             const result = await deviceModel.changeDeviceName(deviceID, userID, newName);
             if (null === result) {
                 return {
-                    "error": "database error"
+                    error: 'database error',
                 };
-            } else if (false === result) {
+            }
+
+            if (!result) {
                 return {
-                    "error": "device not found"
+                    error: 'device not found',
                 };
             }
+
             return {
-                "result": "change save"
-            }
+                result: 'change save',
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "unexpected error"
+                error: 'unexpected error',
             };
         }
     },
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     async changeAPIkey(deviceID: string, userID: string, newKey: string, newUsername: string) {
         try {
             const result = await deviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
             if (null === result) {
                 return {
-                    "error": "database error"
+                    error: 'database error',
                 };
-            } else if (false === result) {
+            }
+
+            if (!result) {
                 return {
-                    "error": "device not found"
+                    error: 'device not found',
                 };
             }
+
             return {
-                "result": "change save"
-            }
+                result: 'change save',
+            };
         } catch (error) {
             console.log(error);
             return {
-                "error": "unexpected error"
+                error: 'unexpected error',
             };
         }
     },
@@ -181,34 +194,45 @@ const deviceController = {
             const deviceList = await deviceModel.getAllSensorData();
             const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
 
-            deviceList.forEach(async device => {
+            type DeviceData = typeof deviceList[0];
+
+            const collectData = async (device: DeviceData) => {
                 try {
                     await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.apiKey));
                 } catch (error) {
                     console.log(error);
                 }
-            });
+            };
 
-            actionDeviceList.forEach(async device => {
+            const triggerSchedule = async (device: DeviceData) => {
                 try {
-                    let pumpTime = "1";
+                    let pumpTime = '1';
                     if (null !== device.schedules && undefined !== device.schedules) {
-                        for (let schedule of device.schedules) {
+                        for (const schedule of device.schedules) {
                             if (schedule[0] === time) {
-                                pumpTime = schedule[1];
+                                pumpTime = String(schedule[1]);
                                 break;
                             }
                         }
                     }
+
                     await adaConnect.triggerPump(device.adaUsername, device.id, device.apiKey, pumpTime);
                 } catch (error) {
                     console.log(error);
                 }
-            });
+            };
+
+            for (const device of deviceList) {
+                void collectData(device);
+            }
+
+            for (const device of actionDeviceList) {
+                void triggerSchedule(device);
+            }
         } catch (error) {
             console.log(error);
         }
-    }
-}
+    },
+};
 
 export default deviceController;
