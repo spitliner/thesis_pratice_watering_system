@@ -33,12 +33,14 @@ userRouter.post('/account/email/duplicate', async (request, response) => {
 });
 userRouter.post('/account/password', async (request, response) => {
     try {
-        const password = String(request.body.password);
-        const userID = String(request.cookies.uid);
-        if ("undefined" === password) {
-            return response.status(400).json({
-                "error": "missing info"
-            });
+        const password = request.body.password;
+        const userID = request.cookies.uid;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(password)) {
+            return response.status(401).json({ error: 'missing info' });
         }
         const result = await userController.changeUserData(userID, { newPassword: password });
         if (undefined !== result.error) {
@@ -49,22 +51,24 @@ userRouter.post('/account/password', async (request, response) => {
     catch (error) {
         console.log(error);
         return response.status(500).json({
-            "error": "unexpected server error"
+            error: 'unexpected server error',
         });
     }
 });
 userRouter.post('/account/email', async (request, response) => {
     try {
-        const email = String(request.body.email);
-        const userID = String(request.cookies.uid);
-        if ("undefined" === email) {
-            return response.status(400).json({
-                "error": "missing info"
-            });
+        const email = request.body.email;
+        const userID = request.cookies.uid;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(email)) {
+            return response.status(401).json({ error: 'missing info' });
         }
         if (!(await userController.checkEmailDublication(email))) {
             return response.status(400).json({
-                "error": "email already in use"
+                error: 'email already in use',
             });
         }
         const result = await userController.changeUserData(userID, { newEmail: email });

@@ -9,8 +9,10 @@ import deviceModel from '../database/models/device-model.js';
 const deviceRouter = express.Router(); // eslint-disable-line new-cap
 deviceRouter.get('/device/', authRequest, async (request, response) => {
     try {
-        const userID = String(request.cookies.uid);
-        if (undefined === userID) {
+        const userID = request.cookies.uid;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID)) {
             return response.status(400).json({ error: 'missing info' });
         }
         const deviceList = await userController.getUserDevice(userID);
@@ -27,9 +29,11 @@ deviceRouter.get('/device/', authRequest, async (request, response) => {
 });
 deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => {
     try {
-        const userID = String(request.cookies.uid);
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        if (undefined === deviceID) {
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID)) {
             return response.status(400).json({ error: 'missing info' });
         }
         const deviceInfo = await deviceController.getDevice(deviceID, userID);
