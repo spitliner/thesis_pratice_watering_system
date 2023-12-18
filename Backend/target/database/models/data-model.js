@@ -26,7 +26,7 @@ const dataModel = {
                 },
             }));
             const result = await dataMongoModel.bulkWrite(bulkUpsert);
-            console.log('Insert ' + result.upsertedCount);
+            console.log('Insert ' + result.upsertedCount + ' for device with id ' + data[0].id);
             return !result.hasWriteErrors();
         }
         catch (error) {

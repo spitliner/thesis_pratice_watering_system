@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import express from 'express';
+import typia from 'typia';
 import authRequest from '../middleware/express-auth.js';
 import deviceController from '../controllers/device-controllers.js';
 import dataModel from '../database/models/data-model.js';
@@ -9,8 +11,9 @@ const deviceRouter = express.Router(); // eslint-disable-line new-cap
 
 deviceRouter.get('/device/', authRequest, async (request, response) => {
     try {
-        const userID = String(request.cookies.uid);
-        if (undefined === userID) {
+        const userID: unknown = request.cookies.uid;
+
+        if (!typia.is<string>(userID)) {
             return response.status(400).json({error: 'missing info'});
         }
 
@@ -28,9 +31,10 @@ deviceRouter.get('/device/', authRequest, async (request, response) => {
 
 deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => {
     try {
-        const userID = String(request.cookies.uid);
+        const userID: unknown = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        if (undefined === deviceID) {
+
+        if (!typia.is<string>(userID)) {
             return response.status(400).json({error: 'missing info'});
         }
 
@@ -48,22 +52,22 @@ deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
         return response.status(200).json({
             info: deviceInfo,
             feed: await dataModel.getData(deviceID),
-        })
+        });
     } catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 
 deviceRouter.post('/device/duplicateKey', authRequest, async (request, response) => {
     try {
-        const key: string = request.body.apiKey;
-        const username: string = request.body.adaUsername;
+        const key: unknown = request.body.apiKey;
+        const username: unknown = request.body.adaUsername;
 
-        if (undefined === key) {
-            return response.status(400).json({error: 'Missing key to check'});
+        if (!typia.is<string>(key) || !typia.is<string>(username)) {
+            return response.status(400).json({error: 'missing key to check'});
         }
 
         if (await deviceModel.checkKey(key, username)) {
@@ -85,9 +89,13 @@ deviceRouter.post('/device/duplicateKey', authRequest, async (request, response)
 
 deviceRouter.post('/device/:deviceID/settings', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
-        const {newSettings} = request.body;
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+        const newSettings: unknown = request.body.newSettings;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<Record<string, unknown>>(newSettings)) {
+            return response.status(400).json({error: 'missing info'});
+        }
 
         const result = await deviceController.changeSettings(deviceID, userID, newSettings);
 
@@ -99,16 +107,20 @@ deviceRouter.post('/device/:deviceID/settings', authRequest, async (request, res
     } catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 
 deviceRouter.post('/device/:deviceID/name', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
-        const {newName} = request.body;
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+        const newName: unknown = request.body.newName;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string>(newName)) {
+            return response.status(400).json({error: 'missing info'});
+        }
 
         const result = await deviceController.changeName(deviceID, userID, newName);
 
@@ -127,9 +139,13 @@ deviceRouter.post('/device/:deviceID/name', authRequest, async (request, respons
 
 deviceRouter.post('/device/:deviceID/type', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
-        const {type} = request.body;
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+        const type: unknown = request.body.type;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string>(type)) {
+            return response.status(400).json({error: 'missing info'});
+        }
 
         const result = await deviceController.changeType(deviceID, userID, type);
 
@@ -141,16 +157,21 @@ deviceRouter.post('/device/:deviceID/type', authRequest, async (request, respons
     } catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 
 deviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
-        const {schedules} = request.body;
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+        const schedules: unknown = request.body.schedules;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string[][]>(schedules)) {
+            return response.status(400).json({error: 'missing info'});
+        }
+
         const result = await deviceController.changeSchedule(deviceID, userID, schedules);
 
         if (undefined === result.error) {
@@ -161,16 +182,21 @@ deviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, re
     } catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 
 deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
-        const {apiKey, adaUsername} = request.body;
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+        const apiKey: unknown = request.body.apiKey;
+        const adaUsername: unknown = request.body.adaUsername;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string>(apiKey) || !typia.is<string>(adaUsername)) {
+            return response.status(400).json({error: 'missing info'});
+        }
 
         const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
 
@@ -189,8 +215,12 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
 
 deviceRouter.post('/device/delete/:deviceID', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID)) {
+            return response.status(400).json({error: 'missing info'});
+        }
 
         const result = await deviceController.deleteDevice(deviceID, userID);
 
@@ -211,11 +241,13 @@ deviceRouter.post('/device/delete/:deviceID', authRequest, async (request, respo
 
 deviceRouter.get('/device/:deviceID/feed', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
-        const deviceID = request.params.deviceID;
-        if (undefined === deviceID) {
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID)) {
             return response.status(400).json({error: 'missing info'});
         }
+
         const deviceInfo = await deviceController.getDevice(deviceID, userID);
         if (null === deviceInfo) {
             return response.status(404).json({error: 'device not found'});
