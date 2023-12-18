@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import DeviceSchema from "../schema/device_schema.js";
 const DeviceMongoModel = mongoose.model("device", DeviceSchema);
-class DeviceModel {
-    static async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings, apiKey, adaUsername) {
+const deviceModel = {
+    async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings, apiKey, adaUsername) {
         try {
             const result = await DeviceMongoModel.insertMany([{
                     id: deviceID,
@@ -11,41 +11,42 @@ class DeviceModel {
                     name: deviceName,
                     settings: deviceSettings,
                     apiKey: apiKey,
-                    adaUserName: adaUsername
+                    adaUsername: adaUsername
                 }]);
-            console.log("Insert device from user " + result[0].userID + " with device id " + result[0]._id);
+            deviceModel.removeDeviceSchedule(deviceID, userID);
+            console.log("Insert device from user " + result[0].userID + " with device id " + result[0].id);
             return result[0];
         }
         catch (error) {
             console.log(error);
             return null;
         }
-    }
-    static async getDevice(deviceID) {
+    },
+    async getDevice(deviceID) {
         return DeviceMongoModel.findOne({ id: deviceID }, "-__v").exec();
-    }
-    static async getDeviceData(deviceID, userID) {
+    },
+    async getDeviceData(deviceID, userID) {
         return DeviceMongoModel.findOne({ id: deviceID, userID: userID }, "-__v -_id -userID").lean().exec();
-    }
-    static async getUserDeivceData(userID) {
+    },
+    async getUserDeivceData(userID) {
         return DeviceMongoModel.find({
             userID: userID
         }).select("-__v -_id -userID").lean().exec();
-    }
-    static async checkID(deviceID) {
+    },
+    async checkID(deviceID) {
         return 0 === await DeviceMongoModel.countDocuments({
             id: deviceID
         }).lean().exec();
-    }
-    static async checkKey(APIkey, adaUserName) {
+    },
+    async checkKey(APIkey, adaUsername) {
         return 0 === await DeviceMongoModel.countDocuments({
             apiKey: APIkey,
-            adaUserName: adaUserName
+            adaUsername: adaUsername
         }).lean().exec();
-    }
-    static async changeDeviceName(deviceID, userID, newName) {
+    },
+    async changeDeviceName(deviceID, userID, newName) {
         try {
-            const device = await DeviceModel.getDevice(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
             }
@@ -59,10 +60,10 @@ class DeviceModel {
             console.log(error);
             return null;
         }
-    }
-    static async changeDeviceType(deviceID, userID, editdType) {
+    },
+    async changeDeviceType(deviceID, userID, editdType) {
         try {
-            const device = await DeviceModel.getDevice(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
             }
@@ -76,10 +77,10 @@ class DeviceModel {
             console.log(error);
             return null;
         }
-    }
-    static async changeDeviceSettings(deviceID, userID, newSetting) {
+    },
+    async changeDeviceSettings(deviceID, userID, newSetting) {
         try {
-            const device = await DeviceModel.getDevice(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
             }
@@ -93,10 +94,10 @@ class DeviceModel {
             console.log(error);
             return null;
         }
-    }
-    static async changeDeviceSchedule(deviceID, userID, newSchedule) {
+    },
+    async changeDeviceSchedule(deviceID, userID, newSchedule) {
         try {
-            const device = await DeviceModel.getDevice(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
             }
@@ -111,10 +112,10 @@ class DeviceModel {
             console.log(error);
             return null;
         }
-    }
-    static async removeDeviceSchedule(deviceID, userID) {
+    },
+    async removeDeviceSchedule(deviceID, userID) {
         try {
-            const device = await DeviceModel.getDevice(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
             }
@@ -122,53 +123,55 @@ class DeviceModel {
                 return false;
             }
             const result = await DeviceMongoModel.updateOne({ id: deviceID }, { $unset: { schedules: [[]] } }).lean().exec();
-            console.log(result);
+            // console.log(result);
             return result.acknowledged;
         }
         catch (error) {
             console.log(error);
             return null;
         }
-    }
-    static async changeAPIkey(deviceID, userID, apiKey, adaUserName) {
+    },
+    async changeAPIkey(deviceID, userID, apiKey, adaUsername) {
         try {
-            const device = await DeviceModel.getDevice(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return false;
             }
             else if (userID !== device.userID) {
                 return false;
             }
-            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey, adaUserName: adaUserName }).lean().exec();
+            const result = await DeviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey, adaUsername: adaUsername }).lean().exec();
             return result.acknowledged;
         }
         catch (error) {
             console.log(error);
             return null;
         }
-    }
-    static async deleteDevice(deviceID, userID) {
+    },
+    async deleteDevice(deviceID, userID) {
         const result = await DeviceMongoModel.deleteOne({
             id: deviceID,
             userID: userID
         });
         return 1 === result.deletedCount;
-    }
-    static async deleteUserDevice(userID) {
+    },
+    async deleteUserDevice(userID) {
         const result = await DeviceMongoModel.deleteMany({
             userID: userID
         });
         return result.deletedCount;
-    }
-    static async getAllDeviceData() {
+    },
+    async getAllDeviceData() {
         return DeviceMongoModel.find().lean().exec();
-    }
-    static async getAllSensorData() {
+    },
+    async getAllSensorData() {
         return DeviceMongoModel.find({
-            schedules: [undefined, null]
+            schedules: {
+                $exists: false
+            }
         }).lean().exec();
-    }
-    static async getDeviceWithSchedules(time) {
+    },
+    async getDeviceWithSchedules(time) {
         return DeviceMongoModel.find({
             schedules: {
                 $elemMatch: {
@@ -179,5 +182,5 @@ class DeviceModel {
             }
         }).lean().exec();
     }
-}
-export default DeviceModel;
+};
+export default deviceModel;

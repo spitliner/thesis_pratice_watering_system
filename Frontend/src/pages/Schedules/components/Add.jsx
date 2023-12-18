@@ -8,6 +8,11 @@ import Typography from '@mui/material/Typography';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
 import { useNavigate } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
+import { deviceType } from '../../../constants/device';
+import { InputAdornment } from '@mui/material';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 function Add() {
   const { onSaveDataById } = useMutateDeviceById();
@@ -16,7 +21,7 @@ function Add() {
 
   const [selectedTime, setSelectedTime] = useState('');
   const [device, setDevice] = useState('');
-  const [water, setWater] = useState('');
+  const [duration, setDuration] = useState('');
 
   const handleCancel = () => {
     navigate('/schedules');
@@ -27,18 +32,87 @@ function Add() {
   };
 
   const handleTimeChange = (event) => {
+    console.log(event.target.value);
     setSelectedTime(event.target.value);
   };
 
-  const handleWaterChange = (event) => {
-    setWater(event.target.value);
+  const handleDurationChange = (event) => {
+    setDuration(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission logic here
-    onSaveDataById([device, 'schedules', { schedules: [selectedTime, water] }]);
+    const selectedDevice = deviceList?.find((item) => item.id === device);
+    debugger;
+    // for (let i in selectedDevice?.schedules) {
+    //   const startTime = selectedDevice.schedules[i][0];
+    //   const existSchedule = dayjs(startTime, 'HH:mm');
+    //   const newSchedule = dayjs(selectedTime, 'HH:mm');
+    //   let betweenTime = 0;
+    //   if (newSchedule.isAfter(existSchedule)) {
+    //     betweenTime = Math.abs(
+    //       newSchedule.diff(
+    //         existSchedule.add(Number(selectedDevice.schedules[i][1]), 'second'),
+    //         'second'
+    //       )
+    //     );
+    //   }
+    //   if (newSchedule.isBefore(existSchedule)) {
+    //     betweenTime = Math.abs(
+    //       newSchedule
+    //         .add(Number(duration), 'second')
+    //         .diff(existSchedule, 'second')
+    //     );
+    //   }
+    //   if (betweenTime < 300) return;
+    // }
+    // debugger;
+    // selectedDevice?.schedules
+    //   ? selectedDevice.schedules.push([selectedTime, duration])
+    //   : [selectedTime, duration];
+    // onSaveDataById([
+    //   device,
+    //   'schedules',
+    //   {
+    //     schedules: selectedDevice?.schedules
+    //   }
+    // ]);
+    const newSchedule = dayjs(selectedTime, 'HH:mm');
+
+    for (const [startTime, scheduleDuration] of selectedDevice.schedules) {
+      const existSchedule = dayjs(startTime, 'HH:mm');
+      const betweenTime = Math.abs(
+        newSchedule.isAfter(existSchedule)
+          ? Math.abs(
+              newSchedule.diff(
+                existSchedule.add(Number(scheduleDuration), 'second'),
+                'second'
+              )
+            )
+          : newSchedule
+              .add(Number(duration), 'second')
+              .diff(existSchedule, 'second')
+      );
+
+      if (betweenTime < 60) {
+        return; // Nếu khoảng thời gian nhỏ hơn 300 giây, ngừng xử lý
+      }
+    }
+
+    selectedDevice.schedules.push([selectedTime, duration]);
+
+    onSaveDataById([
+      device,
+      'schedules',
+      {
+        schedules: selectedDevice.schedules
+      }
+    ]);
   };
+
+  const waterDevices = deviceList?.filter(
+    (device) => device.type === deviceType.water
+  );
 
   if (!deviceList) return null;
   return (
@@ -78,29 +152,27 @@ function Add() {
               fullWidth
               select
               sx={{ mb: 2, mt: 3 }}
-              InputLabelProps={{ shrink: true }}
               value={device}
               onChange={handleDeviceChange}
               required
             >
-              {/* <MenuItem value="KV101">KV101</MenuItem>
-              <MenuItem value="KV102">KV102</MenuItem>
-              <MenuItem value="DV03">DV03</MenuItem>
-              <MenuItem value="DV04">DV04</MenuItem>
-              <MenuItem value="DV05">DV05</MenuItem> */}
-              {deviceList?.map(
-                (device) =>
-                  device.type === 'Watering' && (
-                    <MenuItem key={device.id} value={device.id}>
-                      {device.id}
-                    </MenuItem>
-                  )
+              {waterDevices?.map((device) => (
+                <MenuItem key={device.id} value={device.id}>
+                  {device.id}
+                </MenuItem>
+              ))}
+              {waterDevices?.length === 0 && (
+                <MenuItem sx={{ fontStyle: 'italic', color: 'gray' }}>
+                  No watering device
+                </MenuItem>
               )}
             </TextField>
 
             <TextField
               type="time"
+              label="Start time"
               variant="outlined"
+              InputLabelProps={{ shrink: true }}
               fullWidth
               value={selectedTime}
               onChange={handleTimeChange}
@@ -110,12 +182,18 @@ function Add() {
 
             <TextField
               type="number"
-              label="Amount of Water"
+              label="Duration time"
               variant="outlined"
               fullWidth
               sx={{ mb: 2 }}
-              value={water}
-              onChange={handleWaterChange}
+              value={duration}
+              onChange={handleDurationChange}
+              InputProps={{
+                inputProps: { min: 0 },
+                endAdornment: (
+                  <InputAdornment position="end">seconds</InputAdornment>
+                )
+              }}
               required
             />
 

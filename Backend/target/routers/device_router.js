@@ -1,9 +1,9 @@
 import express from "express";
 import authRequest from "../middleware/expressAuth.js";
-import DeviceController from "../controllers/device_controllers.js";
+import deviceController from "../controllers/device_controllers.js";
 import DataModel from "../database/models/data_model.js";
-import UserController from "../controllers/user_controller.js";
-import DeviceModel from "../database/models/device_model.js";
+import userController from "../controllers/user_controller.js";
+import deviceModel from "../database/models/device_model.js";
 const DeviceRouter = express.Router();
 DeviceRouter.get('/device/', authRequest, async (request, response) => {
     try {
@@ -11,7 +11,7 @@ DeviceRouter.get('/device/', authRequest, async (request, response) => {
         if (undefined === userID) {
             return response.status(400).json({ "error": "missing info" });
         }
-        const deviceList = await UserController.getUserDevice(userID);
+        const deviceList = await userController.getUserDevice(userID);
         return response.status(200).json({
             "deviceList": deviceList
         });
@@ -30,7 +30,7 @@ DeviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
         if (undefined === deviceID) {
             return response.status(400).json({ "error": "missing info" });
         }
-        const deviceInfo = await DeviceController.getDevice(deviceID, userID);
+        const deviceInfo = await deviceController.getDevice(deviceID, userID);
         if (null === deviceInfo) {
             return response.status(404).json({ "error": "device not found" });
         }
@@ -55,11 +55,10 @@ DeviceRouter.post('/device/duplicateKey', authRequest, async (request, response)
     try {
         const key = request.body.apiKey;
         const username = request.body.adaUsername;
-        console.log("-----receive request.body: -------", request.body);
         if (undefined === key) {
             return response.status(400).json({ "error": "Missing key to check" });
         }
-        if (await DeviceModel.checkKey(key, username)) {
+        if (await deviceModel.checkKey(key, username)) {
             return response.status(200).json({
                 "result": false
             });
@@ -80,7 +79,7 @@ DeviceRouter.post('/device/:deviceID/settings', authRequest, async (request, res
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
         const { newSettings } = request.body;
-        const result = await DeviceController.changeSettings(deviceID, userID, newSettings);
+        const result = await deviceController.changeSettings(deviceID, userID, newSettings);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -98,7 +97,7 @@ DeviceRouter.post('/device/:deviceID/name', authRequest, async (request, respons
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
         const { newName } = request.body;
-        const result = await DeviceController.changeName(deviceID, userID, newName);
+        const result = await deviceController.changeName(deviceID, userID, newName);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -116,7 +115,7 @@ DeviceRouter.post('/device/:deviceID/type', authRequest, async (request, respons
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
         const { type } = request.body;
-        const result = await DeviceController.changeType(deviceID, userID, type);
+        const result = await deviceController.changeType(deviceID, userID, type);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -134,7 +133,7 @@ DeviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, re
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
         const { schedules } = request.body;
-        const result = await DeviceController.changeSchedule(deviceID, userID, schedules);
+        const result = await deviceController.changeSchedule(deviceID, userID, schedules);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -152,7 +151,7 @@ DeviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
         const { apiKey, adaUsername } = request.body;
-        const result = await DeviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
+        const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
@@ -169,7 +168,7 @@ DeviceRouter.post('/device/delete/:deviceID', authRequest, async (request, respo
     try {
         const userID = request.cookies["uid"];
         const deviceID = request.params.deviceID;
-        const result = await DeviceController.deleteDevice(deviceID, userID);
+        const result = await deviceController.deleteDevice(deviceID, userID);
         if (null === result) {
             return response.status(500).json({
                 "error": "Database error"
@@ -191,7 +190,7 @@ DeviceRouter.get('/device/:deviceID/feed', authRequest, async (request, response
         if (undefined === deviceID) {
             return response.status(400).json({ "error": "missing info" });
         }
-        const deviceInfo = await DeviceController.getDevice(deviceID, userID);
+        const deviceInfo = await deviceController.getDevice(deviceID, userID);
         if (null === deviceInfo) {
             return response.status(404).json({ "error": "device not found" });
         }

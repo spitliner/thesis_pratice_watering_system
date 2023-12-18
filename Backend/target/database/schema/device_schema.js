@@ -5,7 +5,7 @@ const DeviceSchema = new mongoose.Schema({
     name: { type: String, required: true },
     type: { type: String, required: true },
     apiKey: { type: String, required: true },
-    adaUserName: { type: String, required: true, index: 1 },
+    adaUsername: { type: String, required: true },
     settings: { type: String, required: true },
     schedules: { type: [[String]], required: false },
 });

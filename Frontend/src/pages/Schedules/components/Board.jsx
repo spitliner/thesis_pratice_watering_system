@@ -13,16 +13,8 @@ import { Link } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
-
-const data = [
-  ['KV01', '8:00', '500'],
-  ['KV01', '10:00', '250'],
-  ['KV03', '4:00', '1000'],
-  ['KV04', '4:00', '1000'],
-  ['KV01', '15:00', '1000'],
-  ['KV05', '8:00', '500'],
-  ['KV05', '5:00', '500']
-];
+import { Typography } from '@mui/material';
+import { deviceType } from '../../../constants/device';
 
 function Board() {
   const { deviceList } = useQueryDevice();
@@ -84,7 +76,7 @@ function Board() {
                   textAlign: 'center'
                 }}
               >
-                WATER (ML)
+                DURATION (seconds)
               </TableCell>
               <TableCell
                 sx={{
@@ -98,10 +90,12 @@ function Board() {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {deviceList?.map(
               (device, index) =>
-                device.type === 'Watering' && (
+                device.type === deviceType.water &&
+                device?.schedules && (
                   <TableRow
                     key={index}
                     sx={{ border: 1, borderColor: '#e0e0e0' }}
@@ -116,22 +110,32 @@ function Board() {
                     >
                       {device.id}
                     </TableCell>
-                    {device.schedules.map((cell, cellIndex) => (
-                      <TableCell
-                        key={cellIndex}
-                        sx={{
-                          fontSize: '16px',
-                          fontWeight: 500,
-                          color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
-                          textAlign: 'center' // Set text alignment to center
-                        }}
-                      >
-                        {cell}
-                      </TableCell>
-                    ))}
-                    {device.schedules.length > 0 && (
+
+                    <TableCell key={index} sx={{ textAlign: 'center' }}>
+                      {device.schedules?.map((time, index) => (
+                        <Typography sx={{ fontWeight: 500, color: '#F2946D' }}>
+                          {time[0]}
+                        </Typography>
+                      ))}
+                    </TableCell>
+
+                    <TableCell key={index} sx={{ textAlign: 'center' }}>
+                      {device.schedules?.map((time) => (
+                        <Typography sx={{ fontWeight: 500, color: '#7A40F2' }}>
+                          {time[1]}
+                        </Typography>
+                      ))}
+                    </TableCell>
+
+                    {device?.schedules?.length > 0 && (
                       <TableCell>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            columnGap: 2
+                          }}
+                        >
                           <Button
                             variant="contained"
                             sx={{ backgroundColor: '#FF7961', width: '70px' }}
@@ -139,12 +143,12 @@ function Board() {
                           >
                             DELETE
                           </Button>
-                          {/* <Button
-                      variant="contained"
-                      sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                    >
-                      EDIT
-                    </Button> */}
+                          <Button
+                            variant="contained"
+                            sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                          >
+                            EDIT
+                          </Button>
                         </Box>
                       </TableCell>
                     )}
@@ -152,6 +156,18 @@ function Board() {
                 )
             )}
           </TableBody>
+
+          {deviceList?.length === 0 && (
+            <Typography
+              fontSize={18}
+              fontStyle="italic"
+              textAlign="center"
+              color="gray"
+              mt={3}
+            >
+              There is no device
+            </Typography>
+          )}
         </Table>
       </TableContainer>
     </Container>

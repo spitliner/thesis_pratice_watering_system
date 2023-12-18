@@ -1,12 +1,12 @@
 import express from "express";
 import authRequest from "../middleware/expressAuth.js";
-import UserController from "../controllers/user_controller.js";
-import DeviceController from "../controllers/device_controllers.js";
+import userController from "../controllers/user_controller.js";
+import deviceController from "../controllers/device_controllers.js";
 const UserRouter = express.Router();
 UserRouter.post('/account/', async (request, response) => {
     try {
         const { email, password } = request.body;
-        const usr = await UserController.createUser(email, password);
+        const usr = await userController.createUser(email, password);
         if (null === usr) {
             return response.status(500).json({
                 "error": "unexpected server error"
@@ -20,7 +20,7 @@ UserRouter.post('/account/', async (request, response) => {
             }
             return response.status(400).json(usr);
         }
-        const result = await UserController.login(email, password);
+        const result = await userController.login(email, password);
         response.cookie("uid", result.uid, {
             httpOnly: true,
             sameSite: "strict"
@@ -50,7 +50,7 @@ UserRouter.post('/account/email/duplicate', async (request, response) => {
                 "error": "missing info"
             });
         }
-        if (await UserController.checkEmailDublication(email)) {
+        if (await userController.checkEmailDublication(email)) {
             return response.status(200).json({
                 "result": false
             });
@@ -75,7 +75,7 @@ UserRouter.post('/account/password', async (request, response) => {
                 "error": "missing info"
             });
         }
-        const result = await UserController.changeUserData(userID, { newPassword: password });
+        const result = await userController.changeUserData(userID, { newPassword: password });
         if (undefined !== result.error) {
             return response.status(500).json(result);
         }
@@ -97,12 +97,12 @@ UserRouter.post('/account/email', async (request, response) => {
                 "error": "missing info"
             });
         }
-        if (!(await UserController.checkEmailDublication(email))) {
+        if (!(await userController.checkEmailDublication(email))) {
             return response.status(400).json({
                 "error": "email already in use"
             });
         }
-        const result = await UserController.changeUserData(userID, { newEmail: email });
+        const result = await userController.changeUserData(userID, { newEmail: email });
         if (undefined !== result.error) {
             return response.status(500).json(result);
         }
@@ -124,7 +124,7 @@ UserRouter.post('/account/settings', async (request, response) => {
                 "error": "missing info"
             });
         }
-        const result = await UserController.changeUserData(userID, { newSetting: settings });
+        const result = await userController.changeUserData(userID, { newSetting: settings });
         if (undefined !== result.error) {
             return response.status(500).json(result);
         }
@@ -143,7 +143,7 @@ UserRouter.get('/user/', authRequest, async (request, response) => {
         if (undefined === userID) {
             return response.status(400).json({ "error": "missing info" });
         }
-        const usr = await UserController.getUser(userID);
+        const usr = await userController.getUser(userID);
         if (undefined !== usr.error) {
             if ("database error" === usr.error) {
                 return response.status(500).json({
@@ -165,7 +165,7 @@ UserRouter.post('/user/device', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
         const { deviceID, name, type, apiKey, adaUsername } = request.body;
-        const result = await DeviceController.createDevice(deviceID, userID, name, type, apiKey, adaUsername);
+        const result = await deviceController.createDevice(deviceID, userID, name, type, apiKey, adaUsername);
         if (undefined !== result.error) {
             if ("Device already in use" === result.error) {
                 return response.status(409).json(result);
@@ -184,7 +184,7 @@ UserRouter.post('/user/device', authRequest, async (request, response) => {
 UserRouter.get('/user/device', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
-        const result = await DeviceController.getUserDevice(userID);
+        const result = await deviceController.getUserDevice(userID);
         if (undefined === result) {
             return response.status(500).json({
                 "error": "unexpected server error"
@@ -205,7 +205,7 @@ UserRouter.post('/login/', async (request, response) => {
         if (undefined === email || undefined === password) {
             return response.status(401).json({ "error": "missing info" });
         }
-        const result = await UserController.login(email, password);
+        const result = await userController.login(email, password);
         if (undefined !== result["error"]) {
             return response.status(401).json(result);
         }
@@ -229,7 +229,7 @@ UserRouter.post('/login/', async (request, response) => {
 UserRouter.post('/account/delete', authRequest, async (request, response) => {
     try {
         const userID = request.cookies["uid"];
-        const result = await UserController.deleteUser(userID);
+        const result = await userController.deleteUser(userID);
         return response.status(200).json({ result: result });
     }
     catch (error) {

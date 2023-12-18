@@ -20,7 +20,7 @@ function SideBar() {
       }}
     >
       <Box sx={{ m: 4 }}>
-        <Typography sx={{ fontSize: '18px', fontWeight: '20px', mb: 2 }}>
+        <Typography sx={{ fontSize: '18px', fontWeight: 500, mb: 2 }}>
           My Devices
         </Typography>
         <Box
@@ -113,7 +113,7 @@ function SideBar() {
         </Box>
       </Box>
       <Box sx={{ m: 4 }}>
-        <Typography sx={{ fontSize: '18px', fontWeight: '20px', mb: 2 }}>
+        <Typography sx={{ fontSize: '18px', fontWeight: 500, mb: 2 }}>
           Report
         </Typography>
         <Box
@@ -125,7 +125,7 @@ function SideBar() {
         </Box>
       </Box>
       <Box sx={{ m: 4 }}>
-        <Typography sx={{ fontSize: '18px', fontWeight: '20px', mb: 2 }}>
+        <Typography sx={{ fontSize: '18px', fontWeight: 500, mb: 2 }}>
           Schedules
         </Typography>
         <Box

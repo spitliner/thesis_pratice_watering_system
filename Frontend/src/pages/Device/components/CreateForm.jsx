@@ -14,26 +14,26 @@ import { useForm, Controller } from 'react-hook-form';
 import SelectInput from '../../../components/SelectInput';
 import useMutateDevice from '../hooks/useMutateDevice';
 import useCheckAndSave from '../hooks/useCheckApiKey';
-
-const deviceType = [
-  {
-    value: 'Humidity',
-    label: 'Humidity'
-  },
-  {
-    value: 'Temperture',
-    label: 'Temperture'
-  },
-  {
-    value: 'Watering',
-    label: 'Watering'
-  }
-];
+import { deviceTypeOption } from '../../../constants/device';
+// const deviceType = [
+//   {
+//     value: 'Humidity',
+//     label: 'Humidity'
+//   },
+//   {
+//     value: 'Temperture',
+//     label: 'Temperture'
+//   },
+//   {
+//     value: 'Watering',
+//     label: 'Watering'
+//   }
+// ];
 
 export default function CreateForm(props) {
+  const { open, handleClose, defaultDevice } = props;
   const { onSaveData } = useMutateDevice();
   const { onCheckAndSave } = useCheckAndSave();
-  const { open, handleClose } = props;
   const [errorMessage, setErrorMessage] = useState({
     api: false,
     name: false
@@ -44,7 +44,7 @@ export default function CreateForm(props) {
   const submitForm = (data) => {
     const id = data?.name;
     console.log({ ...data, deviceID: id });
-    onCheckAndSave({ ...data, deviceID: id });
+    onSaveData({ ...data, deviceID: id });
     setTimeout(() => {
       const deviceNameError = localStorage.getItem('deviceNameError');
       const apiError = localStorage.getItem('apiKeyError');
@@ -93,20 +93,21 @@ export default function CreateForm(props) {
                   id="type"
                   label="Device type"
                   fullWidth
-                  options={deviceType}
+                  options={deviceTypeOption}
                   {...field}
                   required
                 />
               )}
+              defaultValue={defaultDevice}
               required
             />
             <TextField
-              id="adaUserName"
-              name="adaUserName"
+              id="adaUsername"
+              name="adaUsername"
               size="small"
               fullWidth
               label="Adafruit user name"
-              {...register('adaUserName')}
+              {...register('adaUsername')}
               control
               required
             />
@@ -115,7 +116,7 @@ export default function CreateForm(props) {
               name="apiKey"
               size="small"
               fullWidth
-              label="Api key"
+              label="Adafruit key"
               {...register('apiKey')}
               control
               required

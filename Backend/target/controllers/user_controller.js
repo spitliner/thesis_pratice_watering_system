@@ -1,10 +1,10 @@
-import DeviceModel from "../database/models/device_model.js";
-import UserModel from "../database/models/user_model.js";
+import deviceModel from "../database/models/device_model.js";
+import userModel from "../database/models/user_model.js";
 import Authentication from "../middleware/auth.js";
-class UserController {
-    static async getUser(userID) {
+const userController = {
+    async getUser(userID) {
         try {
-            const usr = await UserModel.getUserData(userID);
+            const usr = await userModel.getUserData(userID);
             if (null === usr) {
                 return {
                     "error": "user not found"
@@ -20,9 +20,9 @@ class UserController {
                 "error": "database error"
             };
         }
-    }
-    static async login(email, password) {
-        const usr = await UserModel.searchUser(email);
+    },
+    async login(email, password) {
+        const usr = await userModel.searchUser(email);
         if (null === usr) {
             return {
                 "error": "user not found"
@@ -40,26 +40,26 @@ class UserController {
             "uid": usr.id,
             "tokenType": "jwt"
         };
-    }
-    static checkPasswordLength(password) {
+    },
+    checkPasswordLength(password) {
         return 12 < password.length;
-    }
-    static checkEmailDublication(email) {
-        return UserModel.checkEmail(email);
-    }
-    static async createUser(email, password) {
+    },
+    checkEmailDublication(email) {
+        return userModel.checkEmail(email);
+    },
+    async createUser(email, password) {
         try {
             if (!this.checkPasswordLength(password)) {
                 return {
                     "error": "weak password"
                 };
             }
-            if (!UserModel.checkEmail(email)) {
+            if (!userModel.checkEmail(email)) {
                 return {
                     "error": "dublicate email"
                 };
             }
-            const usr = await UserModel.createUser(email, password);
+            const usr = await userModel.createUser(email, password);
             return {
                 "usr": usr
             };
@@ -70,25 +70,25 @@ class UserController {
                 "error": "database error"
             };
         }
-    }
-    static async getUserDevice(userID) {
-        const result = await DeviceModel.getUserDeivceData(userID);
+    },
+    async getUserDevice(userID) {
+        const result = await deviceModel.getUserDeivceData(userID);
         return result;
-    }
-    static async getDailyReport(userID) {
-    }
-    static async changeUserData(userID, change) {
+    },
+    async getDailyReport(userID) {
+    },
+    async changeUserData(userID, change) {
         try {
             let result = {};
             let resultChange = null;
             if (undefined !== change.newSetting) {
-                resultChange = await UserModel.changeSetting(userID, JSON.stringify(change.newSetting));
+                resultChange = await userModel.changeSetting(userID, JSON.stringify(change.newSetting));
             }
             if (undefined !== change.newEmail) {
-                resultChange = await UserModel.changeEmail(userID, change.newEmail);
+                resultChange = await userModel.changeEmail(userID, change.newEmail);
             }
             if (undefined !== change.newPassword) {
-                resultChange = await UserModel.changePassword(userID, await Authentication.hashPassword(change.newPassword));
+                resultChange = await userModel.changePassword(userID, await Authentication.hashPassword(change.newPassword));
             }
             if (null === resultChange) {
                 return {
@@ -110,11 +110,11 @@ class UserController {
                 "error": "database error"
             };
         }
-    }
-    static async deleteUser(userID) {
-        DeviceModel.deleteUserDevice(userID);
-        const result = await UserModel.deleteUser(userID);
+    },
+    async deleteUser(userID) {
+        deviceModel.deleteUserDevice(userID);
+        const result = await userModel.deleteUser(userID);
         return result;
     }
-}
-export default UserController;
+};
+export default userController;

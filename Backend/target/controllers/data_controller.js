@@ -1,9 +1,9 @@
 import DataModel from "../database/models/data_model.js";
-import DeviceModel from "../database/models/device_model.js";
-class DataController {
-    static async getData(deviceID, userID) {
+import deviceModel from "../database/models/device_model.js";
+const dataController = {
+    async getData(deviceID, userID) {
         try {
-            const deviceData = await DeviceModel.getDeviceData(deviceID, userID);
+            const deviceData = await deviceModel.getDeviceData(deviceID, userID);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -22,10 +22,10 @@ class DataController {
                 error: "Database error"
             };
         }
-    }
-    static async getDataWithin(deviceID, userID, afterDate) {
+    },
+    async getDataWithin(deviceID, userID, afterDate) {
         try {
-            const deviceData = await DeviceModel.getDeviceData(deviceID, userID);
+            const deviceData = await deviceModel.getDevice(deviceID);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -44,10 +44,11 @@ class DataController {
                 error: "Database error"
             };
         }
-    }
-    static async insertFeed(deviceID, userID, feed) {
+    },
+    async insertFeed(deviceID, userID, feed) {
         try {
-            const deviceData = await DeviceModel.getDeviceData(deviceID, userID);
+            const deviceData = await deviceModel.getDevice(deviceID);
+            //console.log(deviceData);
             if (null === deviceData) {
                 return {
                     error: "Device not found"
@@ -58,7 +59,7 @@ class DataController {
                     error: "Device not belong to user"
                 };
             }
-            await DataModel.insertData(feed);
+            return await DataModel.insertData(feed);
         }
         catch (error) {
             console.log(error);
@@ -67,5 +68,5 @@ class DataController {
             };
         }
     }
-}
-export default DataController;
+};
+export default dataController;

@@ -1,4 +1,4 @@
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import Navigation from '../components/Navigation/Navigation';
 import AppBar from '../components/AppBar/AppBar';
 import { Outlet } from 'react-router-dom';
@@ -9,7 +9,8 @@ function BaseLayout({ children }) {
       disableGutters
       maxWidth={false}
       sx={{
-        height: 'max-height',
+        // height: 'max-height',
+        width: '100%',
         backgroundColor: 'secondary.main',
         px: 1,
         py: 1,
@@ -18,7 +19,7 @@ function BaseLayout({ children }) {
     >
       <Navigation />
       <Container
-        // maxWidth={false}
+        maxWidth={false}
         sx={{ height: '100%', backgroundColor: 'secondary.main', py: 1 }}
       >
         {/* Header */}

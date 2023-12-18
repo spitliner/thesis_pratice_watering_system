@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import useQueryDevice from '../../Device/hooks/useQueryDevice';
+import { deviceType } from '../../../constants/device';
 
 const Table = (props) => {
   const { deviceList } = props;
@@ -9,37 +10,22 @@ const Table = (props) => {
   useEffect(() => {
     const rows = [];
     for (let i in deviceList) {
+      // if (deviceList[i].type === deviceType.water)
       rows.push({
         id: deviceList[i].id,
-        device: deviceList[i].name,
-        water: 100
+        device: deviceList[i].id,
+        username: deviceList[i].adaUsername,
+        apikey: deviceList[i].apiKey,
+        schedule:
+          deviceList[i].schedules?.length > 0
+            ? deviceList[i].schedules[0][0]
+            : 'Free'
+        // status: 'On'
       });
     }
     setRow(rows);
   }, [deviceList]);
-  // deviceList?.map((device) => {});
-  // const rows = [
-  //   {
-  //     id: 1,
-  //     device: 'KV01',
-  //     water: '2000ml'
-  //   },
-  //   {
-  //     id: 2,
-  //     device: 'KV02',
-  //     water: '2000ml'
-  //   },
-  //   {
-  //     id: 3,
-  //     device: 'KV03',
-  //     water: '300ml'
-  //   },
-  //   {
-  //     id: 4,
-  //     device: 'KV04',
-  //     water: '1000ml'
-  //   }
-  // ];
+
   const columns = [
     {
       field: 'device',
@@ -47,9 +33,19 @@ const Table = (props) => {
       width: 250
     },
     {
-      field: 'water',
-      headerName: 'Water comsumed (ml)',
+      field: 'username',
+      headerName: 'Adafruit user',
       width: 250
+    },
+    {
+      field: 'apikey',
+      headerName: 'Api key',
+      width: 300
+    },
+    {
+      field: 'schedule',
+      headerName: 'Schedule',
+      width: 300
     }
   ];
 
