@@ -52,7 +52,7 @@ const userModel = {
         }
         catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     },
     async changeEmail(userID, newMail) {
@@ -66,7 +66,7 @@ const userModel = {
         }
         catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     },
     async changePassword(userID, newPass) {
@@ -80,7 +80,7 @@ const userModel = {
         }
         catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     },
     async deleteUser(userID) {

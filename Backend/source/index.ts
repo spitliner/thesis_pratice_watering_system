@@ -40,7 +40,7 @@ mongoose.connection.on('error', error => {
 
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@dev0.agidxfk.mongodb.net/?retryWrites=true&w=majority`;
 
-mongoose.connect(uri, {dbName: 'webGarden'}); // eslint-disable-line @typescript-eslint/no-floating-promises
+void mongoose.connect(uri, {dbName: 'webGarden'});
 
 const portNumber: number = (Number(process.env.DB_PORT) || 9000);
 

@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import express from 'express';
+import typia from 'typia';
 import authRequest from '../middleware/express-auth.js';
 import deviceController from '../controllers/device-controllers.js';
 import dataModel from '../database/models/data-model.js';
@@ -47,7 +49,7 @@ deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
     catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
@@ -55,8 +57,12 @@ deviceRouter.post('/device/duplicateKey', authRequest, async (request, response)
     try {
         const key = request.body.apiKey;
         const username = request.body.adaUsername;
-        if (undefined === key) {
-            return response.status(400).json({ error: 'Missing key to check' });
+        if (!(input => {
+            return "string" === typeof input;
+        })(key) || !(input => {
+            return "string" === typeof input;
+        })(username)) {
+            return response.status(400).json({ error: 'missing key to check' });
         }
         if (await deviceModel.checkKey(key, username)) {
             return response.status(200).json({
@@ -76,9 +82,26 @@ deviceRouter.post('/device/duplicateKey', authRequest, async (request, response)
 });
 deviceRouter.post('/device/:deviceID/settings', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        const { newSettings } = request.body;
+        const newSettings = request.body.newSettings;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            const $io0 = input => Object.keys(input).every(key => {
+                const value = input[key];
+                if (undefined === value)
+                    return true;
+                if (true)
+                    return true;
+                return true;
+            });
+            return "object" === typeof input && null !== input && false === Array.isArray(input) && $io0(input);
+        })(newSettings)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
         const result = await deviceController.changeSettings(deviceID, userID, newSettings);
         if (undefined === result.error) {
             return response.status(200).json(result);
@@ -88,15 +111,24 @@ deviceRouter.post('/device/:deviceID/settings', authRequest, async (request, res
     catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 deviceRouter.post('/device/:deviceID/name', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        const { newName } = request.body;
+        const newName = request.body.newName;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return "string" === typeof input;
+        })(newName)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
         const result = await deviceController.changeName(deviceID, userID, newName);
         if (undefined === result.error) {
             return response.status(200).json(result);
@@ -112,9 +144,18 @@ deviceRouter.post('/device/:deviceID/name', authRequest, async (request, respons
 });
 deviceRouter.post('/device/:deviceID/type', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        const { type } = request.body;
+        const type = request.body.type;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return "string" === typeof input;
+        })(type)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
         const result = await deviceController.changeType(deviceID, userID, type);
         if (undefined === result.error) {
             return response.status(200).json(result);
@@ -124,15 +165,24 @@ deviceRouter.post('/device/:deviceID/type', authRequest, async (request, respons
     catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 deviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        const { schedules } = request.body;
+        const schedules = request.body.schedules;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return Array.isArray(input) && input.every(elem => Array.isArray(elem) && elem.every(elem => "string" === typeof elem));
+        })(schedules)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
         const result = await deviceController.changeSchedule(deviceID, userID, schedules);
         if (undefined === result.error) {
             return response.status(200).json(result);
@@ -142,15 +192,27 @@ deviceRouter.post('/device/:deviceID/schedules', authRequest, async (request, re
     catch (error) {
         console.log(error);
         return response.status(500).json({
-            error: 'unexpected server error'
+            error: 'unexpected server error',
         });
     }
 });
 deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        const { apiKey, adaUsername } = request.body;
+        const apiKey = request.body.apiKey;
+        const adaUsername = request.body.adaUsername;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return "string" === typeof input;
+        })(apiKey) || !(input => {
+            return "string" === typeof input;
+        })(adaUsername)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
         const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
         if (undefined === result.error) {
             return response.status(200).json(result);
@@ -166,8 +228,15 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
 });
 deviceRouter.post('/device/delete/:deviceID', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
         const result = await deviceController.deleteDevice(deviceID, userID);
         if (null === result) {
             return response.status(500).json({
@@ -185,9 +254,13 @@ deviceRouter.post('/device/delete/:deviceID', authRequest, async (request, respo
 });
 deviceRouter.get('/device/:deviceID/feed', authRequest, async (request, response) => {
     try {
-        const userID = request.cookies["uid"];
+        const userID = request.cookies.uid;
         const deviceID = request.params.deviceID;
-        if (undefined === deviceID) {
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID)) {
             return response.status(400).json({ error: 'missing info' });
         }
         const deviceInfo = await deviceController.getDevice(deviceID, userID);

@@ -1,22 +1,29 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import axios from 'axios';
+import typia from 'typia';
 
 const adaConnect = {
-    async getFeedData(username: string, feedName: string, key : string) {
+    async getFeedData(username: string, feedName: string, key: string) {
         try {
             const result = await axios.get(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, {
                 headers: {
                     'X-AIO-Key': key,
-                }
+                },
             });
-            const resultArray: [{
-                id: string,
-                value: string,
-                feed_id: number,
-                feed_key: string,
-                created_at: string,
-                created_epoch: number,
-                expiration: string
-            }] = result.data;
+
+            const resultArray: unknown = result.data;
+            if (!typia.is<Array<{
+                id: string;
+                value: string;
+                feed_id: number;
+                feed_key: string;
+                created_at: string;
+                created_epoch: number;
+                expiration: string;
+            }>>(resultArray)) {
+                return [];
+            }
+
             const insertData = resultArray.map(dataPoint => ({
                 id: dataPoint.id,
                 deviceID: dataPoint.feed_key,
@@ -30,9 +37,9 @@ const adaConnect = {
         }
     },
 
-    async triggerPump(username: string, feedName: string, key : string, time: string) {
+    async triggerPump(username: string, feedName: string, key: string, time: string) {
         try {
-            await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, 
+            await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`,
                 {
                     value: 'ON',
                 }, {
@@ -41,15 +48,16 @@ const adaConnect = {
                     },
                 });
             const waitTime = Number(time);
-            setTimeout(() => {}, waitTime);
-            await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, 
-                {
-                    value: 'OFF',
-                }, {
-                    headers: {
-                        'X-AIO-Key': key,
-                    },
-                });
+            setTimeout(async () => {
+                await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`,
+                    {
+                        value: 'OFF',
+                    }, {
+                        headers: {
+                            'X-AIO-Key': key,
+                        },
+                    });
+            }, waitTime);
             return true;
         } catch (error) {
             console.log(error);

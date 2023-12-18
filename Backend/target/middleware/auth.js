@@ -1,9 +1,7 @@
 import crypto from 'node:crypto';
-import dotenv from 'dotenv';
 import argon2 from 'argon2';
 import * as jose from 'jose';
 import { privateKey, publicKey } from '../config/loadKeyPair.js';
-dotenv.config();
 const authentication = {
     async hashPassword(password) {
         return argon2.hash(password, {

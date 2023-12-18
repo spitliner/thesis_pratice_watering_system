@@ -2,7 +2,6 @@ import adaConnect from '../cron-jobs/ada-request.js';
 import deviceModel from '../database/models/device-model.js';
 import dataController from './data-controller.js';
 
-
 const deviceController = {
     async createDevice(deviceID: string, userID: string, name: string, type: string, apiKey: string, adaUsername: string) {
         try {
@@ -128,7 +127,7 @@ const deviceController = {
 
             return {
                 result: 'change save',
-            }
+            };
         } catch (error) {
             console.log(error);
             return {
@@ -154,7 +153,7 @@ const deviceController = {
 
             return {
                 result: 'change save',
-            }
+            };
         } catch (error) {
             console.log(error);
             return {
@@ -163,6 +162,7 @@ const deviceController = {
         }
     },
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     async changeAPIkey(deviceID: string, userID: string, newKey: string, newUsername: string) {
         try {
             const result = await deviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
@@ -194,15 +194,17 @@ const deviceController = {
             const deviceList = await deviceModel.getAllSensorData();
             const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
 
-            deviceList.forEach(async device => {
+            type DeviceData = typeof deviceList[0];
+
+            const collectData = async (device: DeviceData) => {
                 try {
                     await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.apiKey));
                 } catch (error) {
                     console.log(error);
                 }
-            });
+            };
 
-            actionDeviceList.forEach(async device => {
+            const triggerSchedule = async (device: DeviceData) => {
                 try {
                     let pumpTime = '1';
                     if (null !== device.schedules && undefined !== device.schedules) {
@@ -218,7 +220,15 @@ const deviceController = {
                 } catch (error) {
                     console.log(error);
                 }
-            });
+            };
+
+            for (const device of deviceList) {
+                void collectData(device);
+            }
+
+            for (const device of actionDeviceList) {
+                void triggerSchedule(device);
+            }
         } catch (error) {
             console.log(error);
         }

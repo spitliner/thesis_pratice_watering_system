@@ -1,6 +1,5 @@
-import dataModel from "../database/models/data-model.js";
-import deviceModel from "../database/models/device-model.js";
-
+import dataModel from '../database/models/data-model.js';
+import deviceModel from '../database/models/device-model.js';
 
 const dataController = {
     async getData(deviceID: string, userID: string) {
@@ -8,20 +7,22 @@ const dataController = {
             const deviceData = await deviceModel.getDeviceData(deviceID, userID);
             if (null === deviceData) {
                 return {
-                    error: "Device not found"
-                }
-            } else if (userID !== deviceData.userID) {
-                return {
-                    error: "Device not belong to user"
-                }
+                    error: 'Device not found',
+                };
             }
 
-            return dataModel.getData(deviceID);
+            if (userID !== deviceData.userID) {
+                return {
+                    error: 'Device not belong to user',
+                };
+            }
+
+            return await dataModel.getData(deviceID);
         } catch (error) {
             console.log(error);
             return {
-                error: "Database error"
-            }
+                error: 'Database error',
+            };
         }
     },
 
@@ -30,46 +31,48 @@ const dataController = {
             const deviceData = await deviceModel.getDevice(deviceID);
             if (null === deviceData) {
                 return {
-                    error: "Device not found"
-                }
-            } else if (userID !== deviceData.userID) {
-                return {
-                    error: "Device not belong to user"
-                }
+                    error: 'Device not found',
+                };
             }
 
-            return dataModel.getDataWithin(deviceID, afterDate);
+            if (userID !== deviceData.userID) {
+                return {
+                    error: 'Device not belong to user',
+                };
+            }
+
+            return await dataModel.getDataWithin(deviceID, afterDate);
         } catch (error) {
             console.log(error);
             return {
-                error: "Database error"
-            }
+                error: 'Database error',
+            };
         }
     },
 
-    async insertFeed(deviceID: string, userID: string, feed: {id: string, deviceID: string, time: Date, data: string}[]) {
+    async insertFeed(deviceID: string, userID: string, feed: Array<{id: string; deviceID: string; time: Date; data: string}>) {
         try {
             const deviceData = await deviceModel.getDevice(deviceID);
-            //console.log(deviceData);
             if (null === deviceData) {
                 return {
-                    error: "Device not found"
-                }
-            } else if (userID !== deviceData.userID) {
+                    error: 'Device not found',
+                };
+            }
+
+            if (userID !== deviceData.userID) {
                 return {
-                    error: "Device not belong to user"
-                }
+                    error: 'Device not belong to user',
+                };
             }
 
             return await dataModel.insertData(feed);
         } catch (error) {
             console.log(error);
             return {
-                error: "Database error"
-            }
+                error: 'Database error',
+            };
         }
-    }
-    
-}
+    },
+};
 
 export default dataController;
