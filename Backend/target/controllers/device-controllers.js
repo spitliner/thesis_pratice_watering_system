@@ -151,6 +151,7 @@ const deviceController = {
             };
         }
     },
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     async changeAPIkey(deviceID, userID, newKey, newUsername) {
         try {
             const result = await deviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
@@ -179,15 +180,15 @@ const deviceController = {
         try {
             const deviceList = await deviceModel.getAllSensorData();
             const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
-            deviceList.forEach(async (device) => {
+            const collectData = async (device) => {
                 try {
                     await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.apiKey));
                 }
                 catch (error) {
                     console.log(error);
                 }
-            });
-            actionDeviceList.forEach(async (device) => {
+            };
+            const triggerSchedule = async (device) => {
                 try {
                     let pumpTime = '1';
                     if (null !== device.schedules && undefined !== device.schedules) {
@@ -203,7 +204,13 @@ const deviceController = {
                 catch (error) {
                     console.log(error);
                 }
-            });
+            };
+            for (const device of deviceList) {
+                void collectData(device);
+            }
+            for (const device of actionDeviceList) {
+                void triggerSchedule(device);
+            }
         }
         catch (error) {
             console.log(error);

@@ -58,7 +58,7 @@ const userModel = {
             return result.acknowledged;
         } catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     },
 
@@ -73,7 +73,7 @@ const userModel = {
             return result.acknowledged;
         } catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     },
 
@@ -88,7 +88,7 @@ const userModel = {
             return result.acknowledged;
         } catch (error) {
             console.log(error);
-            return null;
+            return undefined;
         }
     },
 

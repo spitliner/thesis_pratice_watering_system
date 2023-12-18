@@ -3,12 +3,12 @@ import typia from 'typia';
 import authentication from './auth.js';
 
 async function authRequest(request: Request, response: Response, next: NextFunction) {
-    if (!typia.is<string>(request.cookies.uid) || !typia.is<string>(request.cookies.tokenType)) {
+    const uid: unknown = request.cookies.uid;
+    const tokenType: unknown = request.cookies.tokenType;
+
+    if (!typia.is<string>(uid) || !typia.is<string>(tokenType)) {
         return response.status(401).json({error: 'unauthenticated request'});
     }
-
-    const uid = String(request.cookies.uid);
-    const tokenType = String(request.cookies.tokenType);
 
     if (undefined === request.headers.authorization) {
         return response.status(401).json({error: 'unauthenticated request'});
