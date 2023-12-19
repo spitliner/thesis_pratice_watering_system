@@ -1,9 +1,16 @@
+/* eslint-disable max-params */
+/* eslint-disable object-shorthand */
+/* eslint-disable @typescript-eslint/naming-convention */
 import mongoose from 'mongoose';
+import { customAlphabet } from 'nanoid';
 import deviceSchema from '../schema/device-schema.js';
+const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const uidGen = customAlphabet(alphabet, 16);
 const deviceMongoModel = mongoose.model('device', deviceSchema);
 const deviceModel = {
-    async insertDevice(deviceID, userID, deviceType, deviceName, deviceSettings, apiKey, adaUsername) {
+    async insertDevice(feedID, userID, deviceType, deviceName, deviceSettings, apiKey, adaUsername) {
         try {
+            const deviceID = uidGen();
             const result = await deviceMongoModel.insertMany([{
                     id: deviceID,
                     userID: userID,
@@ -11,26 +18,29 @@ const deviceModel = {
                     name: deviceName,
                     settings: deviceSettings,
                     apiKey: apiKey,
-                    adaUsername: adaUsername
+                    adaUsername: adaUsername,
+                    feedID: feedID,
                 }]);
             await deviceModel.removeDeviceSchedule(deviceID, userID);
             console.log('Insert device from user ' + result[0].userID + ' with device id ' + String(result[0].id));
-            return result[0];
+            return await deviceModel.getDeviceData(deviceID);
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
     async getDevice(deviceID) {
         return deviceMongoModel.findOne({ id: deviceID }, '-__v').exec();
     },
-    async getDeviceData(deviceID, userID) {
-        return deviceMongoModel.findOne({ id: deviceID, userID: userID }, '-__v -_id -userID').lean().exec();
+    async getDeviceData(deviceID) {
+        return deviceMongoModel.findOne({ id: deviceID }, '-__v -_id -userID').lean().exec();
     },
     async getUserDeivceData(userID) {
         return deviceMongoModel.find({
-            userID: userID
+            userID: userID,
         }).select('-__v -_id -userID').lean().exec();
     },
     async checkID(deviceID) {
@@ -38,71 +48,93 @@ const deviceModel = {
             id: deviceID,
         }).lean().exec();
     },
-    async checkKey(APIkey, adaUsername) {
+    async checkFeedKey(feedID, adaUsername) {
         return 0 === await deviceMongoModel.countDocuments({
-            apiKey: APIkey,
-            adaUsername: adaUsername
+            adaUsername: adaUsername,
+            feedID: feedID,
         }).lean().exec();
     },
     async changeDeviceName(deviceID, userID, newName) {
         try {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
-                return false;
+                return {
+                    error: 'device not found',
+                };
             }
             if (userID !== device.userID) {
-                return false;
+                return {
+                    error: 'device not belong to user',
+                };
             }
             const result = await deviceMongoModel.updateOne({ id: deviceID }, { name: newName }).lean().exec();
             return result.acknowledged;
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
     async changeDeviceType(deviceID, userID, editdType) {
         try {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
-                return false;
+                return {
+                    error: 'device not found',
+                };
             }
             if (userID !== device.userID) {
-                return false;
+                return {
+                    error: 'device not belong to user',
+                };
             }
             const result = await deviceMongoModel.updateOne({ id: deviceID }, { type: editdType }).lean().exec();
             return result.acknowledged;
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
     async changeDeviceSettings(deviceID, userID, newSetting) {
         try {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
-                return false;
+                return {
+                    error: 'device not found',
+                };
             }
             if (userID !== device.userID) {
-                return false;
+                return {
+                    error: 'device not belong to user',
+                };
             }
             const result = await deviceMongoModel.updateOne({ id: deviceID }, { settings: newSetting }).lean().exec();
             return result.acknowledged;
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
     async changeDeviceSchedule(deviceID, userID, newSchedule) {
         try {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
-                return false;
+                return {
+                    error: 'device not found',
+                };
             }
             if (userID !== device.userID) {
-                return false;
+                return {
+                    error: 'device not belong to user',
+                };
             }
             const result = await deviceMongoModel.updateOne({ id: deviceID }, { schedules: newSchedule }).lean().exec();
             console.log(result);
@@ -110,48 +142,64 @@ const deviceModel = {
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
     async removeDeviceSchedule(deviceID, userID) {
         try {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
-                return false;
+                return {
+                    error: 'device not found',
+                };
             }
             if (userID !== device.userID) {
-                return false;
+                return {
+                    error: 'device not belong to user',
+                };
             }
             const result = await deviceMongoModel.updateOne({ id: deviceID }, { $unset: { schedules: [[]] } }).lean().exec();
-            // console.log(result);
-            return result.acknowledged;
+            return {
+                result: result.acknowledged,
+            };
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
-    async changeAPIkey(deviceID, userID, apiKey, adaUsername) {
+    async changeAdafruitAccess(deviceID, userID, apiKey, adaUsername, feedID) {
         try {
             const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
-                return false;
+                return {
+                    error: 'device not found',
+                };
             }
             if (userID !== device.userID) {
-                return false;
+                return {
+                    error: 'device not belong to user',
+                };
             }
-            const result = await deviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey, adaUsername: adaUsername }).lean().exec();
-            return result.acknowledged;
+            const result = await deviceMongoModel.updateOne({ id: deviceID }, { apiKey: apiKey, adaUsername: adaUsername, feedID: feedID }).lean().exec();
+            return {
+                result: result.acknowledged,
+            };
         }
         catch (error) {
             console.log(error);
-            return null;
+            return {
+                error: 'database error',
+            };
         }
     },
-    async deleteDevice(deviceID, userID) {
+    async deleteDevice(deviceID) {
         const result = await deviceMongoModel.deleteOne({
             id: deviceID,
-            userID: userID,
         });
         return 1 === result.deletedCount;
     },

@@ -2,15 +2,15 @@ import adaConnect from '../cron-jobs/ada-request.js';
 import deviceModel from '../database/models/device-model.js';
 import dataController from './data-controller.js';
 const deviceController = {
-    async createDevice(deviceID, userID, name, type, apiKey, adaUsername) {
+    async createDevice(feedID, userID, name, type, apiKey, adaUsername) {
         try {
-            if (!(await deviceModel.checkID(deviceID))) {
+            if (!(await deviceModel.checkID(feedID))) {
                 return {
                     error: 'Device already in use',
                 };
             }
             const deviceSetting = {};
-            const device = await deviceModel.insertDevice(deviceID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUsername);
+            const device = await deviceModel.insertDevice(feedID, userID, type, name, JSON.stringify(deviceSetting), apiKey, adaUsername);
             if (null === device || undefined === device) {
                 return {
                     error: 'Database error',
@@ -29,7 +29,7 @@ const deviceController = {
     },
     async getDevice(deviceID, userID) {
         try {
-            return await deviceModel.getDeviceData(deviceID, userID);
+            return await deviceModel.getDeviceData(deviceID);
         }
         catch (error) {
             console.log(error);
@@ -47,7 +47,7 @@ const deviceController = {
     },
     async deleteDevice(deviceID, userID) {
         try {
-            return await deviceModel.deleteDevice(deviceID, userID);
+            return await deviceModel.deleteDevice(deviceID);
         }
         catch (error) {
             console.log(error);
@@ -152,9 +152,9 @@ const deviceController = {
         }
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    async changeAPIkey(deviceID, userID, newKey, newUsername) {
+    async changeAPIkey(deviceID, userID, newKey, newUsername, newFeedName) {
         try {
-            const result = await deviceModel.changeAPIkey(deviceID, userID, newKey, newUsername);
+            const result = await deviceModel.changeAdafruitAccess(deviceID, userID, newKey, newUsername, newFeedName);
             if (null === result) {
                 return {
                     error: 'database error',
@@ -182,7 +182,7 @@ const deviceController = {
             const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
             const collectData = async (device) => {
                 try {
-                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.apiKey));
+                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.feedID, device.apiKey));
                 }
                 catch (error) {
                     console.log(error);
@@ -199,7 +199,7 @@ const deviceController = {
                             }
                         }
                     }
-                    await adaConnect.triggerPump(device.adaUsername, device.id, device.apiKey, pumpTime);
+                    await adaConnect.triggerPump(device.adaUsername, device.feedID, device.apiKey, pumpTime);
                 }
                 catch (error) {
                     console.log(error);

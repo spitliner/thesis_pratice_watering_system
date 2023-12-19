@@ -59,16 +59,16 @@ deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
 });
 deviceRouter.post('/device/duplicateKey', authRequest, async (request, response) => {
     try {
-        const key = request.body.apiKey;
+        const feedID = request.body.feedID;
         const username = request.body.adaUsername;
         if (!(input => {
             return "string" === typeof input;
-        })(key) || !(input => {
+        })(feedID) || !(input => {
             return "string" === typeof input;
         })(username)) {
             return response.status(400).json({ error: 'missing key to check' });
         }
-        if (await deviceModel.checkKey(key, username)) {
+        if (await deviceModel.checkFeedKey(feedID, username)) {
             return response.status(200).json({
                 result: false,
             });
@@ -206,6 +206,7 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
         const deviceID = request.params.deviceID;
         const apiKey = request.body.apiKey;
         const adaUsername = request.body.adaUsername;
+        const feedID = request.body.feedID;
         if (!(input => {
             return "string" === typeof input;
         })(userID) || !(input => {
@@ -214,10 +215,12 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
             return "string" === typeof input;
         })(apiKey) || !(input => {
             return "string" === typeof input;
-        })(adaUsername)) {
+        })(adaUsername) || !(input => {
+            return "string" === typeof input;
+        })(feedID)) {
             return response.status(400).json({ error: 'missing info' });
         }
-        const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
+        const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername, feedID);
         if (undefined === result.error) {
             return response.status(200).json(result);
         }
