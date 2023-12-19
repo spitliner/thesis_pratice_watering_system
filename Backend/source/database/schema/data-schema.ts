@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import mongoose from 'mongoose';
 
 const dataSchema = new mongoose.Schema({
