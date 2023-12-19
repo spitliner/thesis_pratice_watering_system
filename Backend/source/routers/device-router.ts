@@ -63,14 +63,14 @@ deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
 
 deviceRouter.post('/device/duplicateKey', authRequest, async (request, response) => {
     try {
-        const key: unknown = request.body.apiKey;
+        const feedID: unknown = request.body.feedID;
         const username: unknown = request.body.adaUsername;
 
-        if (!typia.is<string>(key) || !typia.is<string>(username)) {
+        if (!typia.is<string>(feedID) || !typia.is<string>(username)) {
             return response.status(400).json({error: 'missing key to check'});
         }
 
-        if (await deviceModel.checkFeedKey(key, username)) {
+        if (await deviceModel.checkFeedKey(feedID, username)) {
             return response.status(200).json({
                 result: false,
             });
