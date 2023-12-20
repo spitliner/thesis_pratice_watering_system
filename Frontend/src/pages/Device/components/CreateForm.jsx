@@ -43,8 +43,8 @@ export default function CreateForm(props) {
 
   const submitForm = (data) => {
     const id = data?.name;
-    console.log({ ...data, deviceID: id });
-    onSaveData({ ...data, deviceID: id });
+    console.log({ ...data, feedID: id });
+    onSaveData({ ...data, feedID: id });
     setTimeout(() => {
       const deviceNameError = localStorage.getItem('deviceNameError');
       const apiError = localStorage.getItem('apiKeyError');
@@ -79,7 +79,7 @@ export default function CreateForm(props) {
               name="name"
               size="small"
               fullWidth
-              label="Device ID"
+              label="Feed ID"
               {...register('name')}
               control
               sx={{ mt: 2 }}

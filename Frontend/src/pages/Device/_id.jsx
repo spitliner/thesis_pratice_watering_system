@@ -23,7 +23,6 @@ const TabButton = styled(Button)(({ theme }) => ({
 
 function _id() {
   const { deviceList } = useQueryDevice();
-  const { data } = useQueryDeviceById('temperature');
 
   const [activeTab, setActiveTab] = useState(deviceType.temp);
 
