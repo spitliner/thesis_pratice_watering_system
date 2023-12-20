@@ -38,7 +38,7 @@ const adaConnect = {
                     'X-AIO-Key': key,
                 },
             });
-            const waitTime = Number(time);
+            const waitTime = Number(time) * 1000;
             setTimeout(async () => {
                 await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, {
                     value: 'OFF',

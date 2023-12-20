@@ -24,7 +24,7 @@ const userModel = {
     /**
      * If email availible, return true, otherwise return false
      * @param userEmail email to check
-     * @returns 
+     * @returns
      */
     async checkEmail(userEmail: string) {
         return 0 === await userMongoModel.countDocuments({
