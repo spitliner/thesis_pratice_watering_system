@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import mongoose from 'mongoose';
 import dataSchema from '../schema/data-schema.js';
 //---
