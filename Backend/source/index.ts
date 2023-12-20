@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import userRouter from './routers/user-router.js';
 import deviceRouter from './routers/device-router.js';
 import pollingJob from './cron-jobs/cron-request.js';
+import deviceModel from './database/models/device-model.js';
 
 //---
 

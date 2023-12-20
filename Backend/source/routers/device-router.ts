@@ -63,14 +63,14 @@ deviceRouter.get('/device/:deviceID', authRequest, async (request, response) => 
 
 deviceRouter.post('/device/duplicateKey', authRequest, async (request, response) => {
     try {
-        const key: unknown = request.body.apiKey;
+        const feedID: unknown = request.body.feedID;
         const username: unknown = request.body.adaUsername;
 
-        if (!typia.is<string>(key) || !typia.is<string>(username)) {
+        if (!typia.is<string>(feedID) || !typia.is<string>(username)) {
             return response.status(400).json({error: 'missing key to check'});
         }
 
-        if (await deviceModel.checkKey(key, username)) {
+        if (await deviceModel.checkFeedKey(feedID, username)) {
             return response.status(200).json({
                 result: false,
             });
@@ -193,12 +193,13 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
         const deviceID: unknown = request.params.deviceID;
         const apiKey: unknown = request.body.apiKey;
         const adaUsername: unknown = request.body.adaUsername;
+        const feedID: unknown = request.body.feedID;
 
-        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string>(apiKey) || !typia.is<string>(adaUsername)) {
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string>(apiKey) || !typia.is<string>(adaUsername) || !typia.is<string>(feedID)) {
             return response.status(400).json({error: 'missing info'});
         }
 
-        const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername);
+        const result = await deviceController.changeAPIkey(deviceID, userID, apiKey, adaUsername, feedID);
 
         if (undefined === result.error) {
             return response.status(200).json(result);
