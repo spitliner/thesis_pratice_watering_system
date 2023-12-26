@@ -186,14 +186,14 @@ userRouter.get('/user/', authRequest, async (request, response) => {
 userRouter.post('/user/device', authRequest, async (request, response) => {
     try {
         const userID: unknown = request.cookies.uid;
-        const deviceID: unknown = request.body.deviceID;
+        const feedID: unknown = request.body.feedID;
         const name: unknown = request.body.name;
         const type: unknown = request.body.type;
         const apiKey: unknown = request.body.apiKey;
         const adaUsername: unknown = request.body.adaUsername;
 
         if (!typia.is<string>(userID)
-                || !typia.is<string>(deviceID)
+                || !typia.is<string>(feedID)
                 || !typia.is<string>(type)
                 || !typia.is<string>(name)
                 || !typia.is<string>(apiKey)
@@ -201,7 +201,7 @@ userRouter.post('/user/device', authRequest, async (request, response) => {
             return response.status(401).json({error: 'not allowed'});
         }
 
-        const result = await deviceController.createDevice(deviceID, userID, name, type, apiKey, adaUsername);
+        const result = await deviceController.createDevice(feedID, userID, name, type, apiKey, adaUsername);
 
         if (undefined !== result.error) {
             if ('Device already in use' === result.error) {

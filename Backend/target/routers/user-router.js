@@ -190,7 +190,7 @@ userRouter.get('/user/', authRequest, async (request, response) => {
 userRouter.post('/user/device', authRequest, async (request, response) => {
     try {
         const userID = request.cookies.uid;
-        const deviceID = request.body.deviceID;
+        const feedID = request.body.feedID;
         const name = request.body.name;
         const type = request.body.type;
         const apiKey = request.body.apiKey;
@@ -201,7 +201,7 @@ userRouter.post('/user/device', authRequest, async (request, response) => {
         })(userID)
             || !(input => {
                 return "string" === typeof input;
-            })(deviceID)
+            })(feedID)
             || !(input => {
                 return "string" === typeof input;
             })(type)
@@ -216,7 +216,7 @@ userRouter.post('/user/device', authRequest, async (request, response) => {
             })(adaUsername)) {
             return response.status(401).json({ error: 'not allowed' });
         }
-        const result = await deviceController.createDevice(deviceID, userID, name, type, apiKey, adaUsername);
+        const result = await deviceController.createDevice(feedID, userID, name, type, apiKey, adaUsername);
         if (undefined !== result.error) {
             if ('Device already in use' === result.error) {
                 return response.status(409).json(result);
