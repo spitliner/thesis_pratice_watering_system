@@ -198,7 +198,7 @@ const deviceController = {
 
             const collectData = async (device: DeviceData) => {
                 try {
-                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.feedID, device.apiKey));
+                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.feedID, device.apiKey));
                 } catch (error) {
                     console.log(error);
                 }
