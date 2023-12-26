@@ -3,7 +3,7 @@ import deviceModel from '../database/models/device-model.js';
 const dataController = {
     async getData(deviceID, userID) {
         try {
-            const deviceData = await deviceModel.getDeviceData(deviceID, userID);
+            const deviceData = await deviceModel.getDeviceData(deviceID);
             if (null === deviceData) {
                 return {
                     error: 'Device not found',
