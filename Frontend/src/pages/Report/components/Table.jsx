@@ -10,18 +10,18 @@ const Table = (props) => {
   useEffect(() => {
     const rows = [];
     for (let i in deviceList) {
-      // if (deviceList[i].type === deviceType.water)
-      rows.push({
-        id: deviceList[i].id,
-        device: deviceList[i].id,
-        username: deviceList[i].adaUsername,
-        apikey: deviceList[i].apiKey,
-        schedule:
-          deviceList[i].schedules?.length > 0
-            ? deviceList[i].schedules[0][0]
-            : 'Free'
-        // status: 'On'
-      });
+      if (deviceList[i].type === deviceType.water)
+        rows.push({
+          id: deviceList[i].id,
+          device: deviceList[i].name,
+          username: deviceList[i].adaUsername,
+          apikey: deviceList[i].apiKey,
+          schedule:
+            deviceList[i].schedules?.length > 0
+              ? deviceList[i].schedules[0][0]
+              : 'Free'
+          // status: 'On'
+        });
     }
     setRow(rows);
   }, [deviceList]);

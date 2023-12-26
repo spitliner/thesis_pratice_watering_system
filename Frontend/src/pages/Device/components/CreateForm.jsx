@@ -13,22 +13,8 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import SelectInput from '../../../components/SelectInput';
 import useMutateDevice from '../hooks/useMutateDevice';
-import useCheckAndSave from '../hooks/useCheckApiKey';
+import useCheckAndSave from '../hooks/useCheckAndSave';
 import { deviceTypeOption } from '../../../constants/device';
-// const deviceType = [
-//   {
-//     value: 'Humidity',
-//     label: 'Humidity'
-//   },
-//   {
-//     value: 'Temperture',
-//     label: 'Temperture'
-//   },
-//   {
-//     value: 'Watering',
-//     label: 'Watering'
-//   }
-// ];
 
 export default function CreateForm(props) {
   const { open, handleClose, defaultDevice } = props;
@@ -42,9 +28,7 @@ export default function CreateForm(props) {
   const { register, handleSubmit, control } = form;
 
   const submitForm = (data) => {
-    const id = data?.name;
-    console.log({ ...data, feedID: id });
-    onSaveData({ ...data, feedID: id });
+    onCheckAndSave({ ...data, name: data.feedID, deviceID: data.feedID });
     setTimeout(() => {
       const deviceNameError = localStorage.getItem('deviceNameError');
       const apiError = localStorage.getItem('apiKeyError');
@@ -75,12 +59,12 @@ export default function CreateForm(props) {
             sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 3 }}
           >
             <TextField
-              id="name"
-              name="name"
+              id="feedID"
+              name="feedID"
               size="small"
               fullWidth
               label="Feed ID"
-              {...register('name')}
+              {...register('feedID')}
               control
               sx={{ mt: 2 }}
               required
@@ -146,7 +130,7 @@ export default function CreateForm(props) {
           onClose={handleCloseError}
         >
           <Alert open={errorMessage.api} severity="error" sx={{ width: 300 }}>
-            <AlertTitle>Api Key is duplicated!</AlertTitle>
+            <AlertTitle>Feed ID is duplicated!</AlertTitle>
           </Alert>
         </Snackbar>
       </Dialog>

@@ -9,7 +9,7 @@ const useLogin = () => {
   const token = getAccessToken();
 
   const navigate = useNavigate();
-  if (token) navigate('/');
+  // if (token) navigate('/');
 
   const { mutate: onLogin, isLoading } = useMutation(LoginService.create, {
     onSuccess: (res) => {

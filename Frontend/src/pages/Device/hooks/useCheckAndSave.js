@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query';
-import { ApiKeyService } from '../DeviceService';
+import { FeedIDService } from '../DeviceService';
 import useMutateDevice from './useMutateDevice';
 
 const useCheckAndSave = () => {
@@ -8,13 +8,13 @@ const useCheckAndSave = () => {
     mutate: onCheckAndSave,
     isLoading,
     isError
-  } = useMutation(ApiKeyService.create, {
+  } = useMutation(FeedIDService.create, {
     onSuccess: (data, variables) => {
       if (!data.result) {
-        localStorage.removeItem('apiKeyError');
+        localStorage.removeItem('feedIDError');
         onSaveData(variables);
       } else {
-        localStorage.setItem('apiKeyError', true);
+        localStorage.setItem('feedIDError', true);
       }
     }
   });

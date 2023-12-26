@@ -42,8 +42,8 @@ function Add() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const selectedDevice = deviceList?.find((item) => item.id === device);
-    debugger;
+    const selectedDevice = deviceList?.find((item) => item.name === device);
+    // debugger;
     // for (let i in selectedDevice?.schedules) {
     //   const startTime = selectedDevice.schedules[i][0];
     //   const existSchedule = dayjs(startTime, 'HH:mm');
@@ -79,33 +79,41 @@ function Add() {
     // ]);
     const newSchedule = dayjs(selectedTime, 'HH:mm');
 
-    for (const [startTime, scheduleDuration] of selectedDevice.schedules) {
-      const existSchedule = dayjs(startTime, 'HH:mm');
-      const betweenTime = Math.abs(
-        newSchedule.isAfter(existSchedule)
-          ? Math.abs(
-              newSchedule.diff(
-                existSchedule.add(Number(scheduleDuration), 'second'),
-                'second'
+    if (selectedDevice?.schedules) {
+      for (const [startTime, scheduleDuration] of selectedDevice?.schedules) {
+        const existSchedule = dayjs(startTime, 'HH:mm');
+        const betweenTime = Math.abs(
+          newSchedule.isAfter(existSchedule)
+            ? Math.abs(
+                newSchedule.diff(
+                  existSchedule.add(Number(scheduleDuration), 'second'),
+                  'second'
+                )
               )
-            )
-          : newSchedule
-              .add(Number(duration), 'second')
-              .diff(existSchedule, 'second')
-      );
+            : newSchedule
+                .add(Number(duration), 'second')
+                .diff(existSchedule, 'second')
+        );
+        console.log(betweenTime, 'betweenTime');
+        console.log(existSchedule, 'existSchedule');
 
-      if (betweenTime < 60) {
-        return; // Nếu khoảng thời gian nhỏ hơn 300 giây, ngừng xử lý
+        if (betweenTime < 60) {
+          console.log(betweenTime, 'less than 60');
+          return; // Nếu khoảng thời gian nhỏ hơn 300 giây, ngừng xử lý
+        }
       }
     }
 
-    selectedDevice.schedules.push([selectedTime, duration]);
+    const newScheduleList = selectedDevice?.schedules
+      ? [...selectedDevice?.schedules, [selectedTime, duration]]
+      : [[selectedTime, duration]];
 
+    console.log(newScheduleList, selectedDevice?.schedules, 'newScheduleList');
     onSaveDataById([
-      device,
+      selectedDevice.id,
       'schedules',
       {
-        schedules: selectedDevice.schedules
+        schedules: newScheduleList
       }
     ]);
   };
@@ -157,8 +165,8 @@ function Add() {
               required
             >
               {waterDevices?.map((device) => (
-                <MenuItem key={device.id} value={device.id}>
-                  {device.id}
+                <MenuItem key={device.name} value={device.name}>
+                  {device.name}
                 </MenuItem>
               ))}
               {waterDevices?.length === 0 && (

@@ -11,6 +11,7 @@ import useQueryDevice from '../Device/hooks/useQueryDevice';
 import useQueryDeviceById from './hooks/useQueryDeviceById';
 import HumidChart from './components/HumidChart';
 import TempChart from './components/TempChart';
+import { deviceType } from '../../constants/device';
 
 const today = new Date(); // get today's date
 const yesterday = new Date(today);
@@ -21,6 +22,13 @@ function _id() {
   const { deviceList } = useQueryDevice();
 
   // const { data: tempData } = useQueryDeviceById('temperature');
+
+  const tempDevice = deviceList?.filter(
+    (device) => device.type === deviceType.temp
+  );
+  const humidDevice = deviceList?.filter(
+    (device) => device.type === deviceType.humid
+  );
 
   if (!deviceList) return null;
   return (
@@ -82,8 +90,8 @@ function _id() {
         >
           {/* <Charts date={date} type="Line" tempChartData={tempData?.feed} /> */}
           {/* <Charts date={date} type="Bar" chartData={humidData?.feed} /> */}
-          <TempChart date={date} />
-          <HumidChart date={date} />
+          <TempChart date={date} deviceID={tempDevice[0].id} />
+          <HumidChart date={date} deviceID={humidDevice[0].id} />
         </Box>
 
         <Box justifyContent="center">
