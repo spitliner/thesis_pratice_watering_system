@@ -3,7 +3,7 @@ import axios from 'axios';
 import typia from 'typia';
 
 const adaConnect = {
-    async getFeedData(username: string, feedName: string, key: string) {
+    async getFeedData(username: string, deviceID: string, feedName: string, key: string) {
         try {
             const result = await axios.get(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`, {
                 headers: {
@@ -26,7 +26,7 @@ const adaConnect = {
 
             const insertData = resultArray.map(dataPoint => ({
                 id: dataPoint.id,
-                deviceID: dataPoint.feed_key,
+                deviceID,
                 time: new Date(dataPoint.created_epoch * 1000),
                 data: dataPoint.value,
             }));
