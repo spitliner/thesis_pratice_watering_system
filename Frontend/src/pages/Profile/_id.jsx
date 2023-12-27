@@ -1,6 +1,4 @@
 import Container from '@mui/material/Container';
-import AppBar from '../../components/AppBar/AppBar';
-import Navigation from '../../components/Navigation/Navigation';
 import AvatarBox from './components/AvatarBox';
 import EditBox from './components/EditBox';
 import useQueryOnlineProfile from './hooks/useQueryProfile';

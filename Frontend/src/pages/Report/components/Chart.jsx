@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 import dayjs from 'dayjs';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
 
@@ -69,7 +63,7 @@ const Chart = ({ date, deviceID, dataKey, label, color }) => {
       ) : (
         <LineChart
           width={500}
-          height={260}
+          height={300}
           data={dataList}
           margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
         >

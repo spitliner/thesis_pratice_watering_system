@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Welcome from './Banners/WelcomeBanner';
 import SensorInfo from './SensorInfo';
-import Chart from './Chart';
 import { Typography } from '@mui/material';
 
 function MainContent() {
@@ -17,10 +16,9 @@ function MainContent() {
     >
       <Welcome />
       <Typography color="#527853" fontSize={30} fontWeight={700} my={3}>
-        Current Ho Chi Minh city weather
+        Current Ho Chi Minh City weather
       </Typography>
       <SensorInfo />
-      {/* <Chart /> */}
     </Box>
   );
 }

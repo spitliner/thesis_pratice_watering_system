@@ -14,7 +14,7 @@ const useCheckAndSave = () => {
         localStorage.removeItem('feedIDError');
         onSaveData(variables);
       } else {
-        localStorage.setItem('feedIDError', true);
+        localStorage.setItem('feedIDError', 'Duplicated Feed ID');
       }
     }
   });

@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import {
+  Container,
+  Box,
+  TextField,
+  MenuItem,
+  Button,
+  Typography,
+  Snackbar,
+  Alert,
+  AlertTitle
+} from '@mui/material';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
 import { useNavigate } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
@@ -12,6 +17,7 @@ import { deviceType } from '../../../constants/device';
 import { InputAdornment } from '@mui/material';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { validSchedule } from '../../../utils';
 dayjs.extend(customParseFormat);
 
 function Add() {
@@ -22,6 +28,7 @@ function Add() {
   const [selectedTime, setSelectedTime] = useState('');
   const [device, setDevice] = useState('');
   const [duration, setDuration] = useState('');
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const handleCancel = () => {
     navigate('/schedules');
@@ -32,7 +39,6 @@ function Add() {
   };
 
   const handleTimeChange = (event) => {
-    console.log(event.target.value);
     setSelectedTime(event.target.value);
   };
 
@@ -43,72 +49,14 @@ function Add() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const selectedDevice = deviceList?.find((item) => item.name === device);
-    // debugger;
-    // for (let i in selectedDevice?.schedules) {
-    //   const startTime = selectedDevice.schedules[i][0];
-    //   const existSchedule = dayjs(startTime, 'HH:mm');
-    //   const newSchedule = dayjs(selectedTime, 'HH:mm');
-    //   let betweenTime = 0;
-    //   if (newSchedule.isAfter(existSchedule)) {
-    //     betweenTime = Math.abs(
-    //       newSchedule.diff(
-    //         existSchedule.add(Number(selectedDevice.schedules[i][1]), 'second'),
-    //         'second'
-    //       )
-    //     );
-    //   }
-    //   if (newSchedule.isBefore(existSchedule)) {
-    //     betweenTime = Math.abs(
-    //       newSchedule
-    //         .add(Number(duration), 'second')
-    //         .diff(existSchedule, 'second')
-    //     );
-    //   }
-    //   if (betweenTime < 300) return;
-    // }
-    // debugger;
-    // selectedDevice?.schedules
-    //   ? selectedDevice.schedules.push([selectedTime, duration])
-    //   : [selectedTime, duration];
-    // onSaveDataById([
-    //   device,
-    //   'schedules',
-    //   {
-    //     schedules: selectedDevice?.schedules
-    //   }
-    // ]);
-    const newSchedule = dayjs(selectedTime, 'HH:mm');
-
-    if (selectedDevice?.schedules) {
-      for (const [startTime, scheduleDuration] of selectedDevice?.schedules) {
-        const existSchedule = dayjs(startTime, 'HH:mm');
-        const betweenTime = Math.abs(
-          newSchedule.isAfter(existSchedule)
-            ? Math.abs(
-                newSchedule.diff(
-                  existSchedule.add(Number(scheduleDuration), 'second'),
-                  'second'
-                )
-              )
-            : newSchedule
-                .add(Number(duration), 'second')
-                .diff(existSchedule, 'second')
-        );
-        console.log(betweenTime, 'betweenTime');
-        console.log(existSchedule, 'existSchedule');
-
-        if (betweenTime < 60) {
-          console.log(betweenTime, 'less than 60');
-          return; // Nếu khoảng thời gian nhỏ hơn 300 giây, ngừng xử lý
-        }
-      }
-    }
 
     const newScheduleList = selectedDevice?.schedules
       ? [...selectedDevice?.schedules, [selectedTime, duration]]
       : [[selectedTime, duration]];
+    const isValid = validSchedule(newScheduleList);
+    setErrorMessage(!isValid);
+    if (!isValid) return;
 
-    console.log(newScheduleList, selectedDevice?.schedules, 'newScheduleList');
     onSaveDataById([
       selectedDevice.id,
       'schedules',
@@ -233,6 +181,17 @@ function Add() {
           </form>
         </Box>
       </Container>
+      <Snackbar
+        open={errorMessage}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        onClose={() => setErrorMessage(false)}
+        style={{ justifyContent: 'center' }}
+      >
+        <Alert open={errorMessage} severity="error" sx={{ width: 400 }}>
+          <AlertTitle>Time between each schedule must {'>'} 300s !</AlertTitle>
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

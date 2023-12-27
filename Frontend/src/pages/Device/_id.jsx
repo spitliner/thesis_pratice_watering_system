@@ -3,16 +3,11 @@ import { Box, Container, Button, styled, Typography } from '@mui/material';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import ShowerIcon from '@mui/icons-material/Shower';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
-// import TempertureTab from './components/TempertureTab';
-// import WateringTab from './components/WateringTab';
-// import HumidTab from './components/HumidTab';
 import DeviceTab from './components/DeviceTab';
 import useQueryDevice from './hooks/useQueryDevice';
 import { deviceType } from '../../constants/device';
 import DeviceThermostatOutlinedIcon from '@mui/icons-material/DeviceThermostat';
-import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
 import ShowerOutlinedIcon from '@mui/icons-material/Shower';
-import useQueryDeviceById from './hooks/useQueryDeviceById';
 
 const TabButton = styled(Button)(({ theme }) => ({
   width: 250,

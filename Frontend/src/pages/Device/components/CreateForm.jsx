@@ -18,7 +18,6 @@ import { deviceTypeOption } from '../../../constants/device';
 
 export default function CreateForm(props) {
   const { open, handleClose, defaultDevice } = props;
-  const { onSaveData } = useMutateDevice();
   const { onCheckAndSave } = useCheckAndSave();
   const [errorMessage, setErrorMessage] = useState({
     api: false,
@@ -28,7 +27,7 @@ export default function CreateForm(props) {
   const { register, handleSubmit, control } = form;
 
   const submitForm = (data) => {
-    onCheckAndSave({ ...data, name: data.feedID, deviceID: data.feedID });
+    onCheckAndSave(data);
     setTimeout(() => {
       const deviceNameError = localStorage.getItem('deviceNameError');
       const apiError = localStorage.getItem('apiKeyError');
@@ -66,7 +65,16 @@ export default function CreateForm(props) {
               label="Feed ID"
               {...register('feedID')}
               control
-              sx={{ mt: 2 }}
+              required
+            />
+            <TextField
+              id="name"
+              name="name"
+              size="small"
+              fullWidth
+              label="Name"
+              {...register('name')}
+              control
               required
             />
             <Controller

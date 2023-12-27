@@ -195,7 +195,6 @@ userRouter.post('/user/device', authRequest, async (request, response) => {
         const type = request.body.type;
         const apiKey = request.body.apiKey;
         const adaUsername = request.body.adaUsername;
-        console.log(deviceID)
         if (!(input => {
             return "string" === typeof input;
         })(userID)

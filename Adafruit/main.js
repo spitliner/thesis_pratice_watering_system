@@ -9,7 +9,7 @@ dayjs.extend(customParseFormat);
 
 const client = mqtt.connect("mqtt://io.adafruit.com", {
   username: "viluong",
-  password: "aio_fLfl64UWIyKSaWJIV3bVOsUK2jxn",
+  password: "aio_gwqm24eU1KSYLTsZ4aY852Muc0Iu",
 });
 
 const AIO_FEEDS = ["temperature", "humidity", "auto-watering"];
@@ -47,8 +47,8 @@ client.on("error", (error) => {
 });
 
 // send default status to adafruit
-const default_pump_status = "OFF";
-client.publish(topic_water, default_pump_status);
+// const default_pump_status = "OFF";
+// client.publish(topic_water, default_pump_status);
 
 // schedules receive from Backend
 const schedules = [[dayjs().format("HH:mm"), "30"]];
@@ -81,8 +81,10 @@ setInterval(() => {
     //     client.publish(topic, "OFF");
     //   }
     // }
-    const value = Math.round(Math.random() * 100).toFixed();
-    console.log(`upload data to ${topic}: `, value);
-    client.publish(topic, value);
+    if (topic === topic_humid || topic === topic_temp) {
+      const value = (Math.floor(Math.random() * (80 - 30 + 1)) + 30).toFixed();
+      console.log(`upload data to ${topic}: `, value);
+      client.publish(topic, value);
+    }
   });
-}, 55000);
+}, 30000);

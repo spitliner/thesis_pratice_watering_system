@@ -66,17 +66,6 @@ function _id() {
                 }}
                 sx={{ width: '100%' }}
               />
-              {/* <DateCalendar
-                style={{
-                  border: '1px solid #666666',
-                  borderRadius: 5
-                }}
-                maxDate={dayjs(yesterday)}
-                value={date}
-                onChange={(val) => {
-                  setDate(dayjs(val));
-                }}
-              /> */}
             </LocalizationProvider>
           </Box>
         </Box>
@@ -88,10 +77,9 @@ function _id() {
             alignItems: 'start'
           }}
         >
-          {/* <Charts date={date} type="Line" tempChartData={tempData?.feed} /> */}
-          {/* <Charts date={date} type="Bar" chartData={humidData?.feed} /> */}
-          <TempChart date={date} deviceID={tempDevice[0].id} />
-          <HumidChart date={date} deviceID={humidDevice[0].id} />
+          <TempChart date={date} deviceID={tempDevice[0]?.id} />
+          <HumidChart date={date} deviceID={humidDevice[0]?.id} />
+          {/* <HumidChart date={date} deviceID={humidDevice[0]?.id} /> */}
         </Box>
 
         <Box justifyContent="center">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,16 +13,24 @@ import { Link } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
-import { Typography } from '@mui/material';
+import { Modal, Typography } from '@mui/material';
 import { deviceType } from '../../../constants/device';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import Edit from './Edit';
+dayjs.extend(customParseFormat);
 
 function Board() {
   const { deviceList } = useQueryDevice();
   const { onSaveDataById } = useMutateDeviceById();
+  const [onEdit, setOnEdit] = React.useState(false);
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
-  if (!deviceList) return null;
+  const handleEdit = () => {
+    setOnEdit(true);
+  };
+
   return (
     <Container disableGutters maxWidth={false}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -108,20 +116,26 @@ function Board() {
                         textAlign: 'center' // Set text alignment to center
                       }}
                     >
-                      {device.id}
+                      {device.name}
                     </TableCell>
 
-                    <TableCell key={index} sx={{ textAlign: 'center' }}>
+                    <TableCell sx={{ textAlign: 'center' }}>
                       {device.schedules?.map((time, index) => (
-                        <Typography sx={{ fontWeight: 500, color: '#F2946D' }}>
+                        <Typography
+                          key={index + time[0]}
+                          sx={{ fontWeight: 500, color: '#F2946D' }}
+                        >
                           {time[0]}
                         </Typography>
                       ))}
                     </TableCell>
 
-                    <TableCell key={index} sx={{ textAlign: 'center' }}>
-                      {device.schedules?.map((time) => (
-                        <Typography sx={{ fontWeight: 500, color: '#7A40F2' }}>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      {device.schedules?.map((time, index) => (
+                        <Typography
+                          key={index + time[1]}
+                          sx={{ fontWeight: 500, color: '#7A40F2' }}
+                        >
                           {time[1]}
                         </Typography>
                       ))}
@@ -146,9 +160,16 @@ function Board() {
                           <Button
                             variant="contained"
                             sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                            onClick={() => handleEdit()}
                           >
                             EDIT
                           </Button>
+                          <Modal open={onEdit}>
+                            <Edit
+                              device={device}
+                              onClose={() => setOnEdit((prev) => !prev)}
+                            />
+                          </Modal>
                         </Box>
                       </TableCell>
                     )}

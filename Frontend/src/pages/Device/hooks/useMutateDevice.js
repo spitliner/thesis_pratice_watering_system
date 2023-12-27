@@ -9,6 +9,7 @@ const useMutateDevice = () => {
     isError
   } = useMutation(UserDeviceService.create, {
     onSuccess: (res) => {
+      if(res.error)
       localStorage.removeItem('deviceNameError');
       queryClient.invalidateQueries('getDevice');
     },

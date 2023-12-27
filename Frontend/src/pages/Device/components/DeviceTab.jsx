@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography, Grid, styled } from '@mui/material';
-import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
-import DeviceThermostatOutlinedIcon from '@mui/icons-material/DeviceThermostat';
-import ShowerOutlinedIcon from '@mui/icons-material/Shower';
 import CreateForm from './CreateForm';
 import useMutateDeleteDevice from '../hooks/useMutateDeleteById';
-import { deviceType } from '../../../constants/device';
 
 const Device = styled(Box)(({ theme }) => ({
-  width: 450,
+  width: 480,
   display: 'flex',
   justifyContent: 'space-between',
   border: '1px solid #ccc',
@@ -23,7 +19,6 @@ export default function DeviceTab(props) {
   const [open, setOpen] = useState(false);
 
   const handleDelete = (id) => {
-    console.log(id);
     onDeleteData(id);
   };
 
@@ -41,15 +36,6 @@ export default function DeviceTab(props) {
               backgroundColor: '#f0e9fe'
             }
           })}
-          {/* <WaterDropOutlinedIcon
-            sx={{
-              fontSize: '40px',
-              borderRadius: 100,
-              color: 'primary.main',
-              p: 1,
-              backgroundColor: '#f0e9fe'
-            }}
-          /> */}
           <Typography color="primary" fontWeight={700}>
             The {title} device
           </Typography>
@@ -70,11 +56,11 @@ export default function DeviceTab(props) {
             device?.type == typeOfDevice && (
               <Grid key={device.id} item xs={6}>
                 <Device>
-                  <Typography color="primary" width={100}>
+                  <Typography color="primary" width={120}>
                     {device.name}
                   </Typography>
-                  <Typography color="primary" width={150}>
-                    Api key: {device.apiKey.slice(0, 11)}
+                  <Typography color="primary" width={180}>
+                    Feed ID: {device.feedID}
                   </Typography>
                   <Box>
                     <Button
