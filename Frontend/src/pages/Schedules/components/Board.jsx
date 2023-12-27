@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,24 +13,24 @@ import { Link } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
-
-const data = [
-  ['KV01', '8:00', '500'],
-  ['KV01', '10:00', '250'],
-  ['KV03', '4:00', '1000'],
-  ['KV04', '4:00', '1000'],
-  ['KV01', '15:00', '1000'],
-  ['KV05', '8:00', '500'],
-  ['KV05', '5:00', '500']
-];
+import { Modal, Typography } from '@mui/material';
+import { deviceType } from '../../../constants/device';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import Edit from './Edit';
+dayjs.extend(customParseFormat);
 
 function Board() {
   const { deviceList } = useQueryDevice();
   const { onSaveDataById } = useMutateDeviceById();
+  const [onEdit, setOnEdit] = React.useState(false);
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
-  if (!deviceList) return null;
+  const handleEdit = () => {
+    setOnEdit(true);
+  };
+
   return (
     <Container disableGutters maxWidth={false}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -84,7 +84,7 @@ function Board() {
                   textAlign: 'center'
                 }}
               >
-                WATER (ML)
+                DURATION (seconds)
               </TableCell>
               <TableCell
                 sx={{
@@ -98,10 +98,12 @@ function Board() {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {deviceList?.map(
               (device, index) =>
-                device.type === 'Watering' && (
+                device.type === deviceType.water &&
+                device?.schedules && (
                   <TableRow
                     key={index}
                     sx={{ border: 1, borderColor: '#e0e0e0' }}
@@ -114,24 +116,40 @@ function Board() {
                         textAlign: 'center' // Set text alignment to center
                       }}
                     >
-                      {device.id}
+                      {device.name}
                     </TableCell>
-                    {device.schedules.map((cell, cellIndex) => (
-                      <TableCell
-                        key={cellIndex}
-                        sx={{
-                          fontSize: '16px',
-                          fontWeight: 500,
-                          color: cellIndex % 2 === 0 ? '#7A40F2' : '#F2946D',
-                          textAlign: 'center' // Set text alignment to center
-                        }}
-                      >
-                        {cell}
-                      </TableCell>
-                    ))}
-                    {device.schedules.length > 0 && (
+
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      {device.schedules?.map((time, index) => (
+                        <Typography
+                          key={index + time[0]}
+                          sx={{ fontWeight: 500, color: '#F2946D' }}
+                        >
+                          {time[0]}
+                        </Typography>
+                      ))}
+                    </TableCell>
+
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      {device.schedules?.map((time, index) => (
+                        <Typography
+                          key={index + time[1]}
+                          sx={{ fontWeight: 500, color: '#7A40F2' }}
+                        >
+                          {time[1]}
+                        </Typography>
+                      ))}
+                    </TableCell>
+
+                    {device?.schedules?.length > 0 && (
                       <TableCell>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            columnGap: 2
+                          }}
+                        >
                           <Button
                             variant="contained"
                             sx={{ backgroundColor: '#FF7961', width: '70px' }}
@@ -139,12 +157,19 @@ function Board() {
                           >
                             DELETE
                           </Button>
-                          {/* <Button
-                      variant="contained"
-                      sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                    >
-                      EDIT
-                    </Button> */}
+                          <Button
+                            variant="contained"
+                            sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                            onClick={() => handleEdit()}
+                          >
+                            EDIT
+                          </Button>
+                          <Modal open={onEdit}>
+                            <Edit
+                              device={device}
+                              onClose={() => setOnEdit((prev) => !prev)}
+                            />
+                          </Modal>
                         </Box>
                       </TableCell>
                     )}
@@ -152,6 +177,18 @@ function Board() {
                 )
             )}
           </TableBody>
+
+          {deviceList?.length === 0 && (
+            <Typography
+              fontSize={18}
+              fontStyle="italic"
+              textAlign="center"
+              color="gray"
+              mt={3}
+            >
+              There is no device
+            </Typography>
+          )}
         </Table>
       </TableContainer>
     </Container>

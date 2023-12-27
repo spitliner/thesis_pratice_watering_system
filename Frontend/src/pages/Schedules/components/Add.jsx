@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import {
+  Container,
+  Box,
+  TextField,
+  MenuItem,
+  Button,
+  Typography,
+  Snackbar,
+  Alert,
+  AlertTitle
+} from '@mui/material';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
 import { useNavigate } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
+import { deviceType } from '../../../constants/device';
+import { InputAdornment } from '@mui/material';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { validSchedule } from '../../../utils';
+dayjs.extend(customParseFormat);
 
 function Add() {
   const { onSaveDataById } = useMutateDeviceById();
@@ -16,7 +27,8 @@ function Add() {
 
   const [selectedTime, setSelectedTime] = useState('');
   const [device, setDevice] = useState('');
-  const [water, setWater] = useState('');
+  const [duration, setDuration] = useState('');
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const handleCancel = () => {
     navigate('/schedules');
@@ -30,15 +42,33 @@ function Add() {
     setSelectedTime(event.target.value);
   };
 
-  const handleWaterChange = (event) => {
-    setWater(event.target.value);
+  const handleDurationChange = (event) => {
+    setDuration(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission logic here
-    onSaveDataById([device, 'schedules', { schedules: [selectedTime, water] }]);
+    const selectedDevice = deviceList?.find((item) => item.name === device);
+
+    const newScheduleList = selectedDevice?.schedules
+      ? [...selectedDevice?.schedules, [selectedTime, duration]]
+      : [[selectedTime, duration]];
+    const isValid = validSchedule(newScheduleList);
+    setErrorMessage(!isValid);
+    if (!isValid) return;
+
+    onSaveDataById([
+      selectedDevice.id,
+      'schedules',
+      {
+        schedules: newScheduleList
+      }
+    ]);
   };
+
+  const waterDevices = deviceList?.filter(
+    (device) => device.type === deviceType.water
+  );
 
   if (!deviceList) return null;
   return (
@@ -78,29 +108,27 @@ function Add() {
               fullWidth
               select
               sx={{ mb: 2, mt: 3 }}
-              InputLabelProps={{ shrink: true }}
               value={device}
               onChange={handleDeviceChange}
               required
             >
-              {/* <MenuItem value="KV101">KV101</MenuItem>
-              <MenuItem value="KV102">KV102</MenuItem>
-              <MenuItem value="DV03">DV03</MenuItem>
-              <MenuItem value="DV04">DV04</MenuItem>
-              <MenuItem value="DV05">DV05</MenuItem> */}
-              {deviceList?.map(
-                (device) =>
-                  device.type === 'Watering' && (
-                    <MenuItem key={device.id} value={device.id}>
-                      {device.id}
-                    </MenuItem>
-                  )
+              {waterDevices?.map((device) => (
+                <MenuItem key={device.name} value={device.name}>
+                  {device.name}
+                </MenuItem>
+              ))}
+              {waterDevices?.length === 0 && (
+                <MenuItem sx={{ fontStyle: 'italic', color: 'gray' }}>
+                  No watering device
+                </MenuItem>
               )}
             </TextField>
 
             <TextField
               type="time"
+              label="Start time"
               variant="outlined"
+              InputLabelProps={{ shrink: true }}
               fullWidth
               value={selectedTime}
               onChange={handleTimeChange}
@@ -110,12 +138,18 @@ function Add() {
 
             <TextField
               type="number"
-              label="Amount of Water"
+              label="Duration time"
               variant="outlined"
               fullWidth
               sx={{ mb: 2 }}
-              value={water}
-              onChange={handleWaterChange}
+              value={duration}
+              onChange={handleDurationChange}
+              InputProps={{
+                inputProps: { min: 0 },
+                endAdornment: (
+                  <InputAdornment position="end">seconds</InputAdornment>
+                )
+              }}
               required
             />
 
@@ -147,6 +181,17 @@ function Add() {
           </form>
         </Box>
       </Container>
+      <Snackbar
+        open={errorMessage}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        onClose={() => setErrorMessage(false)}
+        style={{ justifyContent: 'center' }}
+      >
+        <Alert open={errorMessage} severity="error" sx={{ width: 400 }}>
+          <AlertTitle>Time between each schedule must {'>'} 300s !</AlertTitle>
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

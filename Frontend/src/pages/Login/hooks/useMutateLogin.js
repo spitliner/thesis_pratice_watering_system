@@ -13,10 +13,10 @@ const useLogin = () => {
 
   const { mutate: onLogin, isLoading } = useMutation(LoginService.create, {
     onSuccess: (res) => {
-      const token = res.token;
-      setAccessToken(token);
-      localStorage.setAccessToken(token);
-      location.replace('/');
+      const token = res?.token;
+      token && setAccessToken(token);
+      // localStorage.setAccessToken(token);
+      getAccessToken() && location.replace('/');
     },
     onError: (res) => {
       alert(res.response.data.error);

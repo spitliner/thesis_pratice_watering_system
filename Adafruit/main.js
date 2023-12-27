@@ -9,7 +9,7 @@ dayjs.extend(customParseFormat);
 
 const client = mqtt.connect("mqtt://io.adafruit.com", {
   username: "viluong",
-  password: "aio_tzeu93jhXdpm7EYcU98K7k280qAI",
+  password: "aio_gwqm24eU1KSYLTsZ4aY852Muc0Iu",
 });
 
 const AIO_FEEDS = ["temperature", "humidity", "auto-watering"];
@@ -47,11 +47,11 @@ client.on("error", (error) => {
 });
 
 // send default status to adafruit
-const default_pump_status = "OFF";
-client.publish(topic_water, default_pump_status);
+// const default_pump_status = "OFF";
+// client.publish(topic_water, default_pump_status);
 
 // schedules receive from Backend
-const schedules = [["23:56", "30"]];
+const schedules = [[dayjs().format("HH:mm"), "30"]];
 
 // update data every 10s
 setInterval(() => {
@@ -66,20 +66,25 @@ setInterval(() => {
   AIO_FEEDS.forEach((feed) => {
     const topic = `${AIO_USERNAME}/feeds/${feed}`;
 
-    if (topic === topic_water) {
-      if (
-        currentTime === startTime &&
-        timeDifference < duration &&
-        pumpState !== "ON"
-      ) {
-        console.log("Turn on pump");
-        client.publish(topic, "ON");
-      }
+    // if (topic === topic_water) {
+    //   if (
+    //     currentTime === startTime &&
+    //     timeDifference < duration &&
+    //     pumpState !== "ON"
+    //   ) {
+    //     console.log("Turn on pump");
+    //     client.publish(topic, "ON");
+    //   }
 
-      if (timeDifference >= duration && pumpState !== "OFF") {
-        console.log("Turn off pump");
-        client.publish(topic, "OFF");
-      }
+    //   if (timeDifference >= duration && pumpState !== "OFF") {
+    //     console.log("Turn off pump");
+    //     client.publish(topic, "OFF");
+    //   }
+    // }
+    if (topic === topic_humid || topic === topic_temp) {
+      const value = (Math.floor(Math.random() * (80 - 30 + 1)) + 30).toFixed();
+      console.log(`upload data to ${topic}: `, value);
+      client.publish(topic, value);
     }
   });
-}, 5000);
+}, 30000);

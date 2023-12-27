@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography, Grid, styled } from '@mui/material';
-import WaterDropOutlinedIcon from '@mui/icons-material/WaterDropOutlined';
 import CreateForm from './CreateForm';
 import useMutateDeleteDevice from '../hooks/useMutateDeleteById';
 
 const Device = styled(Box)(({ theme }) => ({
-  width: 450,
+  width: 480,
   display: 'flex',
   justifyContent: 'space-between',
   border: '1px solid #ccc',
@@ -14,13 +13,8 @@ const Device = styled(Box)(({ theme }) => ({
   alignItems: 'center'
 }));
 
-const deviceType = {
-  value: 'Humidity',
-  label: 'Humidity'
-};
-
-export default function HumidTab(props) {
-  const { deviceList } = props;
+export default function DeviceTab(props) {
+  const { deviceList, title, typeOfDevice, icon } = props;
   const { onDeleteData } = useMutateDeleteDevice();
   const [open, setOpen] = useState(false);
 
@@ -33,35 +27,40 @@ export default function HumidTab(props) {
     <>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box display="flex" gap={2} alignItems="center">
-          <WaterDropOutlinedIcon
-            sx={{
+          {React.cloneElement(icon, {
+            sx: {
               fontSize: '40px',
               borderRadius: 100,
               color: 'primary.main',
               p: 1,
               backgroundColor: '#f0e9fe'
-            }}
-          />
+            }
+          })}
           <Typography color="primary" fontWeight={700}>
-            The humidity measuring device
+            The {title} device
           </Typography>
         </Box>
         <Button variant="contained" onClick={() => setOpen(true)}>
           +
         </Button>
       </Box>
-
-      <CreateForm open={open} handleClose={() => setOpen(false)} />
+      <CreateForm
+        open={open}
+        handleClose={() => setOpen(false)}
+        defaultDevice={typeOfDevice}
+      />
 
       <Grid container rowSpacing={5} mt={0}>
         {deviceList.map(
           (device) =>
-            device?.type == 'Humidity' && (
+            device?.type == typeOfDevice && (
               <Grid key={device.id} item xs={6}>
                 <Device>
-                  <Typography color="primary">{device.name}</Typography>
-                  <Typography color="primary">
-                    apiKey: {device.apiKey}
+                  <Typography color="primary" width={120}>
+                    {device.name}
+                  </Typography>
+                  <Typography color="primary" width={180}>
+                    Feed ID: {device.feedID}
                   </Typography>
                   <Box>
                     <Button
@@ -77,6 +76,18 @@ export default function HumidTab(props) {
             )
         )}
       </Grid>
+
+      {deviceList.length === 0 && (
+        <Typography
+          fontSize={18}
+          fontStyle="italic"
+          textAlign="center"
+          color="gray"
+          mt={10}
+        >
+          There is no device
+        </Typography>
+      )}
     </>
   );
 }

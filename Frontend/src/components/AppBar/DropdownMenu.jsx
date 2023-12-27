@@ -8,10 +8,15 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import useLogoutHook from '../../pages/Login/hooks/useMutateLogout';
+import { GetAvatarByUserId } from '../../common/firebaseService';
+import useQueryProfile from '../../pages/Profile/hooks/useQueryProfile';
 
 function DropdownMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const [avatar, setAvatar] = React.useState(
+    'https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
+  );
+  const { profile } = useQueryProfile();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,6 +25,15 @@ function DropdownMenu() {
     setAnchorEl(null);
   };
   const logout = useLogoutHook();
+  useEffect(() => {
+    async function getAvatar() {
+      if (profile) {
+        const avatar = await GetAvatarByUserId(profile?.id);
+        setAvatar(avatar);
+      }
+    }
+    getAvatar();
+  }, [profile]);
   return (
     <Box>
       <Button
@@ -30,15 +44,10 @@ function DropdownMenu() {
         onClick={handleClick}
         endIcon={<ExpandMoreIcon />}
       >
-        <Avatar
-          sx={{ width: 32, height: 32 }}
-          src="https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg"
-        >
-          M
-        </Avatar>
-        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', px: 1 }}>
+        <Avatar sx={{ width: 32, height: 32 }} src={avatar}></Avatar>
+        {/* <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', px: 1 }}>
           Kate
-        </Typography>
+        </Typography> */}
       </Button>
       <Menu
         id="basic-menu"

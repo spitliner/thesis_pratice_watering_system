@@ -11,6 +11,6 @@ const deviceSchema = new mongoose.Schema({
     settings: { type: String, required: true },
     schedules: { type: [[String]], required: false },
 });
-deviceSchema.index({ id: 1, userID: 1 }, { unique: true });
+deviceSchema.index({ userID: 1, name: 1 }, { unique: true });
 deviceSchema.index({ feedID: 1, adaUsername: 1 }, { unique: true });
 export default deviceSchema;

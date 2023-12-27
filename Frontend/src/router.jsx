@@ -15,6 +15,7 @@ const Login = Loader(lazy(() => import('./pages/Login/_id')));
 const Register = Loader(lazy(() => import('./pages/Register/_id')));
 const Schedules = Loader(lazy(() => import('./pages/Schedules/_id')));
 const Add = Loader(lazy(() => import('./pages/Schedules/components/Add')));
+const Edit = Loader(lazy(() => import('./pages/Schedules/components/Edit')));
 const Device = Loader(lazy(() => import('./pages/Device/_id')));
 const Profile = Loader(lazy(() => import('./pages/Profile/_id')));
 const Report = Loader(lazy(() => import('./pages/Report/_id')));
@@ -40,6 +41,10 @@ const routes = [
       {
         path: '/schedules/add',
         element: <Add />
+      },
+      {
+        path: '/schedules/edit',
+        element: <Edit />
       },
       {
         path: '/profile',

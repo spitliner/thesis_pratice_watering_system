@@ -1,78 +1,80 @@
-import { Box } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend
-} from 'recharts';
-import { fetchHistoricWeatherData } from '../../../common/weatherAPI';
+import { Box, Typography } from '@mui/material';
+import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 import dayjs from 'dayjs';
+import useQueryDeviceById from '../hooks/useQueryDeviceById';
 
-const Charts = (props) => {
-  const [chartData, setChartData] = useState(null);
+const Chart = ({ date, deviceID, dataKey, label, color }) => {
+  const { data } = useQueryDeviceById(deviceID);
   const [dataList, setDataList] = useState([]);
 
-  const getData = async () => {
-    const data = await fetchHistoricWeatherData({
-      start_date: props?.date?.format('YYYY-MM-DD'),
-      end_date: props?.date?.format('YYYY-MM-DD'),
-      hourly: 'temperature_2m,rain'
-    });
-    setChartData(data.hourly);
-  };
-
   useEffect(() => {
-    getData();
-  }, [props]);
-
-  useEffect(() => {
-    let tmpList = [];
-    for (let i = 0; i < chartData?.time?.length; i++) {
-      const dataObject = {
-        time: dayjs(chartData?.time[i])?.format('HH'),
-        temperature: chartData?.temperature_2m[i],
-        rain: chartData?.rain[i]
-      };
-      tmpList.push(dataObject);
+    if (date) {
+      const selectedDateList = data?.feed.filter((item) => {
+        return (
+          dayjs(date).format('DD/MM/YYYY') ===
+          dayjs(item.time).format('DD/MM/YYYY')
+        );
+      });
+      const chartData = selectedDateList?.map((_, index) => ({
+        time: dayjs(selectedDateList[index].time).format('HH:mm'),
+        [dataKey]: selectedDateList[index].data
+      }));
+      chartData?.reverse();
+      setDataList(chartData);
     }
-    setDataList(tmpList);
-  }, [chartData]);
+  }, [data, date]);
+
+  if (!data)
+    return (
+      <Typography fontSize={18} fontWeight={700} color="error">
+        No {label.toLowerCase()} device
+      </Typography>
+    );
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        rowGap: 5
+        alignItems: 'center'
       }}
     >
-      {/* Line Chart */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}
-      >
-        <h3>Temperture</h3>
+      <Typography fontSize={22} fontWeight={700} color={color}>
+        {label}
+      </Typography>
+      {dataList?.length <= 0 ? (
+        <Box
+          width={500}
+          height={260}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Typography
+            fontSize={15}
+            fontWeight={700}
+            color="gray"
+            fontStyle="italic"
+          >
+            No data
+          </Typography>
+        </Box>
+      ) : (
         <LineChart
-          width={480}
-          height={260}
+          width={500}
+          height={300}
           data={dataList}
           margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
         >
           <XAxis
             dataKey="time"
-            label={{ value: 'Hour', position: 'insideBottom', offset: -15 }}
+            label={{ value: 'Time', position: 'insideBottom', offset: -15 }}
+            tickMaxStep={100 * 60}
           />
           <YAxis
             label={{
-              value: 'Temperture (°C)',
+              value: `${label} (${dataKey === 'humidity' ? '%' : '°C'})`,
               angle: -90,
               position: 'insideLeft',
               dy: 50,
@@ -80,44 +82,11 @@ const Charts = (props) => {
             }}
           />
           <Tooltip />
-          <Line type="monotone" dataKey="temperature" stroke="#EF4040" />
+          <Line dataKey={dataKey} stroke={color} />
         </LineChart>
-      </Box>
-
-      {/* Bar Chart */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}
-      >
-        <h3>Rainfall</h3>
-        <BarChart
-          width={480}
-          height={260}
-          data={dataList}
-          margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
-        >
-          <XAxis
-            dataKey="time"
-            label={{ value: 'Hour', position: 'insideBottom', offset: -15 }}
-          />
-          <YAxis
-            label={{
-              value: 'Rainfall (mm)',
-              angle: -90,
-              position: 'insideLeft',
-              dy: 50,
-              offset: -5
-            }}
-          />
-          <Tooltip />
-          <Bar dataKey="rain" fill="#5FBDFF" />
-        </BarChart>
-      </Box>
+      )}
     </Box>
   );
 };
 
-export default Charts;
+export default Chart;

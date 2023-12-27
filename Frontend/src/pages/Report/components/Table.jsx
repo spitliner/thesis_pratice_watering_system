@@ -1,45 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import useQueryDevice from '../../Device/hooks/useQueryDevice';
+import { deviceType } from '../../../constants/device';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const Table = (props) => {
   const { deviceList } = props;
   const [row, setRow] = useState([]);
 
   useEffect(() => {
-    const rows = [];
-    for (let i in deviceList) {
-      rows.push({
-        id: deviceList[i].id,
-        device: deviceList[i].name,
-        water: 100
+    const rows = deviceList
+      .filter((device) => device.type === deviceType.water)
+      .map((device) => {
+        let schedules = 'Free';
+
+        if (device.schedules && device.schedules.length > 0) {
+          device.schedules.sort((a, b) =>
+            dayjs(a[0], 'HH:mm').diff(dayjs(b[0], 'HH:mm'), 'second')
+          );
+          schedules = device.schedules
+            .map(([schedule, duration]) => `${schedule} for ${duration}s`)
+            .join('\n');
+        }
+
+        return {
+          id: device.id,
+          device: device.name,
+          username: device.adaUsername,
+          apikey: `${device.apiKey.slice(0, 10)}****`,
+          feedID: device.feedID,
+          schedule: schedules
+        };
       });
-    }
+
     setRow(rows);
   }, [deviceList]);
-  // deviceList?.map((device) => {});
-  // const rows = [
-  //   {
-  //     id: 1,
-  //     device: 'KV01',
-  //     water: '2000ml'
-  //   },
-  //   {
-  //     id: 2,
-  //     device: 'KV02',
-  //     water: '2000ml'
-  //   },
-  //   {
-  //     id: 3,
-  //     device: 'KV03',
-  //     water: '300ml'
-  //   },
-  //   {
-  //     id: 4,
-  //     device: 'KV04',
-  //     water: '1000ml'
-  //   }
-  // ];
+
   const columns = [
     {
       field: 'device',
@@ -47,9 +45,27 @@ const Table = (props) => {
       width: 250
     },
     {
-      field: 'water',
-      headerName: 'Water comsumed (ml)',
-      width: 250
+      field: 'username',
+      headerName: 'Adafruit user',
+      width: 220
+    },
+    {
+      field: 'apikey',
+      headerName: 'Api key',
+      width: 200
+    },
+    {
+      field: 'feedID',
+      headerName: 'Feed ID',
+      width: 220
+    },
+    {
+      field: 'schedule',
+      headerName: 'Schedule',
+      width: 200,
+      renderCell: (params) => (
+        <div style={{ whiteSpace: 'pre-line' }}>{params.value}</div>
+      )
     }
   ];
 

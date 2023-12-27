@@ -2,14 +2,12 @@ import { useQuery } from 'react-query';
 import { DeviceService } from '../DeviceService';
 
 const useQueryDeviceById = (id) => {
-  if (!id) return null;
-  const { data, isLoading } = useQuery(
-    'getDeviceById',
-    DeviceService.getById(id)
-  );
+  if (!id) return {};
+  const { data, isLoading } = useQuery(`getDevice-${id}`, async () => {
+    return DeviceService.getById(id);
+  });
   return {
-    deviceFeed: data?.feed,
-    deviceInfo: data?.info,
+    data: data,
     isLoading
   };
 };

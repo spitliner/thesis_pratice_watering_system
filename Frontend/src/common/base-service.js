@@ -20,6 +20,7 @@ class BaseService {
   };
 
   updateById = (id, data = {}, params = {}) => {
+    console.log(id);
     return httpRequest
       .post(`${this.endPoint}/${id}`, data, params)
       .then((res) => res.data);

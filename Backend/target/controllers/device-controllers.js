@@ -182,7 +182,7 @@ const deviceController = {
             const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
             const collectData = async (device) => {
                 try {
-                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.feedID, device.apiKey));
+                    await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.feedID, device.apiKey));
                 }
                 catch (error) {
                     console.log(error);

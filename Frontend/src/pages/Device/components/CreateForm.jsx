@@ -13,30 +13,12 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import SelectInput from '../../../components/SelectInput';
 import useMutateDevice from '../hooks/useMutateDevice';
-import useCheckAndSave from '../hooks/useCheckApiKey';
-import { v4 } from 'uuid';
-
-const deviceType = [
-  {
-    value: 'Humidity',
-    label: 'Humidity'
-  },
-  {
-    value: 'Temperture',
-    label: 'Temperture'
-  },
-  {
-    value: 'Watering',
-    label: 'Watering'
-  }
-];
+import useCheckAndSave from '../hooks/useCheckAndSave';
+import { deviceTypeOption } from '../../../constants/device';
 
 export default function CreateForm(props) {
-  const { onSaveData } = useMutateDevice();
+  const { open, handleClose, defaultDevice } = props;
   const { onCheckAndSave } = useCheckAndSave();
-  const { open, handleClose } = props;
-  // const [apiError, setApiError] = useState(false);
-  // const [nameError, setNameError] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
     api: false,
     name: false
@@ -45,8 +27,7 @@ export default function CreateForm(props) {
   const { register, handleSubmit, control } = form;
 
   const submitForm = (data) => {
-    const id = data?.name;
-    onCheckAndSave({ ...data, deviceID: id });
+    onCheckAndSave(data);
     setTimeout(() => {
       const deviceNameError = localStorage.getItem('deviceNameError');
       const apiError = localStorage.getItem('apiKeyError');
@@ -77,14 +58,23 @@ export default function CreateForm(props) {
             sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 3 }}
           >
             <TextField
+              id="feedID"
+              name="feedID"
+              size="small"
+              fullWidth
+              label="Feed ID"
+              {...register('feedID')}
+              control
+              required
+            />
+            <TextField
               id="name"
               name="name"
               size="small"
               fullWidth
-              label="Device ID"
+              label="Name"
               {...register('name')}
               control
-              sx={{ mt: 2 }}
               required
             />
             <Controller
@@ -95,11 +85,22 @@ export default function CreateForm(props) {
                   id="type"
                   label="Device type"
                   fullWidth
-                  options={deviceType}
+                  options={deviceTypeOption}
                   {...field}
                   required
                 />
               )}
+              defaultValue={defaultDevice}
+              required
+            />
+            <TextField
+              id="adaUsername"
+              name="adaUsername"
+              size="small"
+              fullWidth
+              label="Adafruit user name"
+              {...register('adaUsername')}
+              control
               required
             />
             <TextField
@@ -107,7 +108,7 @@ export default function CreateForm(props) {
               name="apiKey"
               size="small"
               fullWidth
-              label="Api key"
+              label="Adafruit key"
               {...register('apiKey')}
               control
               required
@@ -137,7 +138,7 @@ export default function CreateForm(props) {
           onClose={handleCloseError}
         >
           <Alert open={errorMessage.api} severity="error" sx={{ width: 300 }}>
-            <AlertTitle>Api Key is duplicated!</AlertTitle>
+            <AlertTitle>Feed ID is duplicated!</AlertTitle>
           </Alert>
         </Snackbar>
       </Dialog>

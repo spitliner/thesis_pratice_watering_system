@@ -53,12 +53,11 @@ function AvatarBox(props) {
           <Avatar
             sx={{ width: 125, height: 125, border: '3px solid #7A40F2', mb: 3 }}
             src={avatarUrl}
-            // src='https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
           />
         </Box>
         <Box />
       </Box>
-      <Typography
+      {/* <Typography
         sx={{
           fontSize: '25px',
           fontWeight: 500,
@@ -74,7 +73,7 @@ function AvatarBox(props) {
       >
         {' '}
         Front-end{' '}
-      </Typography>
+      </Typography> */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box />
         <Box>
@@ -96,12 +95,12 @@ function AvatarBox(props) {
         </Box>
         <Box />
       </Box>
-      <Typography
+      {/* <Typography
         sx={{ fontSize: '12px', color: '#979797', textAlign: 'center', mb: 3 }}
       >
         {' '}
         I’m responsible for the Front-end tasks{' '}
-      </Typography>
+      </Typography> */}
     </Box>
   );
 }
