@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import SelectInput from '../../../components/SelectInput';
-import useMutateDevice from '../hooks/useMutateDevice';
 import useCheckAndSave from '../hooks/useCheckAndSave';
 import { deviceTypeOption } from '../../../constants/device';
 
