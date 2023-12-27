@@ -23,7 +23,7 @@ const Chart = ({ date, deviceID, dataKey, label, color }) => {
       chartData?.reverse();
       setDataList(chartData);
     }
-  }, [data, date]);
+  }, [data?.feed, date]);
 
   if (!data)
     return (
