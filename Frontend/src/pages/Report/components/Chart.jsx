@@ -118,7 +118,13 @@ const Chart = (props) => {
               {(chartValues.current && chartValues.current + unit) || 'No data'}
             </Typography>
             {chartValues.prev &&
-              (chartValues.current > chartValues.prev ? <Up /> : <Down />)}
+              (chartValues.current > chartValues.prev ? (
+                <Up />
+              ) : chartValues.current < chartValues.prev ? (
+                <Down />
+              ) : (
+                ''
+              ))}
           </Box>
           <Typography width={150} fontWeight={700} color={color}>
             Highest: {(chartValues.max && chartValues.max + unit) || 'No data'}
@@ -136,12 +142,7 @@ const Chart = (props) => {
           justifyContent="center"
           alignItems="center"
         >
-          <Typography
-            fontSize={20}
-            fontWeight={700}
-            color="gray"
-            fontStyle="italic"
-          >
+          <Typography fontSize={20} fontWeight={700} color="gray">
             No data
           </Typography>
         </Box>
