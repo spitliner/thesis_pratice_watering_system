@@ -9,7 +9,6 @@ function BaseLayout({ children }) {
       disableGutters
       maxWidth={false}
       sx={{
-        // height: 'max-height',
         width: '100%',
         backgroundColor: 'secondary.main',
         px: 1,
@@ -19,10 +18,14 @@ function BaseLayout({ children }) {
     >
       <Navigation />
       <Container
-        maxWidth={false}
-        sx={{ height: '100%', backgroundColor: 'secondary.main', py: 1 }}
+        maxWidth
+        disableGutters
+        sx={{
+          height: '100%',
+          backgroundColor: 'secondary.main',
+          py: 1
+        }}
       >
-        {/* Header */}
         <AppBar />
         {children || <Outlet />}
       </Container>

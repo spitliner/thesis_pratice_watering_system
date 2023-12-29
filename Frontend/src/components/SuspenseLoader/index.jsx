@@ -1,8 +1,19 @@
 import { useEffect } from 'react';
 import NProgress from 'nprogress';
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
+import loading from './loading.json';
+import Lottie from 'react-lottie';
 
 function SuspenseLoader() {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: loading,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
+
   useEffect(() => {
     NProgress.start();
 
@@ -24,7 +35,7 @@ function SuspenseLoader() {
       alignItems="center"
       justifyContent="center"
     >
-      <CircularProgress size={64} disableShrink thickness={3} />
+      <Lottie options={defaultOptions} height={120} width={120} />
     </Box>
   );
 }

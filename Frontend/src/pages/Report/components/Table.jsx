@@ -4,11 +4,25 @@ import useQueryDevice from '../../Device/hooks/useQueryDevice';
 import { deviceType } from '../../../constants/device';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { Box, Typography } from '@mui/material';
+import Card from '../../../components/Card';
 dayjs.extend(customParseFormat);
+import watering from '../../../assets/animation/watering.json';
+import Lottie from 'react-lottie';
+
+const WateringIcon = {
+  loop: true,
+  autoplay: true,
+  animationData: watering,
+  rendererSettings: {
+    preserveAspectRatio: 'xMidYMid slice'
+  }
+};
 
 const Table = (props) => {
   const { deviceList } = props;
   const [row, setRow] = useState([]);
+  const [freeDevice, setFreeDevice] = useState(0);
 
   useEffect(() => {
     const rows = deviceList
@@ -17,9 +31,6 @@ const Table = (props) => {
         let schedules = 'Free';
 
         if (device.schedules && device.schedules.length > 0) {
-          device.schedules.sort((a, b) =>
-            dayjs(a[0], 'HH:mm').diff(dayjs(b[0], 'HH:mm'), 'second')
-          );
           schedules = device.schedules
             .map(([schedule, duration]) => `${schedule} for ${duration}s`)
             .join('\n');
@@ -34,8 +45,8 @@ const Table = (props) => {
           schedule: schedules
         };
       });
-
     setRow(rows);
+    setFreeDevice(rows.filter((row) => row.schedule === 'Free').length);
   }, [deviceList]);
 
   const columns = [
@@ -70,32 +81,45 @@ const Table = (props) => {
   ];
 
   return (
-    <DataGrid
-      rows={row}
-      columns={columns}
-      disableColumnMenu
-      hideFooterSelectedRowCount
-      initialState={{
-        pagination: {
-          paginationModel: {
-            pageSize: 4
+    <Card>
+      <Box display="flex" alignItems="center" mb={5} columnGap={1}>
+        <Typography fontWeight={700} fontSize={22} color="#5C8374">
+          Pump status
+        </Typography>
+        <Box height={80} width={80}>
+          <Lottie options={WateringIcon} />
+        </Box>
+        <Typography width={150} fontWeight={700} ml={8}>
+          Free devices: {freeDevice}
+        </Typography>
+      </Box>
+      <DataGrid
+        rows={row}
+        columns={columns}
+        disableColumnMenu
+        hideFooterSelectedRowCount
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 4
+            }
           }
-        }
-      }}
-      getRowHeight={() => 'auto'}
-      sx={{
-        border: '1px solid #666666',
-        minHeight: 208,
-        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
-        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
-          py: '15px'
-        },
-        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
-          py: '22px'
-        },
-        '.MuiDataGrid-columnHeaderTitle': { fontWeight: 700 }
-      }}
-    />
+        }}
+        getRowHeight={() => 'auto'}
+        sx={{
+          border: '1px solid #666666',
+          minHeight: 208,
+          '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
+          '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+            py: '15px'
+          },
+          '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+            py: '22px'
+          },
+          '.MuiDataGrid-columnHeaderTitle': { fontWeight: 700 }
+        }}
+      />
+    </Card>
   );
 };
 

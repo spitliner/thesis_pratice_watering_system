@@ -3,25 +3,21 @@ import { UserDeviceService } from '../DeviceService';
 
 const useMutateDevice = () => {
   const queryClient = useQueryClient();
-  const {
-    mutate: onSaveData,
-    isLoading,
-    isError
-  } = useMutation(UserDeviceService.create, {
-    onSuccess: (res) => {
-      if(res.error)
-      localStorage.removeItem('deviceNameError');
-      queryClient.invalidateQueries('getDevice');
-    },
-    onError: () => {
-      localStorage.setItem('deviceNameError', true);
+  const { mutate: onSaveData, isLoading } = useMutation(
+    UserDeviceService.create,
+    {
+      onSuccess: (data) => {
+        if (data.result.error)
+          localStorage.setItem('deviceNameError', 'Duplicated device name');
+        else localStorage.removeItem('deviceNameError');
+        queryClient.invalidateQueries('getDevice');
+      }
     }
-  });
+  );
 
   return {
     onSaveData,
-    isLoading,
-    nameError: isError
+    isLoading
   };
 };
 

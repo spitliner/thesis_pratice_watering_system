@@ -8,6 +8,9 @@ import useQueryDevice from './hooks/useQueryDevice';
 import { deviceType } from '../../constants/device';
 import DeviceThermostatOutlinedIcon from '@mui/icons-material/DeviceThermostat';
 import ShowerOutlinedIcon from '@mui/icons-material/Shower';
+import SuspenseLoader from '../../components/SuspenseLoader';
+import Title from '../../components/Title';
+import deviceSVG from '../../assets/device.svg';
 
 const TabButton = styled(Button)(({ theme }) => ({
   width: 250,
@@ -17,7 +20,7 @@ const TabButton = styled(Button)(({ theme }) => ({
 }));
 
 function _id() {
-  const { deviceList } = useQueryDevice();
+  const { deviceList, isLoading } = useQueryDevice();
 
   const [activeTab, setActiveTab] = useState(deviceType.temp);
 
@@ -25,20 +28,18 @@ function _id() {
     setActiveTab(tabIndex);
   };
 
+  if (isLoading) return <SuspenseLoader />;
+
   return (
     <>
-      <Container sx={{ mt: 5 }}>
-        <Typography variant="h4" fontWeight={700}>
-          DEVICE
-        </Typography>
-      </Container>
+      <Title title="DEVICE" icon={deviceSVG} />
       <Container
         sx={{
           backgroundColor: 'secondary.main',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          mt: 3
+          mt: 5
         }}
       >
         <TabButton
