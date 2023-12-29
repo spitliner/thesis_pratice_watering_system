@@ -151,7 +151,7 @@ const Chart = (props) => {
           width={1100}
           height={260}
           data={chartData}
-          margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
+          margin={{ left: 25, right: 20, bottom: 25, top: 10 }}
         >
           <defs>
             <linearGradient id={dataKey} x1="0" y1="0" x2="0" y2="1">
@@ -163,7 +163,7 @@ const Chart = (props) => {
             dataKey="time"
             label={{ value: 'Time', position: 'insideBottom', offset: -20 }}
             tickSize={10}
-            interval={9}
+            interval="preserveEnd"
           />
           <YAxis unit={unit} tickSize={10} />
           <Tooltip />
