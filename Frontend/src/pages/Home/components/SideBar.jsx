@@ -12,14 +12,14 @@ function SideBar() {
     <Box
       sx={{
         backgroundColor: 'secondary.dark',
-        width: '440px',
-        // height: 'calc(100vh - 32px - 35px - 10px)',
+        width: '550px',
         height: 'max-height',
         alignItems: 'center',
-        borderRadius: '40px'
+        borderRadius: '40px',
+        justifyContent: 'center'
       }}
     >
-      <Box sx={{ m: 4 }}>
+      <Box sx={{ m: 3 }}>
         <Typography sx={{ fontSize: '18px', fontWeight: 500, mb: 2 }}>
           My Devices
         </Typography>

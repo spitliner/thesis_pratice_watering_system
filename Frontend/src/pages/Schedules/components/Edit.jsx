@@ -3,12 +3,8 @@ import {
   Container,
   Box,
   TextField,
-  MenuItem,
   Button,
   Typography,
-  Snackbar,
-  Alert,
-  AlertTitle,
   Grid,
   IconButton
 } from '@mui/material';
@@ -18,6 +14,8 @@ import { InputAdornment } from '@mui/material';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { validSchedule } from '../../../utils';
+import ErrorDialog from './ErrorDialog';
+import ButtonGroup from './ButtonGroup';
 dayjs.extend(customParseFormat);
 
 function Edit(props) {
@@ -26,22 +24,15 @@ function Edit(props) {
   const [schedule, setSchedule] = useState([...device.schedules]);
   const [errorMessage, setErrorMessage] = useState(false);
 
-  const handleCancel = () => {
-    onClose();
-  };
-
   const handleTimeChange = (event, index) => {
     const updatedSchedules = [...schedule];
     updatedSchedules[index][0] = event.target.value;
-    console.log('update time', index);
     setSchedule(updatedSchedules);
   };
 
   const handleDurationChange = (event, index) => {
     const updatedSchedules = [...schedule];
     updatedSchedules[index][1] = event.target.value;
-    console.log('update duration', index);
-
     setSchedule(updatedSchedules);
   };
 
@@ -64,8 +55,7 @@ function Edit(props) {
         schedules: schedule
       }
     ]);
-    setTimeout(onClose, 1000);
-    // onClose();
+    onClose();
   };
 
   return (
@@ -140,47 +130,12 @@ function Edit(props) {
                   </IconButton>
                 </Box>
               ))}
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#aed581',
-                    width: '45%',
-                    mt: 2
-                  }}
-                >
-                  Save
-                </Button>
-                <Button
-                  type="button"
-                  variant="contained"
-                  color="error"
-                  sx={{
-                    width: '45%',
-                    mt: 2
-                  }}
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </Button>
-              </Box>
+              <ButtonGroup onClose={onClose} />
             </Box>
           </form>
         </Box>
       </Container>
-      <Snackbar
-        open={errorMessage}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        onClose={() => setErrorMessage(false)}
-        style={{ justifyContent: 'center' }}
-      >
-        <Alert open={errorMessage} severity="error" sx={{ width: 400 }}>
-          <AlertTitle>Time between schedules must {'>'} 300s !</AlertTitle>
-        </Alert>
-      </Snackbar>
+      <ErrorDialog open={errorMessage} onClose={() => setErrorMessage(false)} />
     </>
   );
 }

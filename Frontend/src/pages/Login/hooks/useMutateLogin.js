@@ -15,7 +15,6 @@ const useLogin = () => {
     onSuccess: (res) => {
       const token = res?.token;
       token && setAccessToken(token);
-      // localStorage.setAccessToken(token);
       getAccessToken() && location.replace('/');
     },
     onError: (res) => {

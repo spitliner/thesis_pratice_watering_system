@@ -1,57 +1,56 @@
 import React, { useEffect } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import { Link } from 'react-router-dom';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Container,
+  Box
+} from '@mui/material';
 import useQueryDevice from '../hooks/useQueryDevice';
-import useQueryDeviceById from '../hooks/useQueryDeviceById';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
 import { Modal, Typography } from '@mui/material';
 import { deviceType } from '../../../constants/device';
+import Edit from './Edit';
+import Add from './Add';
+import SuspenseLoader from '../../../components/SuspenseLoader';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import Edit from './Edit';
 dayjs.extend(customParseFormat);
 
 function Board() {
-  const { deviceList } = useQueryDevice();
+  const { deviceList, isLoading } = useQueryDevice();
   const { onSaveDataById } = useMutateDeviceById();
-  const [onEdit, setOnEdit] = React.useState(false);
+  const [onEdit, setOnEdit] = React.useState({ status: false, id: '' });
+  const [onAdd, setOnAdd] = React.useState(false);
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
-  const handleEdit = () => {
-    setOnEdit(true);
-  };
+
+  if (isLoading) return <SuspenseLoader />;
 
   return (
     <Container disableGutters maxWidth={false}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box></Box>
-        <Box>
-          <Button
-            component={Link}
-            to="/schedules/add"
-            variant="contained"
-            sx={{
-              backgroundColor: '#aed581',
-              width: '70px',
-              display: 'flex',
-              align: 'right',
-              my: 2
-            }}
-          >
-            ADD
-          </Button>
-        </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: 'primary',
+            width: '100px',
+            my: 2
+          }}
+          onClick={() => setOnAdd(true)}
+        >
+          NEW
+        </Button>
       </Box>
+      <Modal open={onAdd}>
+        <Add onClose={() => setOnAdd((prev) => !prev)} />
+      </Modal>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -160,14 +159,20 @@ function Board() {
                           <Button
                             variant="contained"
                             sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                            onClick={() => handleEdit()}
+                            onClick={() =>
+                              setOnEdit({ status: true, id: device?.id })
+                            }
                           >
                             EDIT
                           </Button>
-                          <Modal open={onEdit}>
+                          <Modal
+                            open={onEdit.id === device.id && onEdit.status}
+                          >
                             <Edit
                               device={device}
-                              onClose={() => setOnEdit((prev) => !prev)}
+                              onClose={() =>
+                                setOnEdit({ status: false, id: '' })
+                              }
                             />
                           </Modal>
                         </Box>

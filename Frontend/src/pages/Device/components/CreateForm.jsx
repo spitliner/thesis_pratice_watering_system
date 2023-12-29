@@ -14,34 +14,38 @@ import { useForm, Controller } from 'react-hook-form';
 import SelectInput from '../../../components/SelectInput';
 import useCheckAndSave from '../hooks/useCheckAndSave';
 import { deviceTypeOption } from '../../../constants/device';
+import SuspenseLoader from '../../../components/SuspenseLoader';
 
 export default function CreateForm(props) {
   const { open, handleClose, defaultDevice } = props;
   const { onCheckAndSave } = useCheckAndSave();
   const [errorMessage, setErrorMessage] = useState({
-    api: false,
-    name: false
+    feedID: '',
+    deviceName: ''
   });
+  const [isloading, setIsloading] = useState(false);
   const form = useForm();
   const { register, handleSubmit, control } = form;
 
-  const submitForm = (data) => {
+  const submitForm = async (data) => {
     onCheckAndSave(data);
+    setIsloading(true);
     setTimeout(() => {
+      const feedIDError = localStorage.getItem('feedIDError');
       const deviceNameError = localStorage.getItem('deviceNameError');
-      const apiError = localStorage.getItem('apiKeyError');
-      if (deviceNameError === null && apiError === null) handleClose();
+      if (deviceNameError === null && feedIDError === null) handleClose();
       else {
         setErrorMessage({
-          api: apiError !== null,
-          name: deviceNameError !== null
+          feedID: feedIDError,
+          deviceName: deviceNameError
         });
       }
+      setIsloading(false);
     }, 1000);
   };
 
   const handleCloseError = () => {
-    setErrorMessage({ api: false, name: false });
+    setErrorMessage({ feedID: false, deviceName: false });
   };
 
   return (
@@ -113,30 +117,42 @@ export default function CreateForm(props) {
               required
             />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit">Add</Button>
-          </DialogActions>
+          {isloading ? (
+            <SuspenseLoader />
+          ) : (
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button type="submit">Add</Button>
+            </DialogActions>
+          )}
         </form>
 
         <Snackbar
-          open={errorMessage.name}
+          open={errorMessage.deviceName}
           autoHideDuration={3000}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           onClose={handleCloseError}
         >
-          <Alert open={errorMessage.name} severity="error" sx={{ width: 300 }}>
-            <AlertTitle>Device ID already in use !</AlertTitle>
+          <Alert
+            open={errorMessage.deviceName}
+            severity="error"
+            sx={{ width: 300 }}
+          >
+            <AlertTitle>Device name already in use !</AlertTitle>
           </Alert>
         </Snackbar>
 
         <Snackbar
-          open={errorMessage.api}
+          open={errorMessage.feedID}
           autoHideDuration={3000}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           onClose={handleCloseError}
         >
-          <Alert open={errorMessage.api} severity="error" sx={{ width: 300 }}>
+          <Alert
+            open={errorMessage.feedID}
+            severity="error"
+            sx={{ width: 300 }}
+          >
             <AlertTitle>Feed ID is duplicated!</AlertTitle>
           </Alert>
         </Snackbar>

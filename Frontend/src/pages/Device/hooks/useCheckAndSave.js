@@ -3,26 +3,23 @@ import { FeedIDService } from '../DeviceService';
 import useMutateDevice from './useMutateDevice';
 
 const useCheckAndSave = () => {
-  const { onSaveData, nameError } = useMutateDevice();
-  const {
-    mutate: onCheckAndSave,
-    isLoading,
-    isError
-  } = useMutation(FeedIDService.create, {
-    onSuccess: (data, variables) => {
-      if (!data.result) {
-        localStorage.removeItem('feedIDError');
-        onSaveData(variables);
-      } else {
-        localStorage.setItem('feedIDError', 'Duplicated Feed ID');
+  const { onSaveData } = useMutateDevice();
+  const { mutate: onCheckAndSave, isLoading } = useMutation(
+    FeedIDService.create,
+    {
+      onSuccess: (data, variables) => {
+        if (!data.result) {
+          localStorage.removeItem('feedIDError');
+          onSaveData(variables);
+        } else {
+          localStorage.setItem('feedIDError', 'Duplicated Feed ID');
+        }
       }
     }
-  });
+  );
   return {
     onCheckAndSave,
-    isLoading,
-    apiKeyError: isError,
-    nameError
+    isLoading
   };
 };
 

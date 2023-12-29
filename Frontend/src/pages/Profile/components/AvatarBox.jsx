@@ -1,13 +1,11 @@
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import {
   GetAvatarByUserId,
   UploadAvatarByUserId
 } from '../../../common/firebaseService';
 import { useEffect, useState } from 'react';
-import useQueryProfile from '../hooks/useQueryProfile';
 import { styled } from '@mui/material';
 
 const Input = styled('input')({
@@ -44,36 +42,19 @@ function AvatarBox(props) {
         width: '45%',
         alignItems: 'center',
         justifyContent: 'center',
-        my: 15
+        my: 5
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box />
         <Box>
           <Avatar
-            sx={{ width: 125, height: 125, border: '3px solid #7A40F2', mb: 3 }}
+            sx={{ width: 150, height: 150, border: '3px solid #7A40F2', mb: 3 }}
             src={avatarUrl}
           />
         </Box>
         <Box />
       </Box>
-      {/* <Typography
-        sx={{
-          fontSize: '25px',
-          fontWeight: 500,
-          color: 'black',
-          textAlign: 'center'
-        }}
-      >
-        {' '}
-        Kate Kfhd{' '}
-      </Typography>
-      <Typography
-        sx={{ fontSize: '15px', color: '#979797', textAlign: 'center', mb: 3 }}
-      >
-        {' '}
-        Front-end{' '}
-      </Typography> */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box />
         <Box>
@@ -81,7 +62,7 @@ function AvatarBox(props) {
             <Button
               component="label"
               variant="contained"
-              sx={{ width: '200px', fontSize: '15px', mb: 3 }}
+              sx={{ width: '200px', fontSize: '15px', mb: 5 }}
             >
               Upload new avatar
               <Input
@@ -95,12 +76,6 @@ function AvatarBox(props) {
         </Box>
         <Box />
       </Box>
-      {/* <Typography
-        sx={{ fontSize: '12px', color: '#979797', textAlign: 'center', mb: 3 }}
-      >
-        {' '}
-        I’m responsible for the Front-end tasks{' '}
-      </Typography> */}
     </Box>
   );
 }
