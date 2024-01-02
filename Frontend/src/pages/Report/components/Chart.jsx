@@ -7,7 +7,14 @@ import {
   Snackbar,
   Typography
 } from '@mui/material';
-import { XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
+import {
+  XAxis,
+  YAxis,
+  Tooltip,
+  AreaChart,
+  Area,
+  ReferenceLine
+} from 'recharts';
 import dayjs from 'dayjs';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
 import Card from '../../../components/Card';
@@ -226,6 +233,18 @@ const Chart = (props) => {
           />
           <YAxis unit={unit} tickSize={10} />
           <Tooltip />
+          <ReferenceLine
+            y={range[0]}
+            label={range[0]}
+            stroke="red"
+            strokeDasharray="3 3"
+          />
+          <ReferenceLine
+            y={range[1]}
+            label={range[1]}
+            stroke="red"
+            strokeDasharray="3 3"
+          />
           <Area
             type="monotone"
             dataKey={dataKey}
@@ -238,22 +257,14 @@ const Chart = (props) => {
       <Snackbar
         key={dataKey}
         open={warning}
-        // autoHideDuration={3000}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        // onClose={handleCloseError}
         sx={{ boxShadow: '0px 1px 6px #aae2f7' }}
       >
         <Alert open={warning} severity="error">
           <AlertTitle sx={{ display: 'flex', flexDirection: 'column' }}>
             WARNING: {dataKey} is {errorMessage?.toLowerCase()} !
             <Box>
-              <Button
-                component={Link}
-                to="/schedules"
-                // onClick={() => {
-                //   naviga;
-                // }}
-              >
+              <Button component={Link} to="/schedules">
                 Adjust watering schedule
               </Button>
               <Button sx={{ color: 'gray' }} onClick={() => setWarning(false)}>
