@@ -9,7 +9,7 @@ const TempChart = (props) => {
       label="Temperature"
       color="#F94C10"
       unit="°C"
-      range={[25, 38]}
+      range={[20, 35]}
     />
   );
 };
