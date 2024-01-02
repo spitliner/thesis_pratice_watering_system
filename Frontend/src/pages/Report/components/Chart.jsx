@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Typography } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  Snackbar,
+  Typography
+} from '@mui/material';
 import { XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
 import dayjs from 'dayjs';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
@@ -7,6 +14,8 @@ import Card from '../../../components/Card';
 import temp from '../../../assets/animation/temp.json';
 import humid from '../../../assets/animation/humid.json';
 import Lottie from 'react-lottie';
+import Circle from '@mui/icons-material/Circle';
+import { Link } from 'react-router-dom';
 
 const TempIcon = {
   loop: true,
@@ -43,7 +52,7 @@ const Up = () => {
 };
 
 const Chart = (props) => {
-  const { date, deviceID, dataKey, label, color, unit, icon } = props;
+  const { date, deviceID, dataKey, label, color, unit, range } = props;
   const { data } = useQueryDeviceById(deviceID);
   const [chartData, setChartData] = useState([]);
   const [chartValues, setChartValues] = useState({
@@ -52,6 +61,8 @@ const Chart = (props) => {
     current: 0,
     prev: null
   });
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [warning, setWarning] = useState(false);
 
   const selectedDateList = useMemo(() => {
     return data?.feed?.filter(
@@ -92,6 +103,18 @@ const Chart = (props) => {
         ? reversedChartData[reversedChartData?.length - 2][dataKey]
         : null;
     setChartValues({ max, min, current, prev });
+
+    if (current === null) setErrorMessage(`No data for this day`);
+    else if (current > range[1]) {
+      setErrorMessage(`Higher than normal`);
+      setWarning(true);
+    } else if (current < range[0]) {
+      setErrorMessage(`Lower than normal`);
+      setWarning(true);
+    } else {
+      setWarning(false);
+      setErrorMessage(null);
+    }
   }, [selectedDateList, dataKey]);
 
   if (!data) {
@@ -112,13 +135,55 @@ const Chart = (props) => {
           <Lottie options={label === 'Temperature' ? TempIcon : HumidIcon} />
         </Box>
         <Box display="flex" flexDirection="row" ml={8}>
-          <Box width={150} display="flex" alignItems="center">
-            <Typography fontWeight={700}>
-              Current:{' '}
-              {(chartValues.current && chartValues.current + unit) || 'No data'}
-            </Typography>
-            {chartValues.prev &&
-              (chartValues.current > chartValues.prev ? <Up /> : <Down />)}
+          <Box display="flex" flexDirection="column">
+            <Box width={200} display="flex" alignItems="center">
+              <Typography fontWeight={700}>
+                Current:{' '}
+                {(chartValues.current && chartValues.current + unit) ||
+                  'No data'}
+              </Typography>
+              {chartValues.prev &&
+                (chartValues.current > chartValues.prev ? (
+                  <Up />
+                ) : chartValues.current < chartValues.prev ? (
+                  <Down />
+                ) : (
+                  ''
+                ))}
+            </Box>
+            <Box sx={{ display: 'flex', mt: 2 }}>
+              {errorMessage ? (
+                <>
+                  <Typography fontWeight={700} sx={{ color: '#B80000' }}>
+                    {errorMessage}
+                  </Typography>
+                  <Circle
+                    color="error"
+                    fontSize="5"
+                    sx={{
+                      alignSelf: 'center',
+                      display: 'flex',
+                      ml: 1
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <Typography fontWeight={700} sx={{ color: '#739072' }}>
+                    Normal
+                  </Typography>
+                  <Circle
+                    fontSize="51"
+                    sx={{
+                      alignSelf: 'center',
+                      display: 'flex',
+                      ml: 1,
+                      color: '#FFB534'
+                    }}
+                  />
+                </>
+              )}
+            </Box>
           </Box>
           <Typography width={150} fontWeight={700} color={color}>
             Highest: {(chartValues.max && chartValues.max + unit) || 'No data'}
@@ -136,12 +201,7 @@ const Chart = (props) => {
           justifyContent="center"
           alignItems="center"
         >
-          <Typography
-            fontSize={20}
-            fontWeight={700}
-            color="gray"
-            fontStyle="italic"
-          >
+          <Typography fontSize={20} fontWeight={700} color="gray">
             No data
           </Typography>
         </Box>
@@ -150,7 +210,7 @@ const Chart = (props) => {
           width={1100}
           height={260}
           data={chartData}
-          margin={{ left: 25, right: 10, bottom: 25, top: 10 }}
+          margin={{ left: 25, right: 20, bottom: 25, top: 10 }}
         >
           <defs>
             <linearGradient id={dataKey} x1="0" y1="0" x2="0" y2="1">
@@ -162,7 +222,7 @@ const Chart = (props) => {
             dataKey="time"
             label={{ value: 'Time', position: 'insideBottom', offset: -20 }}
             tickSize={10}
-            interval={9}
+            interval={3}
           />
           <YAxis unit={unit} tickSize={10} />
           <Tooltip />
@@ -175,6 +235,34 @@ const Chart = (props) => {
           />
         </AreaChart>
       )}
+      <Snackbar
+        key={dataKey}
+        open={warning}
+        // autoHideDuration={3000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        // onClose={handleCloseError}
+        sx={{ boxShadow: '0px 1px 6px #aae2f7' }}
+      >
+        <Alert open={warning} severity="error">
+          <AlertTitle sx={{ display: 'flex', flexDirection: 'column' }}>
+            WARNING: {dataKey} is {errorMessage?.toLowerCase()} !
+            <Box>
+              <Button
+                component={Link}
+                to="/schedules"
+                // onClick={() => {
+                //   naviga;
+                // }}
+              >
+                Adjust watering schedule
+              </Button>
+              <Button sx={{ color: 'gray' }} onClick={() => setWarning(false)}>
+                Dismiss
+              </Button>
+            </Box>
+          </AlertTitle>
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };
