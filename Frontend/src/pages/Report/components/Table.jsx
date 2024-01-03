@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import useQueryDevice from '../../Device/hooks/useQueryDevice';
 import { deviceType } from '../../../constants/device';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -23,6 +22,7 @@ const Table = (props) => {
   const { deviceList } = props;
   const [row, setRow] = useState([]);
   const [freeDevice, setFreeDevice] = useState(0);
+  const [totalDevice, setTotalDevice] = useState(0);
 
   useEffect(() => {
     const rows = deviceList
@@ -46,6 +46,7 @@ const Table = (props) => {
         };
       });
     setRow(rows);
+    setTotalDevice(rows.length);
     setFreeDevice(rows.filter((row) => row.schedule === 'Free').length);
   }, [deviceList]);
 
@@ -82,16 +83,21 @@ const Table = (props) => {
 
   return (
     <Card>
-      <Box display="flex" alignItems="center" mb={5} columnGap={1}>
+      <Box display="flex" alignItems="center" mb={3} columnGap={1}>
         <Typography fontWeight={700} fontSize={22} color="#5C8374">
           Pump status
         </Typography>
         <Box height={80} width={80}>
           <Lottie options={WateringIcon} />
         </Box>
-        <Typography width={150} fontWeight={700} ml={8}>
-          Free devices: {freeDevice}
-        </Typography>
+        <Box>
+          <Typography width={150} fontWeight={700} ml={8} mb={2}>
+            Total devices: {totalDevice}
+          </Typography>
+          <Typography width={150} fontWeight={700} ml={8} color="gray">
+            Free devices: {freeDevice}
+          </Typography>
+        </Box>
       </Box>
       <DataGrid
         rows={row}
@@ -107,7 +113,6 @@ const Table = (props) => {
         }}
         getRowHeight={() => 'auto'}
         sx={{
-          border: '1px solid #666666',
           minHeight: 208,
           '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: '8px' },
           '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {

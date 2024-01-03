@@ -11,9 +11,7 @@ import TempChart from './components/TempChart';
 import { deviceType } from '../../constants/device';
 import reportSVG from '../../assets/report.svg';
 import Title from '../../components/Title';
-const today = new Date(); // get today's date
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
+import ErrorBarChart from './components/ErrorBarChart';
 
 function _id() {
   const [date, setDate] = useState(dayjs());
@@ -60,6 +58,13 @@ function _id() {
 
         <TempChart date={date} deviceID={tempDevice[0]?.id} />
         <HumidChart date={date} deviceID={humidDevice[0]?.id} />
+        <ErrorBarChart
+          date={date}
+          humidDeviceID={humidDevice[0]?.id}
+          tempDeviceID={tempDevice[0]?.id}
+          tempRange={[20, 35]}
+          humidRange={[30, 85]}
+        />
         <Table deviceList={deviceList} />
       </Container>
     </>
