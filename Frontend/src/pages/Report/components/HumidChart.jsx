@@ -9,7 +9,7 @@ const HumidChart = (props) => {
       label="Humidity"
       color="#7E30E1"
       unit="%"
-      range={[30, 80]}
+      range={[30, 85]}
     />
   );
 };

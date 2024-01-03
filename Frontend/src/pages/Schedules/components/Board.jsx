@@ -30,6 +30,12 @@ function Board() {
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
+  const waterDevices = (deviceList || [])
+    .filter((item) => item.type === deviceType.water)
+    .map((item) => ({
+      ...item,
+      schedules: item.schedules || []
+    }));
 
   if (isLoading) return <SuspenseLoader />;
 
@@ -99,88 +105,77 @@ function Board() {
           </TableHead>
 
           <TableBody>
-            {deviceList?.map(
-              (device, index) =>
-                device.type === deviceType.water &&
-                device?.schedules && (
-                  <TableRow
-                    key={index}
-                    sx={{ border: 1, borderColor: '#e0e0e0' }}
-                  >
-                    <TableCell
+            {waterDevices?.map((device, index) => (
+              <TableRow key={index} sx={{ border: 1, borderColor: '#e0e0e0' }}>
+                <TableCell
+                  sx={{
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    color: '#7A40F2',
+                    textAlign: 'center'
+                  }}
+                >
+                  {device.name}
+                </TableCell>
+
+                <TableCell sx={{ textAlign: 'center' }}>
+                  {device.schedules?.map((time, index) => (
+                    <Typography
+                      key={index + time[0]}
+                      sx={{ fontWeight: 500, color: '#F2946D' }}
+                    >
+                      {time[0]}
+                    </Typography>
+                  ))}
+                </TableCell>
+
+                <TableCell sx={{ textAlign: 'center' }}>
+                  {device.schedules?.map((time, index) => (
+                    <Typography
+                      key={index + time[1]}
+                      sx={{ fontWeight: 500, color: '#7A40F2' }}
+                    >
+                      {time[1]}
+                    </Typography>
+                  ))}
+                </TableCell>
+
+                {device?.schedules?.length > 0 && (
+                  <TableCell>
+                    <Box
                       sx={{
-                        fontSize: '16px',
-                        fontWeight: 500,
-                        color: '#7A40F2',
-                        textAlign: 'center' // Set text alignment to center
+                        display: 'flex',
+                        justifyContent: 'center',
+                        columnGap: 2
                       }}
                     >
-                      {device.name}
-                    </TableCell>
-
-                    <TableCell sx={{ textAlign: 'center' }}>
-                      {device.schedules?.map((time, index) => (
-                        <Typography
-                          key={index + time[0]}
-                          sx={{ fontWeight: 500, color: '#F2946D' }}
-                        >
-                          {time[0]}
-                        </Typography>
-                      ))}
-                    </TableCell>
-
-                    <TableCell sx={{ textAlign: 'center' }}>
-                      {device.schedules?.map((time, index) => (
-                        <Typography
-                          key={index + time[1]}
-                          sx={{ fontWeight: 500, color: '#7A40F2' }}
-                        >
-                          {time[1]}
-                        </Typography>
-                      ))}
-                    </TableCell>
-
-                    {device?.schedules?.length > 0 && (
-                      <TableCell>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            columnGap: 2
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            sx={{ backgroundColor: '#FF7961', width: '70px' }}
-                            onClick={() => handleDelete(device.id)}
-                          >
-                            DELETE
-                          </Button>
-                          <Button
-                            variant="contained"
-                            sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                            onClick={() =>
-                              setOnEdit({ status: true, id: device?.id })
-                            }
-                          >
-                            EDIT
-                          </Button>
-                          <Modal
-                            open={onEdit.id === device.id && onEdit.status}
-                          >
-                            <Edit
-                              device={device}
-                              onClose={() =>
-                                setOnEdit({ status: false, id: '' })
-                              }
-                            />
-                          </Modal>
-                        </Box>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                )
-            )}
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: '#FF7961', width: '70px' }}
+                        onClick={() => handleDelete(device.id)}
+                      >
+                        DELETE
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                        onClick={() =>
+                          setOnEdit({ status: true, id: device?.id })
+                        }
+                      >
+                        EDIT
+                      </Button>
+                      <Modal open={onEdit.id === device.id && onEdit.status}>
+                        <Edit
+                          device={device}
+                          onClose={() => setOnEdit({ status: false, id: '' })}
+                        />
+                      </Modal>
+                    </Box>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
           </TableBody>
 
           {deviceList?.length === 0 && (

@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography, Grid, styled } from '@mui/material';
+import {
+  Box,
+  Button,
+  Typography,
+  Grid,
+  styled,
+  Modal,
+  Container,
+  Dialog
+} from '@mui/material';
 import CreateForm from './CreateForm';
 import useMutateDeleteDevice from '../hooks/useMutateDeleteById';
+import ConfirmDelete from './ConfirmDelete';
 
 const Device = styled(Box)(({ theme }) => ({
   width: 480,
@@ -17,9 +27,16 @@ export default function DeviceTab(props) {
   const { deviceList, title, typeOfDevice, icon } = props;
   const { onDeleteData } = useMutateDeleteDevice();
   const [open, setOpen] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState({
+    id: '',
+    name: ''
+  });
 
-  const handleDelete = (id) => {
-    onDeleteData(id);
+  const handleDelete = (id, name) => {
+    setSelectedDevice({ id: id, name: name });
+    setIsDelete(true);
+    // onDeleteData(id);
   };
 
   if (!deviceList) return null;
@@ -66,7 +83,7 @@ export default function DeviceTab(props) {
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDelete(device.id)}
+                      onClick={() => handleDelete(device.id, device.name)}
                     >
                       Delete
                     </Button>
@@ -75,6 +92,12 @@ export default function DeviceTab(props) {
               </Grid>
             )
         )}
+        <ConfirmDelete
+          open={isDelete}
+          handleClose={setIsDelete}
+          onDelete={onDeleteData}
+          device={selectedDevice}
+        />
       </Grid>
 
       {deviceList.length === 0 && (
