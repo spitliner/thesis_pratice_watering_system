@@ -6,8 +6,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import userRouter from './routers/user-router.js';
 import deviceRouter from './routers/device-router.js';
-import pollingJob from './cron-jobs/cron-request.js';
-import deviceModel from './database/models/device-model.js';
+import {pollingFeed, pollingSchedule} from './cron-jobs/cron-request.js';
 
 //---
 
@@ -49,7 +48,8 @@ const portNumber: number = (Number(process.env.DB_PORT) || 9000);
 
 let exceptionOccured = false;
 
-pollingJob.start();
+pollingFeed.start();
+pollingSchedule.start();
 
 process.on('uncaughtException', error => {
     console.log('Caught exception:', error);
@@ -64,7 +64,8 @@ process.on('exit', () => {
         console.log('Kill signal received');
     }
 
-    pollingJob.stop();
+    pollingFeed.stop();
+    pollingSchedule.stop();
 });
 
 process.on('SIGINT', () => {

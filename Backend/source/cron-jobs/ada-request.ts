@@ -37,7 +37,7 @@ const adaConnect = {
         }
     },
 
-    async triggerPump(username: string, feedName: string, key: string, time: string) {
+    async triggerPumpSchedule(username: string, feedName: string, key: string, time: string) {
         try {
             await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`,
                 {
@@ -58,6 +58,23 @@ const adaConnect = {
                         },
                     });
             }, waitTime);
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    async modifiedStatus(username: string, feedName: string, key: string, value: string) {
+        try {
+            await axios.post(`https://io.adafruit.com/api/v2/${username}/feeds/${feedName}/data`,
+                {
+                    value,
+                }, {
+                    headers: {
+                        'X-AIO-Key': key,
+                    },
+                });
             return true;
         } catch (error) {
             console.log(error);
