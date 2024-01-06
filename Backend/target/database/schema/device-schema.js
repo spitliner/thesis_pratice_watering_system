@@ -14,3 +14,4 @@ const deviceSchema = new mongoose.Schema({
 deviceSchema.index({ userID: 1, name: 1 }, { unique: true });
 deviceSchema.index({ feedID: 1, adaUsername: 1 }, { unique: true });
 export default deviceSchema;
+//# sourceMappingURL=device-schema.js.map

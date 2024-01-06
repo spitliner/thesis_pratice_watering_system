@@ -6,3 +6,4 @@ const userSchema = new mongoose.Schema({
     settings: { type: String },
 });
 export default userSchema;
+//# sourceMappingURL=user-schema.js.map

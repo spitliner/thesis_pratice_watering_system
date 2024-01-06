@@ -77,3 +77,4 @@ const dataController = {
     },
 };
 export default dataController;
+//# sourceMappingURL=data-controller.js.map

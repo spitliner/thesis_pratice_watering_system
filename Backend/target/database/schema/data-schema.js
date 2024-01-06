@@ -7,3 +7,4 @@ const dataSchema = new mongoose.Schema({
     data: { type: String, required: true },
 });
 export default dataSchema;
+//# sourceMappingURL=data-schema.js.map

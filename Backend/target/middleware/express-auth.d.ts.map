@@ -1,0 +1,1 @@
+{"version":3,"file":"express-auth.d.ts","sourceRoot":"","sources":["../../source/middleware/express-auth.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAC,OAAO,EAAE,QAAQ,EAAE,YAAY,EAAC,MAAM,SAAS,CAAC;AAI7D,iBAAe,WAAW,CAAC,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,QAAQ,EAAE,IAAI,EAAE,YAAY,2DA2BlF;AAED,eAAe,WAAW,CAAC"}

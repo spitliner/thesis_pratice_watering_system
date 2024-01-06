@@ -115,3 +115,4 @@ const userController = {
     },
 };
 export default userController;
+//# sourceMappingURL=user-controller.js.map
