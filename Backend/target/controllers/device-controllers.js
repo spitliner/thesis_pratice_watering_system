@@ -178,7 +178,7 @@ const deviceController = {
     },
     async changeDeviceStatus(deviceID, userID, status) {
         try {
-            const device = await deviceModel.getDeviceData(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return {
                     error: 'device not found',
