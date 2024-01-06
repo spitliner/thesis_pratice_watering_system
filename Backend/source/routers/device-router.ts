@@ -271,4 +271,29 @@ deviceRouter.get('/device/:deviceID/feed', authRequest, async (request, response
     }
 });
 
+deviceRouter.post('/device/:deviceID/status', authRequest, async (request, response) => {
+    try {
+        const userID: unknown = request.cookies.uid;
+        const deviceID: unknown = request.params.deviceID;
+        const newStatus: unknown = request.body.status;
+
+        if (!typia.is<string>(userID) || !typia.is<string>(deviceID) || !typia.is<string>(newStatus)) {
+            return response.status(400).json({error: 'missing info'});
+        }
+
+        const result = await deviceController.changeDeviceStatus(deviceID, userID, newStatus);
+
+        if (undefined !== result.error) {
+            return response.status(401).json({error: result.error});
+        }
+
+        return response.status(200).json({result: result.result});
+    } catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            error: 'unexpected server error',
+        });
+    }
+});
+
 export default deviceRouter;

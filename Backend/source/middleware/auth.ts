@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import argon2 from 'argon2';
 import * as jose from 'jose';
-import {privateKey, publicKey} from '../config/loadKeyPair.js';
+import {privateKey, publicKey} from '../config/load-keypair.js';
 
 const authentication = {
     async hashPassword(password: string) {
