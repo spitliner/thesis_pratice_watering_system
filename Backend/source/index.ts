@@ -65,6 +65,7 @@ process.on('exit', () => {
     }
 
     pollingFeed.stop();
+    pollingSchedule.stop();
 });
 
 process.on('SIGINT', () => {
