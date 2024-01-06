@@ -1,76 +1,71 @@
 import React, { useState } from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Box, Container, Typography } from '@mui/material';
 import Table from './components/Table';
-import Charts from './components/Chart';
 import dayjs from 'dayjs';
 import useQueryDevice from '../Device/hooks/useQueryDevice';
-
-const today = new Date(); // get today's date
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
+import HumidChart from './components/HumidChart';
+import TempChart from './components/TempChart';
+import { deviceType } from '../../constants/device';
+import reportSVG from '../../assets/report.svg';
+import Title from '../../components/Title';
+import ErrorBarChart from './components/ErrorBarChart';
 
 function _id() {
-  const [date, setDate] = useState(dayjs(yesterday));
+  const [date, setDate] = useState(dayjs());
   const { deviceList } = useQueryDevice();
+
+  const tempDevice = deviceList?.filter(
+    (device) => device.type === deviceType.temp
+  );
+  const humidDevice = deviceList?.filter(
+    (device) => device.type === deviceType.humid
+  );
 
   if (!deviceList) return null;
   return (
     <>
-      <Container sx={{ mt: 5 }}>
-        <Typography variant="h4" fontWeight={700}>
-          REPORT
-        </Typography>
-      </Container>
-
+      <Title title="REPORT" icon={reportSVG} />
       <Container
         sx={{
           backgroundColor: '#fff',
           display: 'flex',
-          // justifyContent: 'space-between',
-          alignItems: 'center',
+          flexDirection: 'column',
           mt: 3,
-          columnGap: 6,
+          rowGap: 3,
           p: 2
-          // width: '100%'
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'start'
-          }}
-        >
-          <Box mb={3}>
+        <Box>
+          <Typography fontWeight={700} fontSize={18} mb={2}>
+            Calendar
+          </Typography>
+          <Box width={480} display="flex" alignItems="center">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              {/* <DatePicker
-                maxDate={dayjs(yesterday)}
+              <DatePicker
+                maxDate={dayjs()}
                 value={date}
                 onChange={(val) => {
                   setDate(dayjs(val));
                 }}
                 sx={{ width: '100%' }}
-              /> */}
-              <DateCalendar
-                style={{
-                  border: '1px solid #666666',
-                  borderRadius: 5
-                }}
-                maxDate={dayjs(yesterday)}
-                value={date}
-                onChange={(val) => {
-                  setDate(dayjs(val));
-                }}
               />
             </LocalizationProvider>
           </Box>
-          <Table deviceList={deviceList} />
         </Box>
-        <Charts date={date} />
+
+        <TempChart date={date} deviceID={tempDevice[0]?.id} />
+        <HumidChart date={date} deviceID={humidDevice[0]?.id} />
+        <ErrorBarChart
+          date={date}
+          humidDeviceID={humidDevice[0]?.id}
+          tempDeviceID={tempDevice[0]?.id}
+          tempRange={[20, 35]}
+          humidRange={[30, 85]}
+        />
+        <Table deviceList={deviceList} />
       </Container>
     </>
   );

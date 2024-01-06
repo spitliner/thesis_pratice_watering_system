@@ -1,15 +1,17 @@
 import { Suspense, lazy } from 'react';
 import BaseLayout from './layouts/BaseLayout';
 import AuthRouteProvider from './middleware/AuthRouteProvider';
-import SuspenseLoader from './components/SuspenseLoader';
+import LoadingScreen from './components/LoadingScreen';
+import NotFound from './components/NotFound';
 
 const Loader = (Component) => (props) => (
-  <Suspense fallback={<SuspenseLoader />}>
+  <Suspense fallback={<LoadingScreen />}>
     <Component {...props} />
   </Suspense>
 );
 
 //import pages
+// const Home = import('./pages/Home/_id');
 const Home = Loader(lazy(() => import('./pages/Home/_id')));
 const Login = Loader(lazy(() => import('./pages/Login/_id')));
 const Register = Loader(lazy(() => import('./pages/Register/_id')));
@@ -38,10 +40,6 @@ const routes = [
         element: <Schedules />
       },
       {
-        path: '/schedules/add',
-        element: <Add />
-      },
-      {
         path: '/profile',
         element: <Profile />
       },
@@ -66,7 +64,7 @@ const routes = [
   },
   {
     path: '*',
-    element: 'Địa chỉ không tồn tại'
+    element: <NotFound />
   }
 ];
 export default routes;

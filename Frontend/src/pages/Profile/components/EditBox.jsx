@@ -30,7 +30,7 @@ function EditBox(props) {
         width: '55%',
         alignItems: 'center',
         justifyContent: 'center',
-        my: 8
+        my: 5
       }}
     >
       <React.Fragment>

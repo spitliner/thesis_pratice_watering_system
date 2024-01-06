@@ -2,14 +2,16 @@ import { useQuery } from 'react-query';
 import { DeviceService } from '../DeviceService';
 
 const useQueryDeviceById = (id) => {
-  if (!id) return null;
+  if (!id) return {};
   const { data, isLoading } = useQuery(
-    'getDeviceById',
-    DeviceService.getById(id)
+    `getDevice-${id}`,
+    async () => {
+      return DeviceService.getById(id);
+    },
+    { refetchInterval: 30000 }
   );
   return {
-    deviceFeed: data?.feed,
-    deviceInfo: data?.info,
+    data: data,
     isLoading
   };
 };
