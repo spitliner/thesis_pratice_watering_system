@@ -10,6 +10,7 @@ const deviceSchema = new mongoose.Schema({
     feedID: { type: String, required: true },
     settings: { type: String, required: true },
     schedules: { type: [[String]], required: false },
+    limit: { type: [Number] },
 });
 deviceSchema.index({ userID: 1, name: 1 }, { unique: true });
 deviceSchema.index({ feedID: 1, adaUsername: 1 }, { unique: true });

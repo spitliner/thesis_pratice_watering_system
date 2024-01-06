@@ -33,6 +33,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -50,6 +51,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -62,6 +64,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -77,6 +80,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -92,6 +96,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -126,6 +131,13 @@ declare const deviceModel: {
         result: boolean;
         error?: undefined;
     }>;
+    changeDeviceFeedLimit(deviceID: string, userID: string, newLimit: number[]): Promise<{
+        error: string;
+        result?: undefined;
+    } | {
+        result: boolean;
+        error?: undefined;
+    }>;
     deleteDevice(deviceID: string): Promise<boolean>;
     deleteUserDevice(userID: string): Promise<number>;
     getAllDeviceData(): Promise<(mongoose.FlattenMaps<{
@@ -137,6 +149,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -152,6 +165,7 @@ declare const deviceModel: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: mongoose.Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
