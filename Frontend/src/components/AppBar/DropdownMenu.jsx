@@ -10,13 +10,15 @@ import { Link } from 'react-router-dom';
 import useLogoutHook from '../../pages/Login/hooks/useMutateLogout';
 import { GetAvatarByUserId } from '../../common/firebaseService';
 import useQueryProfile from '../../pages/Profile/hooks/useQueryProfile';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAvatar as updateAvatar } from '../../pages/Profile/avatarSlice';
 
 function DropdownMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [avatar, setAvatar] = React.useState(
     'https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
   );
-  const { profile } = useQueryProfile();
+  const { profile, isSuccess } = useQueryProfile();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,15 +27,24 @@ function DropdownMenu() {
     setAnchorEl(null);
   };
   const logout = useLogoutHook();
+  const dispatch = useDispatch();
+  const avatarUrl = useSelector((state) => state.avatar.url);
   useEffect(() => {
     async function getAvatar() {
       if (profile) {
         const avatar = await GetAvatarByUserId(profile?.id);
         setAvatar(avatar);
+        dispatch(updateAvatar(avatar));
+        console.log(avatar);
       }
     }
     getAvatar();
   }, [profile]);
+
+  useEffect(() => {
+    setAvatar(avatarUrl);
+  }, [avatarUrl]);
+
   return (
     <Box>
       <Button
@@ -45,9 +56,6 @@ function DropdownMenu() {
         endIcon={<ExpandMoreIcon />}
       >
         <Avatar sx={{ width: 32, height: 32 }} src={avatar}></Avatar>
-        {/* <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', px: 1 }}>
-          Kate
-        </Typography> */}
       </Button>
       <Menu
         id="basic-menu"

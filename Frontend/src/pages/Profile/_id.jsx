@@ -4,8 +4,7 @@ import EditBox from './components/EditBox';
 import useQueryOnlineProfile from './hooks/useQueryProfile';
 import SuspenseLoader from '../../components/SuspenseLoader';
 import Title from '../../components/Title';
-import profilePNG from '../../assets/profile.png';
-
+import welcomeSVG from '../../assets/welcome.svg';
 function _id() {
   const { profile, isLoading } = useQueryOnlineProfile();
 
@@ -13,7 +12,7 @@ function _id() {
 
   return (
     <>
-      <Title title="PROFILE" icon={profilePNG} />
+      <Title title="PROFILE" icon={welcomeSVG} />
       <Container
         disableGutters
         sx={{ backgroundColor: 'secondary.main', display: 'flex', mt: 8 }}

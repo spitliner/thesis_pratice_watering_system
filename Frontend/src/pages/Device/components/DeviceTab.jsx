@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import CreateForm from './CreateForm';
 import useMutateDeleteDevice from '../hooks/useMutateDeleteById';
-import ConfirmDelete from './ConfirmDelete';
+import ConfirmDialog from '../../../components/ConfirmDialog';
 
 const Device = styled(Box)(({ theme }) => ({
   width: 480,
@@ -36,7 +36,6 @@ export default function DeviceTab(props) {
   const handleDelete = (id, name) => {
     setSelectedDevice({ id: id, name: name });
     setIsDelete(true);
-    // onDeleteData(id);
   };
 
   if (!deviceList) return null;
@@ -92,11 +91,12 @@ export default function DeviceTab(props) {
               </Grid>
             )
         )}
-        <ConfirmDelete
+        <ConfirmDialog
           open={isDelete}
           handleClose={setIsDelete}
           onDelete={onDeleteData}
           device={selectedDevice}
+          title="device"
         />
       </Grid>
 

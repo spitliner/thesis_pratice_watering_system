@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import useQueryDevice from '../Device/hooks/useQueryDevice';
 import HumidChart from './components/HumidChart';
 import TempChart from './components/TempChart';
-import { deviceType } from '../../constants/device';
+import { deviceRange, deviceType } from '../../constants/device';
 import reportSVG from '../../assets/report.svg';
 import Title from '../../components/Title';
 import ErrorBarChart from './components/ErrorBarChart';
@@ -55,16 +55,30 @@ function _id() {
             </LocalizationProvider>
           </Box>
         </Box>
-
-        <TempChart date={date} deviceID={tempDevice[0]?.id} />
-        <HumidChart date={date} deviceID={humidDevice[0]?.id} />
+        {tempDevice?.map((device) => (
+          <TempChart key={device.id} date={date} device={device} />
+        ))}
+        {humidDevice?.map((device) => (
+          <HumidChart key={device.id} date={date} device={device} />
+        ))}
         <ErrorBarChart
           date={date}
           humidDeviceID={humidDevice[0]?.id}
           tempDeviceID={tempDevice[0]?.id}
-          tempRange={[20, 35]}
-          humidRange={[30, 85]}
+          tempRange={deviceRange.tempRange}
+          humidRange={deviceRange.humidRange}
         />
+      </Container>
+      <Container
+        sx={{
+          backgroundColor: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          mt: 5,
+          rowGap: 3,
+          p: 2
+        }}
+      >
         <Table deviceList={deviceList} />
       </Container>
     </>

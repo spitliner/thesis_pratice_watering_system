@@ -18,7 +18,7 @@ function BaseLayout({ children }) {
     >
       <Navigation />
       <Container
-        maxWidth
+        // maxWidth={true}
         disableGutters
         sx={{
           height: '100%',

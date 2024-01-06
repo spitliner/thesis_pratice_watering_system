@@ -13,7 +13,7 @@ import useQueryDevice from '../hooks/useQueryDevice';
 import { deviceType } from '../../../constants/device';
 import { validSchedule } from '../../../utils';
 import SuspenseLoader from '../../../components/SuspenseLoader';
-import ErrorDialog from './ErrorDialog';
+import ErrorDialog from './ErrorMessage';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import ButtonGroup from './ButtonGroup';
@@ -44,22 +44,21 @@ function Add(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const selectedDevice = deviceList?.find((item) => item.name === device);
-
     const newScheduleList = selectedDevice?.schedules
       ? [...selectedDevice?.schedules, [selectedTime, duration]]
       : [[selectedTime, duration]];
     const isValid = validSchedule(newScheduleList);
     setErrorMessage(!isValid);
-    if (!isValid) return;
-
-    onSaveDataById([
-      selectedDevice.id,
-      'schedules',
-      {
-        schedules: newScheduleList
-      }
-    ]);
-    onClose();
+    if (isValid) {
+      onSaveDataById([
+        selectedDevice.id,
+        'schedules',
+        {
+          schedules: newScheduleList
+        }
+      ]);
+      onClose();
+    }
   };
 
   const waterDevices = deviceList?.filter(

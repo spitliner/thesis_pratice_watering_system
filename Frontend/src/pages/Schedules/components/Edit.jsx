@@ -5,7 +5,8 @@ import {
   TextField,
   Typography,
   Grid,
-  IconButton
+  IconButton,
+  Button
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
@@ -13,7 +14,7 @@ import { InputAdornment } from '@mui/material';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { validSchedule } from '../../../utils';
-import ErrorDialog from './ErrorDialog';
+import ErrorDialog from './ErrorMessage';
 import ButtonGroup from './ButtonGroup';
 dayjs.extend(customParseFormat);
 
@@ -71,7 +72,7 @@ function Edit(props) {
           }}
         >
           <form onSubmit={handleSubmit}>
-            <Box display="flex" flexDirection="column" rowGap={3}>
+            <Box display="flex" flexDirection="column" rowGap={2}>
               <Typography
                 sx={{
                   fontSize: '25px',
@@ -81,54 +82,67 @@ function Edit(props) {
               >
                 {device.name}
               </Typography>
-
-              {schedule.map((_, index) => (
-                <Box
-                  key={index}
-                  flexDirection="row"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Grid container spacing={3}>
-                    <Grid item xs={6}>
-                      <TextField
-                        type="time"
-                        label="Start time"
-                        variant="outlined"
-                        InputLabelProps={{ shrink: true }}
-                        fullWidth
-                        value={schedule[index][0]}
-                        onChange={(event) => handleTimeChange(event, index)}
-                        sx={{ mb: 2 }}
-                        required
-                      />
+              <Box display="flex" flexDirection="column" rowGap={2} mt={1}>
+                {schedule.map((_, index) => (
+                  <Box
+                    key={index}
+                    flexDirection="row"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Grid container spacing={3}>
+                      <Grid item xs={6}>
+                        <TextField
+                          type="time"
+                          label="Start time"
+                          variant="outlined"
+                          InputLabelProps={{ shrink: true }}
+                          fullWidth
+                          value={schedule[index][0]}
+                          onChange={(event) => handleTimeChange(event, index)}
+                          sx={{ mb: 2 }}
+                          required
+                        />
+                      </Grid>
+                      <Grid item xs>
+                        <TextField
+                          type="number"
+                          label="Duration time"
+                          variant="outlined"
+                          fullWidth
+                          sx={{ mb: 2 }}
+                          value={schedule[index][1]}
+                          onChange={(event) =>
+                            handleDurationChange(event, index)
+                          }
+                          InputProps={{
+                            inputProps: { min: 0 },
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                seconds
+                              </InputAdornment>
+                            )
+                          }}
+                          required
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item xs>
-                      <TextField
-                        type="number"
-                        label="Duration time"
-                        variant="outlined"
-                        fullWidth
-                        sx={{ mb: 2 }}
-                        value={schedule[index][1]}
-                        onChange={(event) => handleDurationChange(event, index)}
-                        InputProps={{
-                          inputProps: { min: 0 },
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              seconds
-                            </InputAdornment>
-                          )
-                        }}
-                        required
-                      />
-                    </Grid>
-                  </Grid>
-                  <IconButton onClick={() => handleRemove(index)}>
-                    <DeleteIcon color="primary" />
-                  </IconButton>
-                </Box>
-              ))}
+                    <IconButton onClick={() => handleRemove(index)}>
+                      <DeleteIcon color="primary" />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
+              <Button
+                sx={{ bgcolor: '#EEF5FF' }}
+                onClick={() => {
+                  setSchedule((prev) => {
+                    return [...prev, ['', '']];
+                  });
+                }}
+              >
+                Add new
+              </Button>
               <ButtonGroup onClose={onClose} />
             </Box>
           </form>

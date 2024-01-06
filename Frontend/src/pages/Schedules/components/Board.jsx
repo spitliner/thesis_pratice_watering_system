@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -20,13 +20,16 @@ import Add from './Add';
 import SuspenseLoader from '../../../components/SuspenseLoader';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import ConfirmDialog from '../../../components/ConfirmDialog';
 dayjs.extend(customParseFormat);
 
 function Board() {
   const { deviceList, isLoading } = useQueryDevice();
   const { onSaveDataById } = useMutateDeviceById();
-  const [onEdit, setOnEdit] = React.useState({ status: false, id: '' });
-  const [onAdd, setOnAdd] = React.useState(false);
+  const [onEdit, setOnEdit] = useState({ status: false, id: '' });
+  const [onAdd, setOnAdd] = useState(false);
+  const [isDelete, setIsDelete] = useState({ status: false, id: '' });
+
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
@@ -146,31 +149,61 @@ function Board() {
                       sx={{
                         display: 'flex',
                         justifyContent: 'center',
-                        columnGap: 2
+                        gap: 2,
+                        flexDirection: 'column'
                       }}
                     >
-                      <Button
-                        variant="contained"
-                        sx={{ backgroundColor: '#FF7961', width: '70px' }}
-                        onClick={() => handleDelete(device.id)}
+                      <Box
+                        sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
                       >
-                        DELETE
-                      </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                        onClick={() =>
-                          setOnEdit({ status: true, id: device?.id })
-                        }
-                      >
-                        EDIT
-                      </Button>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            backgroundColor: '#FF7961',
+                            width: '70px'
+                          }}
+                          onClick={() =>
+                            setIsDelete({ status: true, id: device?.id })
+                          }
+                        >
+                          DELETE
+                        </Button>
+                        <Button
+                          variant="contained"
+                          sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                          onClick={() =>
+                            setOnEdit({ status: true, id: device?.id })
+                          }
+                        >
+                          EDIT
+                        </Button>
+                      </Box>
+                      <Box>
+                        <Button
+                          variant="contained"
+                          sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                          onClick={() =>
+                            setOnEdit({ status: true, id: device?.id })
+                          }
+                        >
+                          EDIT
+                        </Button>
+                      </Box>
                       <Modal open={onEdit.id === device.id && onEdit.status}>
                         <Edit
                           device={device}
                           onClose={() => setOnEdit({ status: false, id: '' })}
                         />
                       </Modal>
+                      <ConfirmDialog
+                        open={isDelete.id === device.id && isDelete.status}
+                        handleClose={() =>
+                          setIsDelete({ status: false, id: '' })
+                        }
+                        onDelete={handleDelete}
+                        device={device}
+                        title="schedule"
+                      />
                     </Box>
                   </TableCell>
                 )}
