@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/explicit-length-check */
 import dataModel from '../database/models/data-model.js';
 import deviceModel from '../database/models/device-model.js';
 const dataController = {
@@ -47,6 +48,11 @@ const dataController = {
     },
     async insertFeed(deviceID, userID, feed) {
         try {
+            if (0 === feed.length) {
+                return {
+                    error: 'No data to insert',
+                };
+            }
             const deviceData = await deviceModel.getDevice(deviceID);
             if (null === deviceData) {
                 return {
@@ -58,7 +64,9 @@ const dataController = {
                     error: 'Device not belong to user',
                 };
             }
-            return await dataModel.insertData(feed);
+            return {
+                result: await dataModel.insertData(feed),
+            };
         }
         catch (error) {
             console.log(error);

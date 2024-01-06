@@ -1,12 +1,11 @@
 import process from 'node:process';
-import dotenv from "dotenv";
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import dotenv from 'dotenv';
+
 dotenv.config();
 
-import fs from 'fs';
-import crypto from 'node:crypto';
-
-
-const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519', {
+const {publicKey, privateKey} = crypto.generateKeyPairSync('ed25519', {
     publicKeyEncoding: {
         type: 'spki',
         format: 'pem',
@@ -18,5 +17,5 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519', {
         passphrase: String(process.env.KEY_PASS),
     }});
 
-fs.writeFileSync("./privateKey.pem", privateKey);
-fs.writeFileSync("./publicKey.pem", publicKey);
+fs.writeFileSync('./privateKey.pem', privateKey);
+fs.writeFileSync('./publicKey.pem', publicKey);

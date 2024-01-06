@@ -236,14 +236,6 @@ const deviceModel = {
         return deviceMongoModel.find().lean().exec();
     },
 
-    async getAllSensorData() {
-        return deviceMongoModel.find({
-            schedules: {
-                $exists: false,
-            },
-        }).lean().exec();
-    },
-
     async getDeviceWithSchedules(time: string) {
         return deviceMongoModel.find({
             schedules: {
