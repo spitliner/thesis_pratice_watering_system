@@ -37,6 +37,7 @@ declare const deviceController: {
             adaUsername: string;
             feedID: string;
             settings: string;
+            limit: number[];
             schedules?: import("mongoose").Types.DocumentArray<{
                 [x: number]: string | null;
             }> | null | undefined;
@@ -56,6 +57,7 @@ declare const deviceController: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: import("mongoose").Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -71,6 +73,7 @@ declare const deviceController: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: import("mongoose").Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
@@ -118,6 +121,13 @@ declare const deviceController: {
         result?: undefined;
     } | {
         result: string;
+        error?: undefined;
+    }>;
+    changeDeviceLimit(deviceID: string, userID: string, limit: number[]): Promise<{
+        error: string;
+        result?: undefined;
+    } | {
+        result: boolean;
         error?: undefined;
     }>;
     getDeviceFeed(): Promise<void>;

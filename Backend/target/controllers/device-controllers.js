@@ -178,7 +178,7 @@ const deviceController = {
     },
     async changeDeviceStatus(deviceID, userID, status) {
         try {
-            const device = await deviceModel.getDeviceData(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
             if (null === device) {
                 return {
                     error: 'device not found',
@@ -198,6 +198,18 @@ const deviceController = {
             return {
                 error: 'failed to set new status',
             };
+        }
+        catch (error) {
+            console.log(error);
+            return {
+                error: 'unexpected error',
+            };
+        }
+    },
+    async changeDeviceLimit(deviceID, userID, limit) {
+        try {
+            const result = await deviceModel.changeDeviceFeedLimit(deviceID, userID, limit);
+            return result;
         }
         catch (error) {
             console.log(error);

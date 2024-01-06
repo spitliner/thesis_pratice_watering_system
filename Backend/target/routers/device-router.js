@@ -233,6 +233,33 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
         });
     }
 });
+deviceRouter.post('/device/:deviceID/limit', authRequest, async (request, response) => {
+    try {
+        const userID = request.cookies.uid;
+        const deviceID = request.params.deviceID;
+        const limit = request.body.limit;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return Array.isArray(input) && input.every(elem => "number" === typeof elem);
+        })(limit)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
+        const result = await deviceController.changeDeviceLimit(deviceID, userID, limit);
+        if (undefined === result.error) {
+            return response.status(200).json(result);
+        }
+        return response.status(500).json(result);
+    }
+    catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            error: 'unexpected server error',
+        });
+    }
+});
 deviceRouter.post('/device/delete/:deviceID', authRequest, async (request, response) => {
     try {
         const userID = request.cookies.uid;

@@ -197,6 +197,31 @@ const deviceModel = {
             };
         }
     },
+    async changeDeviceFeedLimit(deviceID, userID, newLimit) {
+        try {
+            const device = await deviceModel.getDevice(deviceID);
+            if (null === device) {
+                return {
+                    error: 'device not found',
+                };
+            }
+            if (userID !== device.userID) {
+                return {
+                    error: 'device not belong to user',
+                };
+            }
+            const result = await deviceMongoModel.updateOne({ id: deviceID }, { limit: newLimit }).lean().exec();
+            return {
+                result: result.acknowledged,
+            };
+        }
+        catch (error) {
+            console.log(error);
+            return {
+                error: 'database error',
+            };
+        }
+    },
     async deleteDevice(deviceID) {
         const result = await deviceMongoModel.deleteOne({
             id: deviceID,

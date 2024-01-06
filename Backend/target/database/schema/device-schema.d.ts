@@ -32,6 +32,7 @@ declare const deviceSchema: mongoose.Schema<any, mongoose.Model<any, any, any, a
     adaUsername: string;
     feedID: string;
     settings: string;
+    limit: number[];
     schedules?: mongoose.Types.DocumentArray<{
         [x: number]: string | null;
     }> | null | undefined;
@@ -44,6 +45,7 @@ declare const deviceSchema: mongoose.Schema<any, mongoose.Model<any, any, any, a
     adaUsername: string;
     feedID: string;
     settings: string;
+    limit: number[];
     schedules?: mongoose.Types.DocumentArray<{
         [x: number]: string | null;
     }> | null | undefined;
@@ -56,6 +58,7 @@ declare const deviceSchema: mongoose.Schema<any, mongoose.Model<any, any, any, a
     adaUsername: string;
     feedID: string;
     settings: string;
+    limit: number[];
     schedules?: mongoose.Types.DocumentArray<{
         [x: number]: string | null;
     }> | null | undefined;
