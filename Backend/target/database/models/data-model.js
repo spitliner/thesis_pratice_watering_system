@@ -42,3 +42,4 @@ const dataModel = {
     },
 };
 export default dataModel;
+//# sourceMappingURL=data-model.js.map

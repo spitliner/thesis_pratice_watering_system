@@ -306,3 +306,4 @@ userRouter.post('/account/delete', authRequest, async (request, response) => {
 });
 */
 export default userRouter;
+//# sourceMappingURL=user-router.js.map

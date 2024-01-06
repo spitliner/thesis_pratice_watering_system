@@ -191,7 +191,7 @@ const deviceController = {
 
     async changeDeviceStatus(deviceID: string, userID: string, status: string) {
         try {
-            const device = await deviceModel.getDeviceData(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
 
             if (null === device) {
                 return {
@@ -216,6 +216,18 @@ const deviceController = {
             return {
                 error: 'failed to set new status',
             };
+        } catch (error) {
+            console.log(error);
+            return {
+                error: 'unexpected error',
+            };
+        }
+    },
+
+    async changeDeviceLimit(deviceID: string, userID: string, limit: number[]) {
+        try {
+            const result = await deviceModel.changeDeviceFeedLimit(deviceID, userID, limit);
+            return result;
         } catch (error) {
             console.log(error);
             return {

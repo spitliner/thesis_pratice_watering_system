@@ -233,6 +233,33 @@ deviceRouter.post('/device/:deviceID/apiKey', authRequest, async (request, respo
         });
     }
 });
+deviceRouter.post('/device/:deviceID/limit', authRequest, async (request, response) => {
+    try {
+        const userID = request.cookies.uid;
+        const deviceID = request.params.deviceID;
+        const limit = request.body.limit;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return Array.isArray(input) && input.every(elem => "number" === typeof elem);
+        })(limit)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
+        const result = await deviceController.changeDeviceLimit(deviceID, userID, limit);
+        if (undefined === result.error) {
+            return response.status(200).json(result);
+        }
+        return response.status(500).json(result);
+    }
+    catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            error: 'unexpected server error',
+        });
+    }
+});
 deviceRouter.post('/device/delete/:deviceID', authRequest, async (request, response) => {
     try {
         const userID = request.cookies.uid;
@@ -290,4 +317,32 @@ deviceRouter.get('/device/:deviceID/feed', authRequest, async (request, response
         });
     }
 });
+deviceRouter.post('/device/:deviceID/status', authRequest, async (request, response) => {
+    try {
+        const userID = request.cookies.uid;
+        const deviceID = request.params.deviceID;
+        const newStatus = request.body.status;
+        if (!(input => {
+            return "string" === typeof input;
+        })(userID) || !(input => {
+            return "string" === typeof input;
+        })(deviceID) || !(input => {
+            return "string" === typeof input;
+        })(newStatus)) {
+            return response.status(400).json({ error: 'missing info' });
+        }
+        const result = await deviceController.changeDeviceStatus(deviceID, userID, newStatus);
+        if (undefined !== result.error) {
+            return response.status(401).json({ error: result.error });
+        }
+        return response.status(200).json({ result: result.result });
+    }
+    catch (error) {
+        console.log(error);
+        return response.status(500).json({
+            error: 'unexpected server error',
+        });
+    }
+});
 export default deviceRouter;
+//# sourceMappingURL=device-router.js.map
