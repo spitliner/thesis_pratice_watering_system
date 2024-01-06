@@ -191,7 +191,7 @@ const deviceController = {
 
     async changeDeviceStatus(deviceID: string, userID: string, status: string) {
         try {
-            const device = await deviceModel.getDeviceData(deviceID);
+            const device = await deviceModel.getDevice(deviceID);
 
             if (null === device) {
                 return {

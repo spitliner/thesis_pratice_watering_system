@@ -176,10 +176,39 @@ const deviceController = {
             };
         }
     },
-    async triggerDeviceSchedules(time) {
+    async changeDeviceStatus(deviceID, userID, status) {
         try {
-            const deviceList = await deviceModel.getAllSensorData();
-            const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
+            const device = await deviceModel.getDeviceData(deviceID);
+            if (null === device) {
+                return {
+                    error: 'device not found',
+                };
+            }
+            if (userID !== device.userID) {
+                return {
+                    error: 'device not belong to user',
+                };
+            }
+            const result = await adaConnect.modifiedStatus(device.adaUsername, device.feedID, device.apiKey, status);
+            if (result) {
+                return {
+                    result: 'set status success',
+                };
+            }
+            return {
+                error: 'failed to set new status',
+            };
+        }
+        catch (error) {
+            console.log(error);
+            return {
+                error: 'unexpected error',
+            };
+        }
+    },
+    async getDeviceFeed() {
+        try {
+            const deviceList = await deviceModel.getAllDeviceData();
             const collectData = async (device) => {
                 try {
                     await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.feedID, device.apiKey));
@@ -188,6 +217,17 @@ const deviceController = {
                     console.log(error);
                 }
             };
+            for (const device of deviceList) {
+                void collectData(device);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    },
+    async triggerDeviceSchedules(time) {
+        try {
+            const actionDeviceList = await deviceModel.getDeviceWithSchedules(time);
             const triggerSchedule = async (device) => {
                 try {
                     let pumpTime = '1';
@@ -199,15 +239,12 @@ const deviceController = {
                             }
                         }
                     }
-                    await adaConnect.triggerPump(device.adaUsername, device.feedID, device.apiKey, pumpTime);
+                    await adaConnect.triggerPumpSchedule(device.adaUsername, device.feedID, device.apiKey, pumpTime);
                 }
                 catch (error) {
                     console.log(error);
                 }
             };
-            for (const device of deviceList) {
-                void collectData(device);
-            }
             for (const device of actionDeviceList) {
                 void triggerSchedule(device);
             }
@@ -218,3 +255,4 @@ const deviceController = {
     },
 };
 export default deviceController;
+//# sourceMappingURL=device-controllers.js.map

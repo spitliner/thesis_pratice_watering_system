@@ -27,3 +27,4 @@ async function authRequest(request, response, next) {
     next();
 }
 export default authRequest;
+//# sourceMappingURL=express-auth.js.map
