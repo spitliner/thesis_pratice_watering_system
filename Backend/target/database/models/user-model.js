@@ -91,3 +91,4 @@ const userModel = {
     },
 };
 export default userModel;
+//# sourceMappingURL=user-model.js.map

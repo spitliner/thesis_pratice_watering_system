@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import userRouter from './routers/user-router.js';
 import deviceRouter from './routers/device-router.js';
-import pollingJob from './cron-jobs/cron-request.js';
+import { pollingFeed, pollingSchedule } from './cron-jobs/cron-request.js';
 //---
 dotenv.config();
 //---
@@ -34,7 +34,8 @@ void mongoose.connect(uri, { dbName: 'webGarden' });
 const portNumber = (Number(process.env.DB_PORT) || 9000);
 //------
 let exceptionOccured = false;
-pollingJob.start();
+pollingFeed.start();
+pollingSchedule.start();
 process.on('uncaughtException', error => {
     console.log('Caught exception:', error);
     exceptionOccured = true;
@@ -47,7 +48,8 @@ process.on('exit', () => {
     else {
         console.log('Kill signal received');
     }
-    pollingJob.stop();
+    pollingFeed.stop();
+    pollingSchedule.stop();
 });
 process.on('SIGINT', () => {
     process.exit();
@@ -59,3 +61,4 @@ process.on('SIGTERM', () => {
 server.listen(portNumber, () => {
     console.log('Server started on port ' + portNumber);
 });
+//# sourceMappingURL=index.js.map

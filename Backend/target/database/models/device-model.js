@@ -212,13 +212,6 @@ const deviceModel = {
     async getAllDeviceData() {
         return deviceMongoModel.find().lean().exec();
     },
-    async getAllSensorData() {
-        return deviceMongoModel.find({
-            schedules: {
-                $exists: false,
-            },
-        }).lean().exec();
-    },
     async getDeviceWithSchedules(time) {
         return deviceMongoModel.find({
             schedules: {
@@ -232,3 +225,4 @@ const deviceModel = {
     },
 };
 export default deviceModel;
+//# sourceMappingURL=device-model.js.map
