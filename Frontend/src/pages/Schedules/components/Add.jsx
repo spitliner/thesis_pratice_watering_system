@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import {
+  Container,
+  Box,
+  TextField,
+  MenuItem,
+  Button,
+  Typography,
+  InputAdornment
+} from '@mui/material';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
-import { useNavigate } from 'react-router-dom';
 import useQueryDevice from '../hooks/useQueryDevice';
+import { deviceType } from '../../../constants/device';
+import { validSchedule } from '../../../utils';
+import SuspenseLoader from '../../../components/SuspenseLoader';
+import ErrorDialog from './ErrorDialog';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import ButtonGroup from './ButtonGroup';
+dayjs.extend(customParseFormat);
 
-function Add() {
+function Add(props) {
+  const { onClose } = props;
   const { onSaveDataById } = useMutateDeviceById();
-  const { deviceList } = useQueryDevice();
-  const navigate = useNavigate();
+  const { deviceList, isLoading } = useQueryDevice();
 
   const [selectedTime, setSelectedTime] = useState('');
   const [device, setDevice] = useState('');
-  const [water, setWater] = useState('');
-
-  const handleCancel = () => {
-    navigate('/schedules');
-  };
+  const [duration, setDuration] = useState('');
+  const [errorMessage, setErrorMessage] = useState(false);
 
   const handleDeviceChange = (event) => {
     setDevice(event.target.value);
@@ -30,29 +37,38 @@ function Add() {
     setSelectedTime(event.target.value);
   };
 
-  const handleWaterChange = (event) => {
-    setWater(event.target.value);
+  const handleDurationChange = (event) => {
+    setDuration(event.target.value);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission logic here
-    onSaveDataById([device, 'schedules', { schedules: [selectedTime, water] }]);
+    const selectedDevice = deviceList?.find((item) => item.name === device);
+
+    const newScheduleList = selectedDevice?.schedules
+      ? [...selectedDevice?.schedules, [selectedTime, duration]]
+      : [[selectedTime, duration]];
+    const isValid = validSchedule(newScheduleList);
+    setErrorMessage(!isValid);
+    if (!isValid) return;
+
+    onSaveDataById([
+      selectedDevice.id,
+      'schedules',
+      {
+        schedules: newScheduleList
+      }
+    ]);
+    onClose();
   };
 
-  if (!deviceList) return null;
+  const waterDevices = deviceList?.filter(
+    (device) => device.type === deviceType.water
+  );
+
+  if (isLoading) return <SuspenseLoader />;
   return (
-    <Box
-      sx={{
-        backgroundColor: '#c8e6c9',
-        height: '650px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        my: 2,
-        borderRadius: 5
-      }}
-    >
+    <>
       <Container maxWidth="sm">
         <Box
           sx={{
@@ -62,92 +78,72 @@ function Add() {
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
             mt: 4
           }}
         >
           <form onSubmit={handleSubmit}>
-            <Typography
-              sx={{ fontSize: '25px', fontWeight: 'bold', textAlign: 'center' }}
-            >
-              Add Task
-            </Typography>
-            <TextField
-              label="Device"
-              variant="outlined"
-              fullWidth
-              select
-              sx={{ mb: 2, mt: 3 }}
-              InputLabelProps={{ shrink: true }}
-              value={device}
-              onChange={handleDeviceChange}
-              required
-            >
-              {/* <MenuItem value="KV101">KV101</MenuItem>
-              <MenuItem value="KV102">KV102</MenuItem>
-              <MenuItem value="DV03">DV03</MenuItem>
-              <MenuItem value="DV04">DV04</MenuItem>
-              <MenuItem value="DV05">DV05</MenuItem> */}
-              {deviceList?.map(
-                (device) =>
-                  device.type === 'Watering' && (
-                    <MenuItem key={device.id} value={device.id}>
-                      {device.id}
-                    </MenuItem>
+            <Box display="flex" flexDirection="column" rowGap={3}>
+              <Typography
+                sx={{
+                  fontSize: '25px',
+                  fontWeight: 'bold',
+                  textAlign: 'center'
+                }}
+              >
+                Add Task
+              </Typography>
+              <TextField
+                label="Device"
+                variant="outlined"
+                fullWidth
+                select
+                value={device}
+                onChange={handleDeviceChange}
+                required
+              >
+                {waterDevices?.map((device) => (
+                  <MenuItem key={device.name} value={device.name}>
+                    {device.name}
+                  </MenuItem>
+                ))}
+                {waterDevices?.length === 0 && (
+                  <MenuItem sx={{ fontStyle: 'italic', color: 'gray' }}>
+                    No watering device
+                  </MenuItem>
+                )}
+              </TextField>
+              <TextField
+                type="time"
+                label="Start time"
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+                value={selectedTime}
+                onChange={handleTimeChange}
+                required
+              />
+              <TextField
+                type="number"
+                label="Duration time"
+                variant="outlined"
+                fullWidth
+                value={duration}
+                onChange={handleDurationChange}
+                InputProps={{
+                  inputProps: { min: 0 },
+                  endAdornment: (
+                    <InputAdornment position="end">seconds</InputAdornment>
                   )
-              )}
-            </TextField>
-
-            <TextField
-              type="time"
-              variant="outlined"
-              fullWidth
-              value={selectedTime}
-              onChange={handleTimeChange}
-              sx={{ mb: 2 }}
-              required
-            />
-
-            <TextField
-              type="number"
-              label="Amount of Water"
-              variant="outlined"
-              fullWidth
-              sx={{ mb: 2 }}
-              value={water}
-              onChange={handleWaterChange}
-              required
-            />
-
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  backgroundColor: '#aed581',
-                  width: '45%',
-                  mt: 2
                 }}
-              >
-                Add
-              </Button>
-              <Button
-                type="button"
-                variant="contained"
-                color="error"
-                sx={{
-                  width: '45%',
-                  mt: 2
-                }}
-                onClick={handleCancel}
-              >
-                Cancel
-              </Button>
+                required
+              />
+              <ButtonGroup onClose={onClose} />
             </Box>
           </form>
         </Box>
       </Container>
-    </Box>
+      <ErrorDialog open={errorMessage} onClose={() => setErrorMessage(false)} />
+    </>
   );
 }
 

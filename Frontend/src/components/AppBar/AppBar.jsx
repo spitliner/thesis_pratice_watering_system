@@ -5,24 +5,23 @@ import TextField from '@mui/material/TextField';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import DropdownMenu from './DropdownMenu';
+import { Container } from '@mui/material';
 
 function AppBar() {
   return (
-    <Box
+    <Container
       sx={{
-        width: '100%',
-        height: '35px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: 2
+        mb: 3
       }}
     >
       {/* Left */}
       <Box
         sx={{
           alignItems: 'center',
-          gap: 2,
+          gap: 0,
           display: { xs: 'none', md: 'flex' }
         }}
       >
@@ -33,12 +32,12 @@ function AppBar() {
           size="small"
           sx={{
             backgroundColor: 'secondary.dark',
-            width: '630px',
-            borderRadius: '15px'
+            width: 690,
+            borderRadius: '10px'
           }}
           InputProps={{
             style: {
-              borderRadius: '15px'
+              borderRadius: '10px'
             }
           }}
         />
@@ -53,7 +52,7 @@ function AppBar() {
         </Tooltip>
         <DropdownMenu />
       </Box>
-    </Box>
+    </Container>
   );
 }
 

@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import welcomeSVG from '../../../../assets/welcome.svg';
 import Typography from '@mui/material/Typography';
+import welcomePNG from '../../../../assets/welcome.png';
 
 function WelcomeBanner() {
   return (
@@ -15,17 +16,16 @@ function WelcomeBanner() {
         alignItems: 'center'
       }}
     >
-      <Box sx={{ mx: 4 }}>
-        <Typography
-          sx={{ fontSize: '30px', fontWeight: 'bold', color: '#B56F3C' }}
-        >
-          Hello, Kate!
-        </Typography>
+      <Box sx={{ px: 2 }}>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          {/* <Lottie options={WelcomeIcon} height={150} width={250} /> */}
+          <img src={welcomePNG} alt="welcome" height={150} width={250} />
+        </Box>
         <Typography
           display="inline"
           sx={{ fontSize: '20px', fontWeight: '500', color: '#B56F3C' }}
         >
-          Welcome Home! We are ready to{' '}
+          We are ready to{' '}
         </Typography>
         <Typography
           display="inline"
@@ -41,8 +41,8 @@ function WelcomeBanner() {
           your garden!
         </Typography>
       </Box>
-      <Box>
-        <img height={227} src={welcomeSVG} />
+      <Box mr={5}>
+        <img height={200} src={welcomeSVG} />
       </Box>
     </Box>
   );
