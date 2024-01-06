@@ -206,6 +206,18 @@ const deviceController = {
             };
         }
     },
+    async changeDeviceLimit(deviceID, userID, limit) {
+        try {
+            const result = await deviceModel.changeDeviceFeedLimit(deviceID, userID, limit);
+            return result;
+        }
+        catch (error) {
+            console.log(error);
+            return {
+                error: 'unexpected error',
+            };
+        }
+    },
     async getDeviceFeed() {
         try {
             const deviceList = await deviceModel.getAllDeviceData();

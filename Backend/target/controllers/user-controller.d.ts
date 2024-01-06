@@ -79,6 +79,7 @@ declare const userController: {
         adaUsername: string;
         feedID: string;
         settings: string;
+        limit: number[];
         schedules?: import("mongoose").Types.DocumentArray<{
             [x: number]: string | null;
         }> | null | undefined;
