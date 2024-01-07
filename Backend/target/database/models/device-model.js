@@ -33,7 +33,7 @@ const deviceModel = {
         }
     },
     async getDevice(deviceID) {
-        return deviceMongoModel.findOne({ id: deviceID }, '-__v').exec();
+        return deviceMongoModel.findOne({ id: deviceID }, '-__v').lean().exec();
     },
     async getDeviceData(deviceID) {
         return deviceMongoModel.findOne({ id: deviceID }, '-__v -_id -userID').lean().exec();
