@@ -1,16 +1,16 @@
 import { useQuery } from 'react-query';
 import { ProfileService } from '../ProfileService';
-import useLogoutHook from '../../Login/hooks/useMutateLogout';
 import { useNavigate } from 'react-router-dom';
 import { setAccessToken } from '../../../utils/localStorage';
 
 const useQueryProfile = () => {
   const navigate = useNavigate();
-  const { data, isLoading, isError } = useQuery(
+  const { data, isLoading, isError, isSuccess } = useQuery(
     'get-Profile',
     ProfileService.get,
     {
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
+      retry: 1
     }
   );
   if (isError) {
@@ -21,7 +21,8 @@ const useQueryProfile = () => {
   return {
     profile: data?.usr,
     isLoading,
-    isError
+    isError,
+    isSuccess
   };
 };
 

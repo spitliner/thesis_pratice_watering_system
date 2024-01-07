@@ -23,6 +23,7 @@ import Circle from '@mui/icons-material/Circle';
 import { Link } from 'react-router-dom';
 import temp from '../../../assets/animation/temp.json';
 import humid from '../../../assets/animation/humid.json';
+import ChangeThreshold from './ChangeThreshold';
 
 const TempIcon = {
   loop: true,
@@ -55,11 +56,16 @@ const Up = () => (
   />
 );
 
-const ChartCardHeader = ({ label, color, icon }) => (
+const ChartCardHeader = ({ deviceName, label, color, icon }) => (
   <Box display="flex" alignItems="center" columnGap={2}>
-    <Typography fontSize={22} fontWeight={700} color={color} width={130}>
-      {label}
-    </Typography>
+    <Box display="flex" flexDirection="column">
+      <Typography fontSize={22} fontWeight={700} color={color} width={130}>
+        {label}
+      </Typography>
+      <Typography fontSize={14} fontWeight={700} color={color}>
+        {deviceName}
+      </Typography>
+    </Box>
     <Box height={80} width={80}>
       <Lottie options={icon} />
     </Box>
@@ -112,8 +118,9 @@ const ChartInfo = ({ errorMessage }) => (
 );
 
 const Chart = (props) => {
-  const { date, deviceID, dataKey, label, color, unit, range } = props;
-  const { data } = useQueryDeviceById(deviceID);
+  const { date, device, dataKey, label, color, unit } = props;
+  const { data } = useQueryDeviceById(device?.id);
+
   const [chartData, setChartData] = useState([]);
   const [chartValues, setChartValues] = useState({
     max: 0,
@@ -124,14 +131,26 @@ const Chart = (props) => {
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [warning, setWarning] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [range, setRange] = useState([]);
 
   const selectedDateList = useMemo(() => {
+    console.log(dayjs(date).format('MM/YYYY'));
     return data?.feed?.filter(
       (item) =>
         dayjs(date).format('DD/MM/YYYY') ===
         dayjs(item.time).format('DD/MM/YYYY')
     );
   }, [data?.feed, date]);
+
+  const handleFinishEdit = () => {
+    setOpenEdit(false);
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    data && setRange(data?.info.limit);
+  }, [data]);
 
   useEffect(() => {
     if (!selectedDateList) return;
@@ -169,18 +188,21 @@ const Chart = (props) => {
         : null;
     setChartValues({ max, min, current, average, prev });
 
+    const isToday =
+      dayjs(date).format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY');
+
     if (current === null) setErrorMessage(`No data for this day`);
     else if (current > range[1]) {
       setErrorMessage(`Higher than normal`);
-      setWarning(true);
+      setWarning(isToday);
     } else if (current < range[0]) {
       setErrorMessage(`Lower than normal`);
-      setWarning(true);
+      setWarning(isToday);
     } else {
       setErrorMessage(null);
       setWarning(false);
     }
-  }, [selectedDateList, dataKey]);
+  }, [selectedDateList, dataKey, range]);
 
   if (!data) {
     return (
@@ -194,6 +216,7 @@ const Chart = (props) => {
     <Card>
       <Box display="flex" mb={5} columnGap={2}>
         <ChartCardHeader
+          deviceName={device.name}
           label={label}
           color={color}
           icon={label === 'Temperature' ? TempIcon : HumidIcon}
@@ -221,6 +244,24 @@ const Chart = (props) => {
             Average:{' '}
             {(chartValues.average && chartValues.average + unit) || 'No data'}
           </Typography>
+        </Box>
+        <Box>
+          <Button
+            fullWidth={false}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => setOpenEdit(true)}
+          >
+            Change threshold
+          </Button>
+          <ChangeThreshold
+            open={openEdit}
+            handleFinishEdit={handleFinishEdit}
+            handleCancelEdit={() => setOpenEdit(false)}
+            device={device}
+            dataKey={dataKey}
+          />
         </Box>
       </Box>
       {chartData?.length <= 0 ? (
@@ -252,7 +293,7 @@ const Chart = (props) => {
             dataKey="time"
             label={{ value: 'Time', position: 'insideBottom', offset: -20 }}
             tickSize={10}
-            interval={3}
+            interval={2}
           />
           <YAxis unit={unit} tickSize={10} domain={[0, range[1]]} />
           <Tooltip />
@@ -288,9 +329,9 @@ const Chart = (props) => {
             sx={{ display: 'flex', flexDirection: 'column', fontSize: 17 }}
           >
             WARNING: {dataKey} is {errorMessage?.toLowerCase()} !
-            <Box mt={1}>
+            <Box mt={1} display="flex" justifyContent="center">
               <Button component={Link} to="/schedules" sx={{ fontSize: 16 }}>
-                Adjust watering schedule
+                Go water
               </Button>
               <Button
                 sx={{ color: 'gray', fontSize: 16 }}

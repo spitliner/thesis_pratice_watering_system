@@ -17,7 +17,7 @@ export default function validSchedule(schedule) {
       betweenTime = dayjs(startTime, 'HH:mm')
         .add(Number(duration), 'second')
         .diff(dayjs(nextStartTime, 'HH:mm'), 'second');
-      if (Math.abs(betweenTime) < 300) {
+      if (Math.abs(betweenTime) <= 300) {
         return false;
       }
     }

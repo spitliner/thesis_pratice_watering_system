@@ -17,8 +17,8 @@ export default function ButtonGroup(props) {
       <Button
         type="button"
         variant="contained"
-        color="error"
         sx={{
+          backgroundColor: 'grey.500',
           width: '45%'
         }}
         onClick={props.onClose}

@@ -7,7 +7,8 @@ import {
   ScatterChart,
   Tooltip,
   XAxis,
-  YAxis
+  YAxis,
+  ZAxis
 } from 'recharts';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
 import dayjs from 'dayjs';
@@ -40,7 +41,8 @@ export default function ErrorBarChart(props) {
     if (selectedDateHumid && selectedDateTemp) {
       return selectedDateHumid.map((item, i) => ({
         humidity: item.data,
-        temperature: selectedDateTemp[i]?.data || null
+        temperature: selectedDateTemp[i]?.data || null,
+        time: dayjs(item.time).format('HH:mm')
       }));
     } else {
       return [];
@@ -60,8 +62,7 @@ export default function ErrorBarChart(props) {
       .sort((a, b) => a.temperature - b.temperature);
     setChartData(errorDataList);
   }, [selectedDateList.length]);
-  debugger;
-  console.log(chartData);
+
   return (
     <Card>
       <Typography fontSize={22} fontWeight={700} color="#1A5D1A" mb={5}>
@@ -100,6 +101,7 @@ export default function ErrorBarChart(props) {
             }}
             type="number"
           />
+          <ZAxis dataKey="time" name="Time" />
           <Tooltip />
           <ReferenceLine
             x={tempRange[0]}
@@ -116,13 +118,13 @@ export default function ErrorBarChart(props) {
           <ReferenceLine
             y={humidRange[0]}
             label={`${humidRange[0]} %`}
-            stroke="red"
+            stroke="blue"
             strokeDasharray="3 3"
           />
           <ReferenceLine
             y={humidRange[1]}
             label={`${humidRange[1]} %`}
-            stroke="red"
+            stroke="blue"
             strokeDasharray="3 3"
           />
           <Scatter data={chartData} fill="#ff7300" />
@@ -136,7 +138,7 @@ export default function ErrorBarChart(props) {
           alignItems="center"
         >
           <Typography fontSize={20} fontWeight={700} color="gray">
-            No data
+            Everything is normal
           </Typography>
         </Box>
       )}

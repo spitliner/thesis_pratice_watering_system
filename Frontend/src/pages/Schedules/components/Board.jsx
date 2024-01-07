@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -9,7 +9,8 @@ import {
   Paper,
   Button,
   Container,
-  Box
+  Box,
+  Switch
 } from '@mui/material';
 import useQueryDevice from '../hooks/useQueryDevice';
 import useMutateDeviceById from '../hooks/useMutateDeviceById';
@@ -20,22 +21,39 @@ import Add from './Add';
 import SuspenseLoader from '../../../components/SuspenseLoader';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import ConfirmDialog from '../../../components/ConfirmDialog';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPumpDevice } from '../../Report/deviceListSlice';
 dayjs.extend(customParseFormat);
 
 function Board() {
   const { deviceList, isLoading } = useQueryDevice();
   const { onSaveDataById } = useMutateDeviceById();
-  const [onEdit, setOnEdit] = React.useState({ status: false, id: '' });
-  const [onAdd, setOnAdd] = React.useState(false);
+  const dispatch = useDispatch();
+  const [onEdit, setOnEdit] = useState({ status: false, id: '' });
+  const [onAdd, setOnAdd] = useState(false);
+  const [isDelete, setIsDelete] = useState({ status: false, id: '' });
+
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
-  const waterDevices = (deviceList || [])
+  const handleTriggerPump = (id, status) => {
+    // const status = e.target.checked ? 'ON' : 'OFF';
+    console.log(status);
+    onSaveDataById([id, 'status', { status: status }]);
+  };
+  const pumpDevices = (deviceList || [])
     .filter((item) => item.type === deviceType.water)
     .map((item) => ({
       ...item,
       schedules: item.schedules || []
     }));
+
+  console.log(pumpDevices);
+
+  useEffect(() => {
+    dispatch(setPumpDevice(pumpDevices));
+  }, [pumpDevices]);
 
   if (isLoading) return <SuspenseLoader />;
 
@@ -99,13 +117,23 @@ function Board() {
                   textAlign: 'center'
                 }}
               >
+                SCHEDULE
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#7A40F2',
+                  textAlign: 'center'
+                }}
+              >
                 ACTION
               </TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {waterDevices?.map((device, index) => (
+            {pumpDevices?.map((device, index) => (
               <TableRow key={index} sx={{ border: 1, borderColor: '#e0e0e0' }}>
                 <TableCell
                   sx={{
@@ -140,40 +168,84 @@ function Board() {
                   ))}
                 </TableCell>
 
-                {device?.schedules?.length > 0 && (
-                  <TableCell>
-                    <Box
+                <TableCell
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 2,
+                    flexDirection: 'column'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: 2,
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <Button
+                      variant="contained"
                       sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        columnGap: 2
+                        backgroundColor: '#FF7961',
+                        width: '70px'
                       }}
+                      onClick={() =>
+                        setIsDelete({ status: true, id: device?.id })
+                      }
                     >
-                      <Button
-                        variant="contained"
-                        sx={{ backgroundColor: '#FF7961', width: '70px' }}
-                        onClick={() => handleDelete(device.id)}
-                      >
-                        DELETE
-                      </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                        onClick={() =>
-                          setOnEdit({ status: true, id: device?.id })
-                        }
-                      >
-                        EDIT
-                      </Button>
-                      <Modal open={onEdit.id === device.id && onEdit.status}>
-                        <Edit
-                          device={device}
-                          onClose={() => setOnEdit({ status: false, id: '' })}
-                        />
-                      </Modal>
-                    </Box>
-                  </TableCell>
-                )}
+                      DELETE
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                      onClick={() =>
+                        setOnEdit({ status: true, id: device?.id })
+                      }
+                    >
+                      EDIT
+                    </Button>
+                    <Modal open={onEdit.id === device.id && onEdit.status}>
+                      <Edit
+                        device={device}
+                        onClose={() => setOnEdit({ status: false, id: '' })}
+                      />
+                    </Modal>
+                    <ConfirmDialog
+                      open={isDelete.id === device.id && isDelete.status}
+                      handleClose={() => setIsDelete({ status: false, id: '' })}
+                      onDelete={handleDelete}
+                      device={device}
+                      title="schedule"
+                    />
+                  </Box>
+                </TableCell>
+
+                <TableCell align="center">
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: 2,
+                      flexDirection: 'row'
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{ width: '70px', bgcolor: 'grey.500' }}
+                      onClick={() => handleTriggerPump(device?.id, 'OFF')}
+                    >
+                      OFF
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{ width: '70px' }}
+                      onClick={() => handleTriggerPump(device?.id, 'ON')}
+                    >
+                      ON
+                    </Button>
+                  </Box>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

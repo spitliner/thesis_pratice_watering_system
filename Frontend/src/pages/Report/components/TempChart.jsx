@@ -1,5 +1,6 @@
 import React from 'react';
 import Chart from './Chart';
+import { deviceRange } from '../../../constants/device';
 
 const TempChart = (props) => {
   return (
@@ -9,7 +10,7 @@ const TempChart = (props) => {
       label="Temperature"
       color="#F94C10"
       unit="°C"
-      range={[20, 35]}
+      range={deviceRange.tempRange}
     />
   );
 };

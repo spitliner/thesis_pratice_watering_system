@@ -7,6 +7,8 @@ import {
 } from '../../../common/firebaseService';
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAvatar } from '../avatarSlice';
 
 const Input = styled('input')({
   display: 'none'
@@ -15,25 +17,19 @@ const Input = styled('input')({
 function AvatarBox(props) {
   const { profile } = props;
   const [avatarUrl, setAvatarUrl] = useState('');
+  const avatar = useSelector((state) => state.avatar.url);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    handleGetAvatar();
-  }, [profile]);
-
-  const handleGetAvatar = async () => {
-    const userId = profile?.id;
-    const url = await GetAvatarByUserId(userId).catch(
-      () =>
-        'https://i.pinimg.com/736x/57/3f/f1/573ff1a3bea0c77246affaf18bb39b48.jpg'
-    );
-    setAvatarUrl(url);
-  };
+    setAvatarUrl(avatar);
+  }, [avatar]);
 
   const handleUpload = (e) => {
     const image = e.target.files[0];
     const url = URL.createObjectURL(image);
     UploadAvatarByUserId(profile?.id, image);
     setAvatarUrl(url);
+    dispatch(setAvatar(url));
   };
 
   return (

@@ -121,8 +121,16 @@ export default function CreateForm(props) {
             <SuspenseLoader />
           ) : (
             <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button type="submit">Add</Button>
+              <Button variant="contained" type="submit" sx={{ width: 80 }}>
+                Add
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleClose}
+                sx={{ backgroundColor: 'grey.500', width: 80 }}
+              >
+                Cancel
+              </Button>
             </DialogActions>
           )}
         </form>

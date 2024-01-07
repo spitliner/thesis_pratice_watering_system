@@ -1,5 +1,6 @@
 import React from 'react';
 import Chart from './Chart';
+import { deviceRange } from '../../../constants/device';
 
 const HumidChart = (props) => {
   return (
@@ -9,7 +10,7 @@ const HumidChart = (props) => {
       label="Humidity"
       color="#7E30E1"
       unit="%"
-      range={[30, 85]}
+      range={deviceRange.humidRange}
     />
   );
 };
