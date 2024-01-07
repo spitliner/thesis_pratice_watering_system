@@ -42,7 +42,7 @@ declare const deviceModel: {
     }) | {
         error: string;
     } | null>;
-    getDevice(deviceID: string): Promise<(mongoose.Document<unknown, {}, {
+    getDevice(deviceID: string): Promise<(mongoose.FlattenMaps<{
         type: string;
         id: string;
         userID: string;
@@ -56,19 +56,6 @@ declare const deviceModel: {
             [x: number]: string | null;
         }> | null | undefined;
     }> & {
-        type: string;
-        id: string;
-        userID: string;
-        name: string;
-        apiKey: string;
-        adaUsername: string;
-        feedID: string;
-        settings: string;
-        limit: number[];
-        schedules?: mongoose.Types.DocumentArray<{
-            [x: number]: string | null;
-        }> | null | undefined;
-    } & {
         _id: mongoose.Types.ObjectId;
     }) | null>;
     getDeviceData(deviceID: string): Promise<(mongoose.FlattenMaps<{
