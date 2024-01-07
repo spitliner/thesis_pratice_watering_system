@@ -208,6 +208,7 @@ const deviceController = {
             const result = await adaConnect.modifiedStatus(device.adaUsername, device.feedID, device.apiKey, status);
 
             if (result) {
+                await dataController.insertFeed(device.id, device.userID, await adaConnect.getFeedData(device.adaUsername, device.id, device.feedID, device.apiKey));
                 return {
                     result: 'set status success',
                 };
