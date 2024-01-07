@@ -3,12 +3,14 @@ import { DataGrid } from '@mui/x-data-grid';
 import { deviceType } from '../../../constants/device';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import Card from '../../../components/Card';
 dayjs.extend(customParseFormat);
 import watering from '../../../assets/animation/watering.json';
 import Lottie from 'react-lottie';
 import useQueryDeviceById from '../hooks/useQueryDeviceById';
+import { useSelector } from 'react-redux';
+import PumpHistory from './PumpHistory';
 
 const WateringIcon = {
   loop: true,
@@ -20,19 +22,27 @@ const WateringIcon = {
 };
 
 const Table = (props) => {
-  const { deviceList } = props;
+  const { date } = props;
+  const deviceList = useSelector((state) => state.deviceList.pumpDevice);
   const [row, setRow] = useState([]);
-  const [freeDevice, setFreeDevice] = useState(0);
+  const [unscheduledDevice, setUnscheduledDevice] = useState(0);
   const [totalDevice, setTotalDevice] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
-  const { data } = useQueryDeviceById(deviceList[3].id);
-  useEffect(() => {}, [row]);
+  const viewHistory = (id) => {
+    setSelectedDevice(id);
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+    setSelectedDevice(null);
+  };
 
   useEffect(() => {
-    const rows = deviceList
-      .filter((device) => device.type === deviceType.water)
-      .map((device) => {
-        let schedules = 'Free';
+    if (deviceList) {
+      const rows = deviceList.map((device) => {
+        let schedules = 'Unscheduled';
 
         if (device.schedules && device.schedules.length > 0) {
           schedules = device.schedules
@@ -49,9 +59,13 @@ const Table = (props) => {
           schedule: schedules
         };
       });
-    setRow(rows);
-    setTotalDevice(rows.length);
-    setFreeDevice(rows.filter((row) => row.schedule === 'Free').length);
+
+      setRow(rows);
+      setTotalDevice(rows.length);
+      setUnscheduledDevice(
+        rows.filter((row) => row.schedule === 'Unscheduled').length
+      );
+    }
   }, [deviceList]);
 
   const columns = [
@@ -76,11 +90,27 @@ const Table = (props) => {
       width: 220
     },
     {
-      field: 'schedule',
-      headerName: 'Schedule',
+      field: 'history',
+      headerName: 'History',
       width: 200,
       renderCell: (params) => (
-        <div style={{ whiteSpace: 'pre-line' }}>{params.value}</div>
+        <>
+          <Button
+            variant="contained"
+            onClick={() => viewHistory(params.row.id)}
+          >
+            View
+          </Button>
+          {selectedDevice === params.row.id && (
+            <PumpHistory
+              id={params.row.id}
+              open={open}
+              onClose={onClose}
+              date={date}
+              deviceName={params.row.device}
+            />
+          )}
+        </>
       )
     }
   ];
@@ -94,14 +124,14 @@ const Table = (props) => {
         <Box height={80} width={80}>
           <Lottie options={WateringIcon} />
         </Box>
-        <Box>
-          <Typography width={150} fontWeight={700} ml={8} mb={2}>
+        {/* <Box>
+          <Typography fontWeight={700} ml={8} mb={2}>
             Total devices: {totalDevice}
           </Typography>
-          <Typography width={150} fontWeight={700} ml={8} color="gray">
-            Free devices: {freeDevice}
+          <Typography fontWeight={700} ml={8} color="gray">
+            Unscheduled devices: {unscheduledDevice}
           </Typography>
-        </Box>
+        </Box> */}
       </Box>
       <DataGrid
         rows={row}

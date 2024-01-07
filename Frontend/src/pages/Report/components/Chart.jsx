@@ -23,7 +23,7 @@ import Circle from '@mui/icons-material/Circle';
 import { Link } from 'react-router-dom';
 import temp from '../../../assets/animation/temp.json';
 import humid from '../../../assets/animation/humid.json';
-import ChangeThrehold from './ChangeThrehold';
+import ChangeThreshold from './ChangeThreshold';
 
 const TempIcon = {
   loop: true,
@@ -120,6 +120,7 @@ const ChartInfo = ({ errorMessage }) => (
 const Chart = (props) => {
   const { date, device, dataKey, label, color, unit } = props;
   const { data } = useQueryDeviceById(device?.id);
+
   const [chartData, setChartData] = useState([]);
   const [chartValues, setChartValues] = useState({
     max: 0,
@@ -134,6 +135,7 @@ const Chart = (props) => {
   const [range, setRange] = useState([]);
 
   const selectedDateList = useMemo(() => {
+    console.log(dayjs(date).format('MM/YYYY'));
     return data?.feed?.filter(
       (item) =>
         dayjs(date).format('DD/MM/YYYY') ===
@@ -141,8 +143,12 @@ const Chart = (props) => {
     );
   }, [data?.feed, date]);
 
+  const handleFinishEdit = () => {
+    setOpenEdit(false);
+    window.location.reload();
+  };
+
   useEffect(() => {
-    console.log(data?.info.limit);
     data && setRange(data?.info.limit);
   }, [data]);
 
@@ -249,10 +255,12 @@ const Chart = (props) => {
           >
             Change threshold
           </Button>
-          <ChangeThrehold
+          <ChangeThreshold
             open={openEdit}
-            handleClose={() => setOpenEdit(false)}
+            handleFinishEdit={handleFinishEdit}
+            handleCancelEdit={() => setOpenEdit(false)}
             device={device}
+            dataKey={dataKey}
           />
         </Box>
       </Box>
@@ -321,9 +329,9 @@ const Chart = (props) => {
             sx={{ display: 'flex', flexDirection: 'column', fontSize: 17 }}
           >
             WARNING: {dataKey} is {errorMessage?.toLowerCase()} !
-            <Box mt={1}>
+            <Box mt={1} display="flex" justifyContent="center">
               <Button component={Link} to="/schedules" sx={{ fontSize: 16 }}>
-                Adjust watering schedule
+                Go water
               </Button>
               <Button
                 sx={{ color: 'gray', fontSize: 16 }}

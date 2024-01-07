@@ -29,8 +29,8 @@ const schema = yup.object().shape({
     )
 });
 
-export default function ChangeThrehold(props) {
-  const { open, handleClose, device } = props;
+export default function ChangeThreshold(props) {
+  const { open, handleFinishEdit, handleCancelEdit, device } = props;
   const { onSaveDataById } = useMutateDeviceById();
 
   const [isloading, setIsloading] = useState(false);
@@ -45,12 +45,11 @@ export default function ChangeThrehold(props) {
   });
 
   const submitForm = async (data) => {
-    onSaveDataById([
-      device.id,
-      'limit',
-      { limit: [Number(data.lowerThreshold), Number(data.upperThreshold)] }
-    ]);
-    handleClose();
+    const limit = [Number(data.lowerThreshold), Number(data.upperThreshold)];
+    onSaveDataById([device.id, 'limit', { limit: limit }]);
+    setIsloading(true);
+    setTimeout(handleFinishEdit, 1000);
+    // setIsloading(false);
   };
 
   useEffect(() => {
@@ -128,7 +127,7 @@ export default function ChangeThrehold(props) {
               </Button>
               <Button
                 variant="contained"
-                onClick={handleClose}
+                onClick={handleCancelEdit}
                 sx={{ backgroundColor: 'grey.500', width: 80 }}
               >
                 Cancel

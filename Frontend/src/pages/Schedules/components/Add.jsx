@@ -17,12 +17,12 @@ import ErrorDialog from './ErrorMessage';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import ButtonGroup from './ButtonGroup';
+import { useSelector } from 'react-redux';
 dayjs.extend(customParseFormat);
 
 function Add(props) {
   const { onClose } = props;
   const { onSaveDataById } = useMutateDeviceById();
-  const { deviceList, isLoading } = useQueryDevice();
 
   const [selectedTime, setSelectedTime] = useState('');
   const [device, setDevice] = useState('');
@@ -41,9 +41,11 @@ function Add(props) {
     setDuration(event.target.value);
   };
 
+  const pumpDevices = useSelector((state) => state.deviceList.pumpDevice);
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const selectedDevice = deviceList?.find((item) => item.name === device);
+    const selectedDevice = pumpDevices?.find((item) => item.name === device);
     const newScheduleList = selectedDevice?.schedules
       ? [...selectedDevice?.schedules, [selectedTime, duration]]
       : [[selectedTime, duration]];
@@ -61,11 +63,6 @@ function Add(props) {
     }
   };
 
-  const waterDevices = deviceList?.filter(
-    (device) => device.type === deviceType.water
-  );
-
-  if (isLoading) return <SuspenseLoader />;
   return (
     <>
       <Container maxWidth="sm">
@@ -100,12 +97,12 @@ function Add(props) {
                 onChange={handleDeviceChange}
                 required
               >
-                {waterDevices?.map((device) => (
+                {pumpDevices?.map((device) => (
                   <MenuItem key={device.name} value={device.name}>
                     {device.name}
                   </MenuItem>
                 ))}
-                {waterDevices?.length === 0 && (
+                {pumpDevices?.length === 0 && (
                   <MenuItem sx={{ fontStyle: 'italic', color: 'gray' }}>
                     No watering device
                   </MenuItem>

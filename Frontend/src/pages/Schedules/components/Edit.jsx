@@ -26,13 +26,15 @@ function Edit(props) {
 
   const handleTimeChange = (event, index) => {
     const updatedSchedules = [...schedule];
-    updatedSchedules[index][0] = event.target.value;
+    // updatedSchedules[index][0] = event.target.value;
+    updatedSchedules[index] = [event.target.value, updatedSchedules[index][1]];
     setSchedule(updatedSchedules);
   };
 
   const handleDurationChange = (event, index) => {
     const updatedSchedules = [...schedule];
-    updatedSchedules[index][1] = event.target.value;
+    console.log(updatedSchedules[index][1], event.target.value);
+    updatedSchedules[index] = [updatedSchedules[index][0], event.target.value];
     setSchedule(updatedSchedules);
   };
 
