@@ -8,6 +8,7 @@ import Card from '../../../components/Card';
 dayjs.extend(customParseFormat);
 import watering from '../../../assets/animation/watering.json';
 import Lottie from 'react-lottie';
+import useQueryDeviceById from '../hooks/useQueryDeviceById';
 
 const WateringIcon = {
   loop: true,
@@ -23,6 +24,9 @@ const Table = (props) => {
   const [row, setRow] = useState([]);
   const [freeDevice, setFreeDevice] = useState(0);
   const [totalDevice, setTotalDevice] = useState(0);
+
+  const { data } = useQueryDeviceById(deviceList[3].id);
+  useEffect(() => {}, [row]);
 
   useEffect(() => {
     const rows = deviceList

@@ -11,7 +11,6 @@ const useMutateDeviceById = () => {
     {
       onSuccess: (res) => {
         queryClient.invalidateQueries('getDevice');
-        navigate('/schedules');
       }
     }
   );

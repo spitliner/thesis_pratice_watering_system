@@ -33,6 +33,9 @@ function Board() {
   const handleDelete = (id) => {
     onSaveDataById([id, 'schedules', { schedules: [] }]);
   };
+  const handleTriggerPump = (id, status) => {
+    onSaveDataById([id, 'status', { status: status }]);
+  };
   const waterDevices = (deviceList || [])
     .filter((item) => item.type === deviceType.water)
     .map((item) => ({
@@ -144,51 +147,43 @@ function Board() {
                 </TableCell>
 
                 {device?.schedules?.length > 0 && (
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: 2,
+                      flexDirection: 'column'
+                    }}
+                  >
                     <Box
                       sx={{
                         display: 'flex',
                         justifyContent: 'center',
                         gap: 2,
-                        flexDirection: 'column'
+                        flexDirection: 'row'
                       }}
                     >
-                      <Box
-                        sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: '#FF7961',
+                          width: '70px'
+                        }}
+                        onClick={() =>
+                          setIsDelete({ status: true, id: device?.id })
+                        }
                       >
-                        <Button
-                          variant="contained"
-                          sx={{
-                            backgroundColor: '#FF7961',
-                            width: '70px'
-                          }}
-                          onClick={() =>
-                            setIsDelete({ status: true, id: device?.id })
-                          }
-                        >
-                          DELETE
-                        </Button>
-                        <Button
-                          variant="contained"
-                          sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                          onClick={() =>
-                            setOnEdit({ status: true, id: device?.id })
-                          }
-                        >
-                          EDIT
-                        </Button>
-                      </Box>
-                      <Box>
-                        <Button
-                          variant="contained"
-                          sx={{ backgroundColor: '#b39ddb', width: '70px' }}
-                          onClick={() =>
-                            setOnEdit({ status: true, id: device?.id })
-                          }
-                        >
-                          EDIT
-                        </Button>
-                      </Box>
+                        DELETE
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: '#b39ddb', width: '70px' }}
+                        onClick={() =>
+                          setOnEdit({ status: true, id: device?.id })
+                        }
+                      >
+                        EDIT
+                      </Button>
                       <Modal open={onEdit.id === device.id && onEdit.status}>
                         <Edit
                           device={device}
@@ -204,6 +199,25 @@ function Board() {
                         device={device}
                         title="schedule"
                       />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: 2,
+                        flexDirection: 'row'
+                      }}
+                    >
+                      <Button
+                        onClick={() => handleTriggerPump(device?.id, 'ON')}
+                      >
+                        ON
+                      </Button>
+                      <Button
+                        onClick={() => handleTriggerPump(device?.id, 'OFF')}
+                      >
+                        OFF
+                      </Button>
                     </Box>
                   </TableCell>
                 )}

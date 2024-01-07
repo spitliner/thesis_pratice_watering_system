@@ -61,13 +61,13 @@ function _id() {
         {humidDevice?.map((device) => (
           <HumidChart key={device.id} date={date} device={device} />
         ))}
-        <ErrorBarChart
+        {/* <ErrorBarChart
           date={date}
           humidDeviceID={humidDevice[0]?.id}
           tempDeviceID={tempDevice[0]?.id}
           tempRange={deviceRange.tempRange}
           humidRange={deviceRange.humidRange}
-        />
+        /> */}
       </Container>
       <Container
         sx={{

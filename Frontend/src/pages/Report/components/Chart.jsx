@@ -23,6 +23,7 @@ import Circle from '@mui/icons-material/Circle';
 import { Link } from 'react-router-dom';
 import temp from '../../../assets/animation/temp.json';
 import humid from '../../../assets/animation/humid.json';
+import ChangeThrehold from './ChangeThrehold';
 
 const TempIcon = {
   loop: true,
@@ -117,7 +118,7 @@ const ChartInfo = ({ errorMessage }) => (
 );
 
 const Chart = (props) => {
-  const { date, device, dataKey, label, color, unit, range } = props;
+  const { date, device, dataKey, label, color, unit } = props;
   const { data } = useQueryDeviceById(device?.id);
   const [chartData, setChartData] = useState([]);
   const [chartValues, setChartValues] = useState({
@@ -129,6 +130,8 @@ const Chart = (props) => {
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [warning, setWarning] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [range, setRange] = useState([]);
 
   const selectedDateList = useMemo(() => {
     return data?.feed?.filter(
@@ -137,6 +140,11 @@ const Chart = (props) => {
         dayjs(item.time).format('DD/MM/YYYY')
     );
   }, [data?.feed, date]);
+
+  useEffect(() => {
+    console.log(data?.info.limit);
+    data && setRange(data?.info.limit);
+  }, [data]);
 
   useEffect(() => {
     if (!selectedDateList) return;
@@ -176,6 +184,7 @@ const Chart = (props) => {
 
     const isToday =
       dayjs(date).format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY');
+
     if (current === null) setErrorMessage(`No data for this day`);
     else if (current > range[1]) {
       setErrorMessage(`Higher than normal`);
@@ -187,7 +196,7 @@ const Chart = (props) => {
       setErrorMessage(null);
       setWarning(false);
     }
-  }, [selectedDateList, dataKey]);
+  }, [selectedDateList, dataKey, range]);
 
   if (!data) {
     return (
@@ -229,6 +238,22 @@ const Chart = (props) => {
             Average:{' '}
             {(chartValues.average && chartValues.average + unit) || 'No data'}
           </Typography>
+        </Box>
+        <Box>
+          <Button
+            fullWidth={false}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => setOpenEdit(true)}
+          >
+            Change threshold
+          </Button>
+          <ChangeThrehold
+            open={openEdit}
+            handleClose={() => setOpenEdit(false)}
+            device={device}
+          />
         </Box>
       </Box>
       {chartData?.length <= 0 ? (

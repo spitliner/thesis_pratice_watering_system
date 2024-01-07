@@ -312,7 +312,7 @@ deviceRouter.post('/device/:deviceID/status', authRequest, async (request, respo
             return response.status(401).json({error: result.error});
         }
 
-        return response.status(200).json({result: result.result});
+        return response.status(200).json({result: result.result, feed: await dataModel.getData(deviceID)});
     } catch (error) {
         console.log(error);
         return response.status(500).json({
